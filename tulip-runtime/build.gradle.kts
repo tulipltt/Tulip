@@ -89,6 +89,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/info.picocli/picocli
     implementation("info.picocli:picocli:$picocliVersion")
+
+    // Source: https://mvnrepository.com/artifact/io.javalin/javalin
+    testImplementation("io.javalin:javalin:7.0.0")
 }
 
 tasks.withType<JavaCompile>().configureEach {
