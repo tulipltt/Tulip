@@ -499,6 +499,7 @@ table.expanded .extra-col {
     <th>Std_Dev</th>
     <th>Min_Rt</th>
     <th>p50_Rt</th>
+    <th>p90_Rt</th>
     <th>p95_Rt</th>
     <th>p99_Rt</th>
     <th>Max_Rt</th>
@@ -525,6 +526,7 @@ benchmark_columns = '''
     <th>Std_Dev</th>
     <th>Min_Rt</th>
     <th>p50_Rt</th>
+    <th>p90_Rt</th>
     <th>p95_Rt</th>
     <th>p99_Rt</th>
     <th>Max_Rt</th>
@@ -554,6 +556,7 @@ benchmark_header = '''
     <td></td>
     <td></td>
     <td></td>
+    <td></td>
     <td class="extra-col"></td>
     <td class="extra-col"></td>
     <td class="extra-col"></td>
@@ -567,6 +570,7 @@ benchmark_header = '''
 
 benchmark_empty_row = '''
   <tr>
+    <td>&nbsp;</td>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
@@ -606,6 +610,7 @@ benchmark_detail_row = '''
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
+    <td>%s</td>
     <td class="extra-col">%s</td>
     <td class="extra-col">%.1f</td>
     <td class="extra-col">%d</td>
@@ -625,6 +630,7 @@ benchmark_summary_row = '''
     <td><b><tag1>%d</tag1></b></td>
     <td><b>%s</b></td>
     <td><b><tag2>%.1f</tag2></b></td>
+    <td><b>%s</b></td>
     <td><b>%s</b></td>
     <td><b>%s</b></td>
     <td><b>%s</b></td>
@@ -1068,6 +1074,7 @@ def createReport(filename):
             rd["std_dev"] = jh.getStdDeviation()
             rd["min_rt"] = sm.min_rt
             rd["p50_rt"] = jh.getValueAtPercentile(50.0)
+            rd["p90_rt"] = jh.getValueAtPercentile(90.0)
             rd["p95_rt"] = jh.getValueAtPercentile(95.0)
             rd["p99_rt"] = jh.getValueAtPercentile(99.0)
             rd["max_rt"] = sm.max_rt
@@ -1093,6 +1100,7 @@ def createReport(filename):
             formatTime(jh.getStdDeviation()),
             formatTime(sm.min_rt),
             formatTime(jh.getValueAtPercentile(50.0)),
+            formatTime(jh.getValueAtPercentile(90.0)),
             formatTime(jh.getValueAtPercentile(95.0)),
             formatTime(jh.getValueAtPercentile(99.0)),
             formatTime(sm.max_rt),
@@ -1290,6 +1298,7 @@ def createReport(filename):
                 rd["std_dev"] = jhx.getStdDeviation()
                 rd["min_rt"] = smx.min_rt
                 rd["p50_rt"] = jhx.getValueAtPercentile(50.0)
+                rd["p90_rt"] = jhx.getValueAtPercentile(90.0)
                 rd["p95_rt"] = jhx.getValueAtPercentile(95.0)
                 rd["p99_rt"] = jhx.getValueAtPercentile(99.0)
                 rd["max_rt"] = smx.max_rt
@@ -1312,6 +1321,7 @@ def createReport(filename):
                 formatTime(jhx.getStdDeviation()),
                 formatTime(smx.min_rt),
                 formatTime(jhx.getValueAtPercentile(50.0)),
+                formatTime(jhx.getValueAtPercentile(90.0)),
                 formatTime(jhx.getValueAtPercentile(95.0)),
                 formatTime(jhx.getValueAtPercentile(99.0)),
                 formatTime(smx.max_rt),
@@ -1401,6 +1411,7 @@ def createReport(filename):
             rd["std_dev"] = ht.getStdDeviation()
             rd["min_rt"] = e["min_rt"]
             rd["p50_rt"] = e["percentiles_rt"]["50.0"]
+            rd["p90_rt"] = e["percentiles_rt"]["90.0"]
             rd["p95_rt"] = e["percentiles_rt"]["95.0"]
             rd["p99_rt"] = e["percentiles_rt"]["99.0"]
             rd["max_rt"] = e["max_rt"]
@@ -1428,6 +1439,7 @@ def createReport(filename):
                 formatTime(ht.getStdDeviation()),
                 formatTime(e["min_rt"]),
                 formatTime(e["percentiles_rt"]["50.0"]),
+                formatTime(e["percentiles_rt"]["90.0"]),
                 formatTime(e["percentiles_rt"]["95.0"]),
                 formatTime(e["percentiles_rt"]["99.0"]),
                 formatTime(e["max_rt"]),
