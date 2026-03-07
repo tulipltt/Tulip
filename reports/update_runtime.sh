@@ -7,4 +7,4 @@ jbang run FileModifier.java report_py.java
 
 # rm report.txt
 
-cp report_py.java  ../tulip-runtime/src/main/java/io/github/wfouche/tulip/report/
+cp report_py.java  ../tulip-runtime/src/main/java/io/github/tulipltt/tulip/report/

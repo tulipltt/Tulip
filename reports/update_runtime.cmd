@@ -7,4 +7,4 @@ call jbang run FileModifier.java report_py.java
 
 REM del report.txt
 
-copy report_py.java  ..\tulip-runtime\src\main\java\io\github\wfouche\tulip\report
+copy report_py.java  ..\tulip-runtime\src\main\java\io\github\tulipltt\tulip\report

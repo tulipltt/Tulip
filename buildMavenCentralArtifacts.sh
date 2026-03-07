@@ -3,7 +3,7 @@ source "$HOME/.sdkman/bin/sdkman-init.sh"
 sdk env
 
 # Tulip version
-export version="2.2.5"
+export version="2.3.0"
 
 # Remove staging folder
 rm -f -r tulip-runtime/build/staging-deploy
@@ -12,7 +12,7 @@ rm -f -r tulip-runtime/build/staging-deploy
 ./gradlew publish
 
 # Sign the artifacts
-pushd ./tulip-runtime/build/staging-deploy/io/github/wfouche/tulip/tulip-runtime/$version || exit
+pushd ./tulip-runtime/build/staging-deploy/io/github/tulipltt/tulip/tulip-runtime/$version || exit
 gpg -ab tulip-runtime-$version-javadoc.jar
 gpg -ab tulip-runtime-$version-sources.jar
 gpg -ab tulip-runtime-$version.jar

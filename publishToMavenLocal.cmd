@@ -4,7 +4,7 @@ md %USERPROFILE%\.m2
 
 dir /s %USERPROFILE%\.m2\tulip-runtime*.jar
 
-rd/q/s %USERPROFILE%\.m2\repository\io\github\wfouche\tulip\tulip-runtime
+rd/q/s %USERPROFILE%\.m2\repository\io\github\tulipltt\tulip\tulip-runtime
 
 REM -------------------------------------------------------------
 
