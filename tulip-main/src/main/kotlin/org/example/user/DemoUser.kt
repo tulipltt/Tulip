@@ -1,16 +1,13 @@
 package org.example.user
 
+import io.github.tulipltt.tulip.api.TulipUser
+import io.github.tulipltt.tulip.stats.LlqHistogram
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import io.github.wfouche.tulip.api.TulipUser
 import java.util.concurrent.ThreadLocalRandom
-
-import io.github.wfouche.tulip.stats.LlqHistogram
 import org.HdrHistogram.Histogram as HdrHistogram
 
-class DemoUser() : TulipUser() {
-
+class DemoUser : TulipUser() {
     val llqh = LlqHistogram()
     val hdrh = HdrHistogram(3)
     val rnd: ThreadLocalRandom = ThreadLocalRandom.current()
@@ -40,9 +37,7 @@ class DemoUser() : TulipUser() {
         return true
     }
 
-    override fun action3(): Boolean {
-        return true
-    }
+    override fun action3(): Boolean = true
 
     override fun action7(): Boolean {
         num = rnd.nextLong(1, 1_000_000_000L)
@@ -63,13 +58,9 @@ class DemoUser() : TulipUser() {
         return true
     }
 
-    override fun onStop(): Boolean {
-        return true
-    }
+    override fun onStop(): Boolean = true
 
-    override fun logger(): Logger {
-        return logger
-    }
+    override fun logger(): Logger = logger
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(DemoUser::class.java)

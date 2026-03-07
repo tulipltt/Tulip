@@ -1,6 +1,6 @@
 import static org.junit.jupiter.api.Assertions.*;
 
-import io.github.wfouche.tulip.stats.LlqHistogram;
+import io.github.tulipltt.tulip.stats.LlqHistogram;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

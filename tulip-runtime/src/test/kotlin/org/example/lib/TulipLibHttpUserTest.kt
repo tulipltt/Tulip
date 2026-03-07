@@ -1,6 +1,6 @@
 package org.example.lib
 
-import io.github.wfouche.tulip.user.HttpUser
+import io.github.tulipltt.tulip.user.HttpUser
 import io.javalin.Javalin
 import io.javalin.config.JavalinConfig
 import io.javalin.http.Context

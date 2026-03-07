@@ -9,7 +9,7 @@ from collections import OrderedDict
 import java.io.PrintStream as PrintStream
 import java.io.ByteArrayOutputStream as ByteArrayOutputStream
 try:
-    import io.github.wfouche.tulip.stats.LlqHistogram as LlqHistogram
+    import io.github.tulipltt.tulip.stats.LlqHistogram as LlqHistogram
 except:
     print("LlqHistogram class not found, LLQ stats will be missing.")
 import java.lang.management.ManagementFactory as ManagementFactory

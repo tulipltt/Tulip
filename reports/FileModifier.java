@@ -14,7 +14,7 @@ import java.util.List;
 public class FileModifier {
 
     // The text to be inserted on the new line
-    private static final String NEW_LINE_CONTENT = "package io.github.wfouche.tulip.report;";
+    private static final String NEW_LINE_CONTENT = "package io.github.tulipltt.tulip.report;";
 
     public static void main(String[] args) {
         // 1. Check for command-line argument
