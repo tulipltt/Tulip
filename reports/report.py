@@ -458,7 +458,7 @@ summary_html_3 = '''</body>
 </html>
 '''
 
-# <h2><a href="https://wfouche.github.io/Tulip-docs">__DESC1__</a> / __DESC2__</h2>
+# <h2><a href="https://tulipltt.github.io/Tulip-docs">__DESC1__</a> / __DESC2__</h2>
 # <h2>__DESC1__ / __DESC2__</h2>
 
 header = '''<!DOCTYPE html>
@@ -483,7 +483,7 @@ table.expanded .extra-col {
 
 <body>
 
-<h2><a href="https://wfouche.github.io/Tulip-docs">__DESC1__</a> / __DESC2__</h2>
+<h2><a href="https://tulipltt.github.io/Tulip-docs">__DESC1__</a> / __DESC2__</h2>
 
 <button id="toggleBtn">Show All Columns</button>
 
@@ -1891,7 +1891,7 @@ def convertAdocToHtml(adocFilename):
     filename = os.path.join(os.getcwd(), adocFilename)
     #print("Adoc file: %s"%(filename))
     asciidoctor = Asciidoctor.Factory.create()
-    stylesheetUrl = "https://raw.githubusercontent.com/wfouche/Tulip/refs/heads/main/docs/css/adoc-foundation.css"
+    stylesheetUrl = "https://raw.githubusercontent.com/tulipltt/Tulip/refs/heads/main/docs/css/adoc-foundation.css"
     attributes = Attributes.builder().attribute("linkcss", False).attribute("data-uri", True).attribute("allow-uri-read", True).attribute("stylesheet", stylesheetUrl).build()
     asciidoctor.requireLibrary("asciidoctor-diagram")
     asciidoctor.convertFile(
