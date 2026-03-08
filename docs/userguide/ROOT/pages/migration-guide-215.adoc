@@ -1,0 +1,93 @@
+= Upgrade from 2.0.0 to 2.1.5
+
+== Configuration
+
+The benchmark configuration file layout has changed slightly.
+A Python script is provided to apply the required changes to version 2.0.0 configuration files.
+
+$ `python3 convert_200_to_215.py 200_config.json > 215_config.json`
+
+[cols="1a"]
+|===
+|
+
+[source,python]
+----
+import json
+from collections import OrderedDict
+import sys
+
+filename = sys.argv[1]
+fh = open(filename)
+jb = json.load(fh, object_pairs_hook=OrderedDict)
+
+# Fix toplevel structure
+jb_1 = OrderedDict()
+jb_1["actions"] = jb["static"]
+if "workflows" in jb_1["actions"].keys():
+    jb_1["workflows"] = jb_1["actions"]["workflows"]
+    del jb_1["actions"]["workflows"]
+jb_1["benchmarks"] = jb["benchmarks"]
+jb_1["contexts"] = jb["contexts"]
+
+if "user_actions" in jb_1["actions"].keys():
+    x = jb_1["actions"]["user_actions"]
+    if "99" in x.keys():
+        x["100"] = x["99"]
+        del x["99"]
+
+# Fix contexts
+clist = jb_1["contexts"]
+d = OrderedDict()
+for e in clist:
+    name = e["name"]
+    del e["name"]
+    d[name] = e
+jb_1["contexts"] = d
+
+# Fix benchmarks
+blist = jb_1["benchmarks"]
+d = OrderedDict()
+for e in blist:
+    name = e["name"]
+    del e["name"]
+    text = json.dumps(e)
+    text = text.replace("throughput_rate", "aps_rate")
+    text = text.replace("benchmark_repeat_count", "benchmark_iterations")
+    text = text.replace("actions", "scenario_actions")
+    text = text.replace("workflow", "scenario_workflow")
+    text = text.replace("99", "100")
+    e = json.loads(text)
+    d[name] = e
+jb_1["benchmarks"] = d
+
+print(json.dumps(jb_1, indent=4))
+----
+|===
+
+== Runtime
+
+Change the version number of the  tulip-runtime Maven dependency from 2.0.0 to 2.1.5.
+
+[source,java]
+----
+///usr/bin/env jbang "$0" "$@" ; exit $?
+//DEPS io.github.wfouche.tulip:tulip-runtime:2.1.5  // <1>
+//DEPS org.springframework.boot:spring-boot-starter-web:3.4.2
+//DEPS org.slf4j:slf4j-api:2.0.16
+//DEPS ch.qos.logback:logback-core:1.5.16
+//DEPS ch.qos.logback:logback-classic:1.5.16
+//SOURCES HttpUser.java
+//JAVA 21
+
+package io.tulip;
+
+import io.github.wfouche.tulip.api.TulipApi;
+
+public class App {
+   public static void main(String[] args) {
+      TulipApi.runTulip("benchmark_config.json");
+   }
+}
+----
+<1> tulip-runtime:<version>
