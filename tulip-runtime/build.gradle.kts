@@ -100,7 +100,7 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.jar {
     manifest {
-        attributes["Main-Class"] = "io.github.wfouche.tulip.api.TulipApi"
+        attributes["Main-Class"] = "io.github.tulipltt.tulip.api.TulipApi"
         attributes["Enable-Native-Access"] = "ALL-UNNAMED"
     }
 }
@@ -109,7 +109,7 @@ publishing {
     publications {
         create<MavenPublication>("Tulip") {
             from(components["java"])
-            groupId = "io.github.wfouche.tulip"
+            groupId = "io.github.tulipltt.tulip"
             artifactId = "tulip-runtime"
             description = "Tulip Runtime"
         }
@@ -118,8 +118,7 @@ publishing {
                 packaging = "jar"
                 name.set("tulip-runtime")
                 description.set("Tulip Runtime")
-                // url.set("https://wfouche.github.io/Tulip")
-                url.set("https://github.com/wfouche/Tulip")
+                url.set("https://github.com/tulipltt/Tulip")
                 inceptionYear.set("2020")
                 licenses {
                     license {
@@ -134,9 +133,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection.set("scm:git:git@github.com:wfouche/Tulip.git")
-                    developerConnection.set("scm:git:ssh:git@github.com:wfouche/Tulip.git")
-                    url.set("https://github.com/wfouche/Tulip")
+                    connection.set("scm:git:git@github.com:tulipltt/Tulip.git")
+                    developerConnection.set("scm:git:ssh:git@github.com:tulipltt/Tulip.git")
+                    url.set("https://github.com/tulipltt/Tulip")
                 }
             }
         }
