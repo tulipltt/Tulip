@@ -12,7 +12,7 @@ rm -f -r tulip-runtime/build/staging-deploy
 ./gradlew publish
 
 # Sign the artifacts
-pushd ./tulip-runtime/build/staging-deploy/io/github/tulipltt/tulip/tulip-runtime/$version || exit
+pushd ./tulip-runtime/build/staging-deploy/io/github/tulipltt/tulip-runtime/$version || exit
 gpg -ab tulip-runtime-$version-javadoc.jar
 gpg -ab tulip-runtime-$version-sources.jar
 gpg -ab tulip-runtime-$version.jar

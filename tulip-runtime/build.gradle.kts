@@ -109,7 +109,7 @@ publishing {
     publications {
         create<MavenPublication>("Tulip") {
             from(components["java"])
-            groupId = "io.github.tulipltt.tulip"
+            groupId = "io.github.tulipltt"
             artifactId = "tulip-runtime"
             description = "Tulip Runtime"
         }

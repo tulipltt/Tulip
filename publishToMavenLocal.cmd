@@ -4,7 +4,7 @@ md %USERPROFILE%\.m2
 
 dir /s %USERPROFILE%\.m2\tulip-runtime*.jar
 
-rd/q/s %USERPROFILE%\.m2\repository\io\github\tulipltt\tulip\tulip-runtime
+rd/q/s %USERPROFILE%\.m2\repository\io\github\tulipltt\tulip-runtime
 
 REM -------------------------------------------------------------
 
@@ -21,6 +21,6 @@ call .\gradlew :tulip-runtime:build
 call .\gradlew :tulip-runtime:publishToMavenLocal
 dir /s %USERPROFILE%\.m2\tulip-runtime*.jar
 REM echo.
-REM echo "jbang io.github.wfouche.tulip:tulip-runtime:<version>"
+REM echo "jbang io.github.tulipltt:tulip-runtime:<version>"
 
 REM -------------------------------------------------------------

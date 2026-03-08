@@ -15,5 +15,5 @@ popd || exit
 # Clean
 mkdir -p ~/.m2
 find ~/.m2 -name 'tulip-runtime*.jar' -print | sort
-rm -f -r ~/.m2/repository/io/github/wfouche/tulip/tulip-runtime
+rm -f -r ~/.m2/repository/io/github/tulipltt/tulip-runtime
 
