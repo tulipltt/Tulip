@@ -10,7 +10,7 @@ REM Publish JARs to staging folder
 call .\gradlew.bat publish
 
 REM Sign the artifacts
-pushd .\tulip-runtime\build\staging-deploy\io\github\tulipltt\tulip\tulip-runtime\%version%
+pushd .\tulip-runtime\build\staging-deploy\io\github\tulipltt\tulip-runtime\%version%
 gpg -ab tulip-runtime-%version%-javadoc.jar
 gpg -ab tulip-runtime-%version%-sources.jar
 gpg -ab tulip-runtime-%version%.jar
@@ -24,5 +24,5 @@ zip -r tulip-runtime-%version%.zip io
 popd
 
 REM Display artifact files and ZIP file
-dir /s .\tulip-runtime\build\staging-deploy\io\github\tulipltt\tulip\tulip-runtime\%version%
+dir /s .\tulip-runtime\build\staging-deploy\io\github\tulipltt\tulip-runtime\%version%
 dir   .\tulip-runtime\build\staging-deploy\*.zip
