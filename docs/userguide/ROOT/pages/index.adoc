@@ -1,7 +1,7 @@
 = Introduction
-:use-kroki: 0
+:use-kroki: 1
 
-https://github.com/wfouche/Tulip[Tulip] is a SDK for the Java VM (JVM) to create load testing, stress testing, and performance regression testing benchmarks for software systems.
+The https://github.com/tulipltt/Tulip[Tulip Load Testing Toolkit (LTT)] is a SDK for the Java VM (JVM) to create load testing, stress testing, and performance regression testing benchmarks for software systems.
 Tulip is a robust solution for evaluating the performance and stability of web applications under varying conditions, ensuring they can handle high traffic and stress levels efficiently.
 Similar to well-known tools like JMeter, Gatling, and Locust, Tulip provides powerful capabilities to simulate real-world scenarios and generate comprehensive reports, helping developers identify and resolve potential bottlenecks.
 
@@ -48,10 +48,7 @@ split
    #greenyellow:benchmark_config.json;
 split again
    -[hidden]->
-   #beige:User.class;
-split again
-   -[hidden]->
-   #beige:App.class;
+   #beige:User.java;
 split again
    -[hidden]->
    #azure:tulip-runtime.jar;
@@ -200,9 +197,9 @@ image:image-demo-benchmark-report-html.png[]
 
 == Source Code
 
-https://github.com/wfouche/Tulip/
+https://github.com/tulipltt/Tulip/
 
-https://github.com/wfouche/Tulip-docs/
+https://github.com/tulipltt/Tulip-docs/
 
 == Social Media
 
@@ -228,7 +225,7 @@ https://www.youtube.com/@Tulip_ltt[@Tulip_ltt]
 <dependency>
    <groupId>io.github.wfouche.tulip</groupId>
    <artifactId>tulip-runtime</artifactId>
-   <version>2.2.0</version>
+   <version>2.2.5</version>
 </dependency>
 ----
 https://mvnrepository.com/artifact/io.github.wfouche.tulip/tulip-runtime
@@ -236,7 +233,7 @@ https://mvnrepository.com/artifact/io.github.wfouche.tulip/tulip-runtime
 .Gradle(Kotlin)
 [source,kotlin]
 ----
-implementation("io.github.wfouche.tulip:tulip-runtime:2.2.0")
+implementation("io.github.wfouche.tulip:tulip-runtime:2.2.5")
 ----
 
 .JBang(App.java)
@@ -247,11 +244,11 @@ include::example$App.java[]
 
 === Current Release
 
-Tulip v2.2.0::
+Tulip v2.2.5::
 
-* https://github.com/wfouche/Tulip/releases/tag/v2.2.0[Release Notes]
+* https://github.com/wfouche/Tulip/releases/tag/v2.2.5[Release Notes]
 
-* Release date: 30 January 2026
+* Release date: 5 March 2026
 
 === Previous Releases
 
@@ -263,6 +260,6 @@ Tulip v2.1.17::
 
 == Next Release
 
-Tulip v2.2.1::
+Tulip v2.2.6::
 
-* Release date: Q1, 2026
+* Release date: Q2, 2026
