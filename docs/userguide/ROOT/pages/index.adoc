@@ -260,6 +260,6 @@ Tulip v2.1.17::
 
 == Next Release
 
-Tulip v2.2.6::
+Tulip v2.3.0::
 
 * Release date: Q2, 2026
