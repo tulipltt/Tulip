@@ -1,0 +1,33 @@
+= Migration Guide
+
+== 2.0.0
+
+Tulip 2.0.0 was released at the start of December 2024.
+
+== 2.1.5
+
+Tulip 2.1.5 was released at the end of January 2025.
+
+Since the release of Tulip 2.0.0, a few changes were made to the configuration file layout.
+A Python script is provided to upgrade the configuration file to the new format.
+However, no benchmark program source code changes are required to upgrade to the latest release.
+
+== 2.1.6
+
+Tulip 2.1.6 was released in the first week of March 2025.
+
+This release is 100% compatible with the 2.1.5 release.
+The new release of Tulip introduces enhanced reporting capabilities
+to display latencies by percentile distribution using HdrHistogram.
+
+[cols="1a"]
+|===
+|
+image::image-hdrhisrogram-plot-1.png[]
+|===
+
+[cols="1a"]
+|===
+|
+image::image-hdrhisrogram-plot-2.png[]
+|===

@@ -1,0 +1,268 @@
+= Introduction
+:use-kroki: 0
+
+https://github.com/wfouche/Tulip[Tulip] is a SDK for the Java VM (JVM) to create load testing, stress testing, and performance regression testing benchmarks for software systems.
+Tulip is a robust solution for evaluating the performance and stability of web applications under varying conditions, ensuring they can handle high traffic and stress levels efficiently.
+Similar to well-known tools like JMeter, Gatling, and Locust, Tulip provides powerful capabilities to simulate real-world scenarios and generate comprehensive reports, helping developers identify and resolve potential bottlenecks.
+
+== Load-Test Driven Development
+
+Tulip is designed to champion Load-Test Driven Development (LTDD).
+Too often software load testing is delayed until the final phases of a project.
+LTDD fundamentally shifts this focus by advocating for load testing  in-the-small to begin as early as possible in the software creation life-cycle while at the same time still adhering to standard Test-Driven Development (TDD) best practices.
+
+Tulip empowers software engineers to start load testing their code on  day 1 of a project and not delay this important work until day N-10.
+See the following blog post for more information about Load-Test Driven Development:
+
+* https://blog.octoperf.com/load-test-driven-development/
+
+== Tulip Program Structure
+
+A Tulip benchmark program consists of four parts:
+
+. Benchmark configuration file specifying benchmark scenarios to be tested
+. User class that implement actions to be benchmarked
+. App class that activates the Tulip runtime
+. Tulip runtime .jar file available from Maven Central
+
+ifeval::[{use-kroki} == 0]
+
+[cols="1a"]
+|===
+|
+image::diag0.svg[]
+|===
+
+endif::[]
+
+ifeval::[{use-kroki} == 1]
+
+[cols="1a"]
+|===
+|
+[plantuml,diag0,svg]
+----
+@startuml
+split
+   -[hidden]->
+   #greenyellow:benchmark_config.json;
+split again
+   -[hidden]->
+   #beige:User.class;
+split again
+   -[hidden]->
+   #beige:App.class;
+split again
+   -[hidden]->
+   #azure:tulip-runtime.jar;
+end split
+:EXECUTE;
+#greenyellow:benchmark_output.json;
+#cadetblue:benchmark_report.json;
+#cadetblue:benchmark_report.html;
+@enduml
+----
+|===
+
+endif::[]
+
+=== Languages
+
+The Tulip runtime is written in https://kotlinlang.org/[Kotlin].
+Tulip benchmark programs (App and User classes) can be written in any Java Virtual Machine (JVM) programming language.
+The following languages are currently supported:
+
+* Java, Kotlin
+* Scala, Groovy
+* Jython
+
+=== Workflows
+
+A benchmark execution workflow is specified in Tulip as a Markov chain over a set of actions. Probabilities of moving from having performed one action to performing another action are specified in a JSON structure.
+
+[%header,cols="1a,1a"]
+|===
+| Workflow Diagram | Specification
+|
+ifeval::[{use-kroki} == 1]
+[plantuml,wfd0,svg]
+----
+@startuml
+state "-" as A0
+state "Action 1" as A1
+A1: <PA>
+
+state "Action 2" as A2
+A2: <CP>
+
+state "Action 3" as A3
+A3: <DB>
+
+state "Action 4" as A4
+A4: <RF>
+
+A0 --> A1: 0.50
+A0 --> A3: 0.50
+A1 --> A2: 1.00
+A2 --> A4: 0.20
+A2 --> A0: 0.80
+A3 --> A4: 0.20
+A3 --> A0: 0.80
+A4 --> A0: 1.00
+@enduml
+----
+endif::[]
+ifeval::[{use-kroki} == 0]
+image::wfd0.svg[]
+endif::[]
+|
+[source,json]
+----
+{
+    "-": {
+        "1": 0.5,
+        "3": 0.5
+    },
+    "1": {
+        "2": 1.0
+    },
+    "2": {
+        "4": 0.2,
+        "-": 0.8
+    },
+    "3": {
+        "4": 0.2,
+        "-": 0.8
+    },
+    "4": {
+        "-": 1.0
+    }
+}
+----
+|===
+
+"In probability theory and statistics, a Markov chain or Markov process is a stochastic process describing a sequence of possible events in which the probability of each event depends only on the state attained in the previous event. Informally, this may be thought of as, "What happens next depends only on the state of affairs now."
+-- Wikipedia article on Markov Chains
+
+=== Coordinated Omission
+
+Tulip resolves the infamous https://redhatperf.github.io/post/coordinated-omission/[Coordination Omission] problem.
+It reports internal *wait-time* separately from external *service-time*.
+This is a reporting capability unique to Tulip.
+The internal *wait-time* statistics is used to tune the Tulip runtime environment by changing the number of worker threads, or changing the amount of heap space assigned to the Java VM, altering the throughput-rate, or adjusting worker thread input queue sizes; all in an attempt to reduce the internal wait-time to a reasonable level so that it has a negligible impact on end-user response times.
+
+"Coordinated Omission is the unintended back pressure a system under test can apply to a load generation tool that prevents that tool from accurately recording user experience. Response time = wait time + service time. "
+-- Redhat article on Coordinated Omission
+
+== Reporting
+
+=== HdrHistogram
+
+Tulip uses https://hdrhistogram.github.io/HdrHistogram/[HdrHistogram] to display Latency by Percentile Distribution charts.
+
+[cols="1a"]
+|===
+|
+.Percentile Distribution Chart
+image::image-hdrhisrogram-plot-2.png[]
+|===
+
+=== LlqHistogram
+
+A Tulip-specific Log/Linear Quantized Histogram is used to provide a detailed view of the responses times of actions. In the example below the benchmark results of two actions with average response times of 10ms and 20ms are shown.
+
+image::llq-histogram.png[]
+
+=== Apache eCharts
+
+https://echarts.apache.org/en/index.html[Apache ECharts] are used to display the following charts.
+
+[cols="1a"]
+|===
+|
+.Global Throughput Chart
+image::image-throughput.png[]
+|===
+
+[cols="1a"]
+|===
+|
+.Global Latency Chart
+image::image-latency-ms.png[]
+|===
+
+=== Performance Report
+
+The performance charts are contained in the detailed performance report
+which the Tulip runtime creates for a benchmark suite.
+
+image:image-demo-benchmark-report-html.png[]
+
+== Source Code
+
+https://github.com/wfouche/Tulip/
+
+https://github.com/wfouche/Tulip-docs/
+
+== Social Media
+
+Twitter::
+
+https://x.com/Tulip_ltt[@Tulip_ltt]
+
+BlueSky::
+
+https://bsky.app/profile/tulip-ltt.bsky.social[@Tulip_ltt]
+
+YouTube::
+
+https://www.youtube.com/@Tulip_ltt[@Tulip_ltt]
+
+== Tulip Releases
+
+=== Maven Central
+
+.Maven
+[source,xml]
+----
+<dependency>
+   <groupId>io.github.wfouche.tulip</groupId>
+   <artifactId>tulip-runtime</artifactId>
+   <version>2.2.0</version>
+</dependency>
+----
+https://mvnrepository.com/artifact/io.github.wfouche.tulip/tulip-runtime
+
+.Gradle(Kotlin)
+[source,kotlin]
+----
+implementation("io.github.wfouche.tulip:tulip-runtime:2.2.0")
+----
+
+.JBang(App.java)
+[source,java,linenums]
+----
+include::example$App.java[]
+----
+
+=== Current Release
+
+Tulip v2.2.0::
+
+* https://github.com/wfouche/Tulip/releases/tag/v2.2.0[Release Notes]
+
+* Release date: 30 January 2026
+
+=== Previous Releases
+
+Tulip v2.1.17::
+
+* https://github.com/wfouche/Tulip/releases/tag/v2.1.17[Release Notes]
+
+* Release date: 23 January 2026
+
+== Next Release
+
+Tulip v2.2.1::
+
+* Release date: Q1, 2026

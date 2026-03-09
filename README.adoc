@@ -12,9 +12,9 @@ image::tulip_logo.jpg[width=128]
 
 Tulip is a Kotlin SDK to create load testing, stress testing, and performance regression testing benchmarks for software systems. Tulip is a robust solution for evaluating the performance and stability of web applications under varying conditions, ensuring they can handle high traffic and stress levels efficiently. Similar to well-known tools like JMeter, Gatling, and Locust, Tulip provides powerful capabilities to simulate real-world scenarios and generate comprehensive reports, helping developers identify and resolve potential bottlenecks.
 
-See https://wfouche.github.io/Tulip-docs for more information.
+See https://tulipltt.github.io/Tulip-docs for more information.
 
-See also https://deepwiki.com/wfouche/Tulip.
+See also https://deepwiki.com/tulipltt/Tulip
 
 == Kwrk
 
@@ -23,7 +23,7 @@ See also https://deepwiki.com/wfouche/Tulip.
 Show the options supported by `kwrk`:
 
 ----
-$ jbang run kwrk@wfouche --help
+$ jbang run kwrk@tulipltt --help
 
 Usage: kwrk [<options>]
 
@@ -42,7 +42,7 @@ Options:
 Run a low-volume, constant rate load test to `test-api.k6.io`
 
 ----
-$ jbang run kwrk@wfouche \
+$ jbang run kwrk@tulipltt \
     --rate=10.0 \
     --url=https://test-api.k6.io/public/crocodiles/1
 ....
@@ -60,7 +60,7 @@ image::image-2025-02-27-11-49-24-856.png[]
 
 Additional information about `kwrk` is provided in the Tulip documentation:
 
-* https://wfouche.github.io/Tulip-docs/tulip/main/utilities-and-scripts.html#_kwrk
+* https://tulipltt.github.io/Tulip-docs/tulip/main/utilities-and-scripts.html#_kwrk
 
 == License
 

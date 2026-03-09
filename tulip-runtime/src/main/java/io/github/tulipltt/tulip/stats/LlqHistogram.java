@@ -1,4 +1,3 @@
-// language: java
 package io.github.tulipltt.tulip.stats;
 
 // spotless:off
@@ -6,12 +5,12 @@ package io.github.tulipltt.tulip.stats;
 //DEPS org.hdrhistogram:HdrHistogram:2.2.2
 // spotless:on
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.io.IOException;
 import java.util.*;
 import org.HdrHistogram.Histogram;
 import org.HdrHistogram.HistogramIterationValue;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.json.JsonMapper;
 
 /**
  * LlqHistogram provides a lightweight quantized histogram optimized for recording time durations

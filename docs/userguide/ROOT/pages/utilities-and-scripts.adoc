@@ -1,0 +1,169 @@
+= Utilities and Scripts
+:shiki-line-numbers: true
+
+== Asciidoc
+
+[source,shellscript]
+----
+jbang run asciidoctorj@asciidoctor filename.adoc
+----
+
+== Kwrk
+
+`kwrk` is a benchmark utility, implemented in Kotlin using the Tulip runtime, which is similar in functionality to `wrk` and `wrk2`. See article "https://nitikagarw.medium.com/getting-started-with-wrk-and-wrk2-benchmarking-6e3cdc76555f[Getting started with wrk and wrk2 benchmarking]" for more information on using these two HTTP benchmark utilities.
+
+[source,shellscript]
+----
+Usage: kwrk [<options>]
+
+Options:
+  --name=<text>             # short name for this benchmark
+  --rate=<float>            # default value is <5.0> RPS
+  --threads=<int>           # default value is <2> threads
+  --duration=<int>          # default value is <30> seconds
+  --iterations=<int>        # default value is <3> iterations
+  --header=<text>           # default value is <User-Agent: kwrk>
+  --method=<text>           # GET or POST
+  --url=<text>              # no default value
+  --jsonBody=>text>         # jsonBody to be used with POST
+  -h, --help          Show this message and exit
+----
+
+=== Benchmark 1 at 10 RPS
+
+This test sends HTTP requests at a rate of 10 requests per second (rps) to <jsonplaceholder>/posts/1.
+
+.Command
+[source,bash]
+----
+jbang run kwrk@wfouche --rate=10.0 --url=http://jsonplaceholder.typicode.com/posts/1
+----
+
+.Command Output
+[source,bash]
+----
+kwrk:
+  --rate 10.0
+  --threads 2
+  --duration 30
+  --iterations 3
+  --header User-Agent: kwrk
+  --url http://jsonplaceholder.typicode.com/posts/1
+
+Tulip 2.1.6 (Java: Microsoft 21.0.6+7-LTS, Kotlin: 2.0.21)
+
+....
+....
+
+Output filename = kwrk_output.json
+Report filename = kwrk_report.html
+----
+
+Open file `kwrk_report.html` in a browser to view the benchmark results.
+
+[cols="1a"]
+|===
+|
+image::kwrk-bench-1.png[]
+|===
+
+=== Benchmark 2 at 10,000 RPS
+
+This test sends HTTP requests at a rate of 10,000 requests per second (rps) to <localhost:7070>/posts/1.
+
+Open two terminal windows. Run the *Test Http Service* in the first terminal window, and *kwrk* in the second terminal window.
+
+.Terminal 1
+[source,shellscript]
+----
+jbang run HttpService.java
+
+[main] INFO io.javalin.Javalin - Javalin started in 526ms \o/
+[main] INFO io.javalin.Javalin - Listening on http://localhost:7070/
+[main] INFO io.javalin.Javalin - You are running Javalin 6.4.0 (released December 17, 2024).
+----
+
+.Terminal 2
+[source,shellscript]
+----
+jbang run kwrk@wfouche --rate=10000.0 --url=http://localhost:7070/posts/1
+
+kwrk:
+  --rate 10000.0
+  --threads 2
+  --duration 30
+  --iterations 3
+  --header User-Agent: kwrk
+  --url http://localhost:7070/posts/1
+
+Tulip 2.1.6 (Java: Microsoft 21.0.6+7-LTS, Kotlin: 2.0.21)
+
+....
+....
+
+Output filename = kwrk_output.json
+Report filename = kwrk_report.html
+----
+
+The benchmark results are again written to report `kwrk_report.html`.
+
+[cols="1a"]
+|===
+|
+image::kwrk-bench-2.png[]
+|===
+
+== Test Http Service
+
+$ jbang run HttpService.java
+
+.HttpService.java
+[source,java]
+----
+///usr/bin/env jbang "$0" "$@" ; exit $?
+
+//DEPS io.javalin:javalin:6.7.0
+//DEPS org.slf4j:slf4j-simple:2.0.17
+
+// https://javalin.io/
+import io.javalin.Javalin;
+
+public class HttpService {
+    public static void main(String[] args) {
+        var app = Javalin.create(config -> config.useVirtualThreads = true)
+            .get("/posts/{id}", ctx -> ctx.result("{\"code\": \"OK\"}")
+                .contentType("application/json") )
+            .start(7070);
+    }
+}
+
+// curl http://localhost:7070/posts/1
+// {"code": "OK"}
+----
+
+== Dump Http Headers
+
+$ python3 http_serv_headers.py
+
+.http_serv_headers.py
+[source,python,linenums]
+----
+import http.server as SimpleHTTPServer
+import socketserver as SocketServer
+import logging
+
+PORT = 7070
+
+class GetHandler(
+        SimpleHTTPServer.SimpleHTTPRequestHandler
+        ):
+
+    def do_GET(self):
+        logging.error(self.headers)
+        SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+
+Handler = GetHandler
+httpd = SocketServer.TCPServer(("", PORT), Handler)
+
+httpd.serve_forever()
+----

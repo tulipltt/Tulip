@@ -1,0 +1,59 @@
+= Tulip User Guide
+
+TBD.
+
+== Recreating Reports
+
+[source,java]
+----
+//DEPS io.github.wfouche.tulip:tulip-runtime:2.1.11
+
+import io.github.wfouche.tulip.api.TulipApi;
+
+public class GenReport {
+   public static void main(String[] args) {
+      TulipApi.createHtmlReport(args[0], args[1]);
+   }
+}
+
+// jbang run GenReport.java benckmark_output.json  benchmark_config.json
+----
+
+== Logging with Logback
+
+.src/main/resources/logback.xml
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <level>INFO</level>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+    </filter>
+</appender>
+
+<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>app.log</file>
+    <encoder>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>INFO</level>
+    </filter>
+</appender>
+
+<root level="INFO">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="FILE" />
+</root>
+
+</configuration>
+----
+

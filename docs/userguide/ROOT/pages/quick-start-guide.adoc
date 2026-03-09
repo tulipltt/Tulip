@@ -1,0 +1,14 @@
+= Quick Start Guide
+
+[cols="1a"]
+|===
+|
+
+"Seeing is believing, and believing is knowing, and knowing beats unknowing and the unknown."
+-- Philip Roth
+
+|===
+
+
+The best and quickest way to get started with Tulip is to try out the example benchmark program.
+
