@@ -166,7 +166,7 @@ image::image-hdrhisrogram-plot-2.png[]
 
 === LlqHistogram
 
-A Tulip-specific Log/Linear Quantized Histogram is used to provide a detailed view of the responses times of actions. In the example below the benchmark results of two actions with average response times of 10ms and 20ms are shown.
+A Tulip-specific Log/Linear Quantized Histogram is used to provide a detailed view of the response times of actions. In the example below the benchmark results of two actions with average response times of 10ms and 20ms are shown.
 
 image::llq-histogram.png[]
 
