@@ -201,20 +201,6 @@ https://github.com/tulipltt/Tulip/
 
 https://github.com/tulipltt/Tulip-docs/
 
-== Social Media
-
-Twitter::
-
-https://x.com/Tulip_ltt[@Tulip_ltt]
-
-BlueSky::
-
-https://bsky.app/profile/tulip-ltt.bsky.social[@Tulip_ltt]
-
-YouTube::
-
-https://www.youtube.com/@Tulip_ltt[@Tulip_ltt]
-
 == Tulip Releases
 
 === Maven Central
@@ -258,8 +244,22 @@ Tulip v2.1.17::
 
 * Release date: 23 January 2026
 
-== Next Release
+=== Next Release
 
 Tulip v2.3.0::
 
 * Release date: Q2, 2026
+
+== Social Media
+
+Twitter::
+
+https://x.com/Tulip_ltt[@Tulip_ltt]
+
+BlueSky::
+
+https://bsky.app/profile/tulip-ltt.bsky.social[@Tulip_ltt]
+
+YouTube::
+
+https://www.youtube.com/@Tulip_ltt[@Tulip_ltt]
