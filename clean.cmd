@@ -15,3 +15,7 @@ rd/q/s tulip-main\build
 md %USERPROFILE%\.m2
 dir /s %USERPROFILE%\.m2\tulip-runtime*.jar
 rd/q/s %USERPROFILE%\.m2\repository\io\github\tulipltt\tulip-runtime
+
+rd/q/s %USERPROFILE%\.jbang
+rd/q/s %USERPROFILE%\.groovy
+
