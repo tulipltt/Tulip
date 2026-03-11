@@ -1212,11 +1212,11 @@ def createReport(filename):
         printStream.println('  </tr>')
 
         printStream.println('  <tr>')
-        printStream.println('    <td>avg: %s</td>'%(formatTime(jhx.getMean())))
-        printStream.println('    <td>sd: %s</td>'%(formatTime(jhx.getStdDeviation())))
-        printStream.println('    <td>p90: %s</td>'%(formatTime(jhx.getValueAtPercentile(90))))
-        printStream.println('    <td>p95: %s</td>'%(formatTime(jhx.getValueAtPercentile(95))))
-        printStream.println('    <td>p99: %s</td>'%(formatTime(jhx.getValueAtPercentile(99))))
+        printStream.println('    <td>AVG: %s</td>'%(formatTime(jhx.getMean())))
+        printStream.println('    <td>SD: %s</td>'%(formatTime(jhx.getStdDeviation())))
+        printStream.println('    <td>P90: %s</td>'%(formatTime(jhx.getValueAtPercentile(90))))
+        printStream.println('    <td>P95: %s</td>'%(formatTime(jhx.getValueAtPercentile(95))))
+        printStream.println('    <td>P99: %s</td>'%(formatTime(jhx.getValueAtPercentile(99))))
         printStream.println('  </tr>')
 
         printStream.println("</table>")

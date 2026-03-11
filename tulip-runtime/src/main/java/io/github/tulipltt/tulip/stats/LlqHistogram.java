@@ -392,12 +392,12 @@ public class LlqHistogram {
         htmlString.append("  </tr>\n");
 
         htmlString.append("  <tr>\n");
-        htmlString.append(formatTimeValue((long) averageValue(), "avg: "));
-        htmlString.append(formatTimeValue((long) standardDeviationValue(), "sd: "));
-        htmlString.append(formatTimeValue(percentileValue(50.0), "p50: "));
-        htmlString.append(formatTimeValue(percentileValue(90.0), "p90: "));
-        htmlString.append(formatTimeValue(percentileValue(95.0), "p95: "));
-        htmlString.append(formatTimeValue(percentileValue(99.0), "p99: "));
+        htmlString.append(formatTimeValue((long) averageValue(), "AVG: "));
+        htmlString.append(formatTimeValue((long) standardDeviationValue(), "SD: "));
+        htmlString.append(formatTimeValue(percentileValue(50.0), "P50: "));
+        htmlString.append(formatTimeValue(percentileValue(90.0), "P90: "));
+        htmlString.append(formatTimeValue(percentileValue(95.0), "P95: "));
+        htmlString.append(formatTimeValue(percentileValue(99.0), "P99: "));
         htmlString.append("  </tr>\n");
 
         return htmlString.toString();
