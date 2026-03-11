@@ -36,12 +36,10 @@
     "benchmarks": {
         "NOP": {
             "enabled": true,
-            "time": {
-                "warmup_duration1": 5,
-                "warmup_duration2": 10,
-                "benchmark_duration": 30,
-                "benchmark_iterations": 3
-            },
+            "warmup_duration1": 5,
+            "warmup_duration2": 10,
+            "benchmark_duration": 30,
+            "benchmark_iterations": 3,
             "aps_rate": 100000.0,
             "scenario_actions": [
                 {"id": 3}
@@ -49,12 +47,10 @@
         },
         "Maximum Rate": {
             "enabled": true,
-            "time": {
-                "warmup_duration1": 5,
-                "warmup_duration2": 10,
-                "benchmark_duration": 30,
-                "benchmark_iterations": 3
-            },
+            "warmup_duration1": 5,
+            "warmup_duration2": 10,
+            "benchmark_duration": 30,
+            "benchmark_iterations": 3,
             "aps_rate": 0.0,
             "scenario_actions": [
                 {"id": 1, "weight": 90},
@@ -63,12 +59,10 @@
         },
         "Fixed Rate": {
             "enabled": true,
-            "time": {
-                "warmup_duration1": 5,
-                "warmup_duration2": 10,
-                "benchmark_duration": 30,
-                "benchmark_iterations": 3
-            },
+            "warmup_duration1": 5,
+            "warmup_duration2": 10,
+            "benchmark_duration": 30,
+            "benchmark_iterations": 3,
             "aps_rate": 100.0,
             "scenario_actions": [
                 {"id": 1, "weight": 90},

@@ -44,12 +44,10 @@
   "benchmarks": {
     "NOP": {
       "enabled": true,
-      "time": {
-        "warmup_duration1": 5,
-        "warmup_duration2": 10,
-        "benchmark_duration": 30,
-        "benchmark_iterations": 3
-      },
+      "warmup_duration1": 5,
+      "warmup_duration2": 10,
+      "benchmark_duration": 30,
+      "benchmark_iterations": 3,
       "aps_rate": 0.0,
       "scenario_actions": [
         {
@@ -59,12 +57,10 @@
     },
     "Histogram1": {
       "enabled": true,
-      "time": {
-        "warmup_duration1": 5,
-        "warmup_duration2": 10,
-        "benchmark_duration": 30,
-        "benchmark_iterations": 3
-      },
+      "warmup_duration1": 5,
+      "warmup_duration2": 10,
+      "benchmark_duration": 30,
+      "benchmark_iterations": 3,
       "aps_rate": 100000.0,
       "scenario_actions": [
         {
@@ -74,12 +70,10 @@
     },
     "Histogram2": {
       "enabled": true,
-      "time": {
-        "warmup_duration1": 5,
-        "warmup_duration2": 10,
-        "benchmark_duration": 30,
-        "benchmark_iterations": 3
-      },
+      "warmup_duration1": 5,
+      "warmup_duration2": 10,
+      "benchmark_duration": 30,
+      "benchmark_iterations": 3,
       "aps_rate": 100000.0,
       "scenario_actions": [
         {
@@ -89,12 +83,10 @@
     },
     "Histogram3": {
       "enabled": true,
-      "time": {
-        "warmup_duration1": 5,
-        "warmup_duration2": 10,
-        "benchmark_duration": 30,
-        "benchmark_iterations": 3
-      },
+      "warmup_duration1": 5,
+      "warmup_duration2": 10,
+      "benchmark_duration": 30,
+      "benchmark_iterations": 3,
       "aps_rate": 100000.0,
       "scenario_actions": [
         {
@@ -110,12 +102,10 @@
     },
     "Maximum Rate": {
       "enabled": false,
-      "time": {
-        "warmup_duration1": 5,
-        "warmup_duration2": 10,
-        "benchmark_duration": 30,
-        "benchmark_iterations": 3
-      },
+      "warmup_duration1": 5,
+      "warmup_duration2": 10,
+      "benchmark_duration": 30,
+      "benchmark_iterations": 3,
       "aps_rate": 0.0,
       "scenario_actions": [
         {
@@ -130,12 +120,10 @@
     },
     "Fixed Rate": {
       "enabled": false,
-      "time": {
-        "warmup_duration1": 5,
-        "warmup_duration2": 10,
-        "benchmark_duration": 30,
-        "benchmark_iterations": 3
-      },
+      "warmup_duration1": 5,
+      "warmup_duration2": 10,
+      "benchmark_duration": 30,
+      "benchmark_iterations": 3,
       "aps_rate": 100.0,
       "scenario_actions": [
         {

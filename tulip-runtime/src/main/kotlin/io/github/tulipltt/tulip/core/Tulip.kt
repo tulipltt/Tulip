@@ -214,27 +214,22 @@ data class ConfigContext(
     @SerialName("workload_model") val workloadModel: String = "closed",
 )
 
-@Serializable
-data class ConfigDuration(
-    @SerialName("warmup_duration1") val startupDuration: Long = 0,
-    @SerialName("warmup_duration2") val warmupDuration: Long = 0,
-    @SerialName("benchmark_duration") val mainDuration: Long = 0,
-    @SerialName("benchmark_iterations") val mainDurationRepeatCount: Int = 1,
-)
-
 @Serializable data class ConfigAction(val id: Int, val weight: Int = 0)
 
 @Serializable
 data class ConfigBenchmark(
     val enabled: Boolean = true,
     @SerialName("save_stats") val logStats: Boolean = true,
-    val time: ConfigDuration = ConfigDuration(),
     @SerialName("aps_rate") val throughputRate: Double = 0.0,
     @SerialName("aps_rate_step_change") val throughputRateStepChange: Double = 0.0,
     @SerialName("aps_rate_step_count") val throughputRateStepCount: Int = 1,
     @SerialName("num_tasks") val numTasks: Int = 0,
     @SerialName("scenario_actions") val actions: List<ConfigAction> = listOf(),
     @SerialName("scenario_workflow") val workflow: String = "",
+    @SerialName("warmup_duration1") val startupDuration: Long = 0,
+    @SerialName("warmup_duration2") val warmupDuration: Long = 0,
+    @SerialName("benchmark_duration") val mainDuration: Long = 0,
+    @SerialName("benchmark_iterations") val mainDurationRepeatCount: Int = 1,
 )
 
 @Serializable
@@ -317,10 +312,10 @@ fun initConfig(text: String): String {
                 name = key,
                 duration =
                     Duration(
-                        e.time.startupDuration,
-                        e.time.warmupDuration,
-                        e.time.mainDuration,
-                        e.time.mainDurationRepeatCount,
+                        e.startupDuration,
+                        e.warmupDuration,
+                        e.mainDuration,
+                        e.mainDurationRepeatCount,
                         TimeUnit.SECONDS,
                     ),
                 arrivalRate = e.throughputRate,

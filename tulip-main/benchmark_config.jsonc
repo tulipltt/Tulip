@@ -45,45 +45,37 @@
         "Max TPS": {
             "enabled": true,
             "aps_rate": 0.0,
-            "time": {
-                "warmup_duration1": 15,
-                "warmup_duration2": 30,
-                "benchmark_duration": 60,
-                "benchmark_iterations": 4
-            },
+            "warmup_duration1": 15,
+            "warmup_duration2": 30,
+            "benchmark_duration": 60,
+            "benchmark_iterations": 4,
             "scenario_workflow": "max-tps"
         },
         "100k TPS": {
             "enabled": true,
             "aps_rate": 100000.0,
-            "time": {
-                "warmup_duration1": 15,
-                "warmup_duration2": 30,
-                "benchmark_duration": 60,
-                "benchmark_iterations": 4
-            },
+            "warmup_duration1": 15,
+            "warmup_duration2": 30,
+            "benchmark_duration": 60,
+            "benchmark_iterations": 4,
             "scenario_workflow": "max-tps"
         },
         "100 TPS": {
             "enabled": true,
             "aps_rate": 100.0,
-            "time": {
-                "warmup_duration1": 15,
-                "warmup_duration2": 15,
-                "benchmark_duration": 30,
-                "benchmark_iterations": 4
-            },
+            "warmup_duration1": 15,
+            "warmup_duration2": 15,
+            "benchmark_duration": 30,
+            "benchmark_iterations": 4,
             "scenario_workflow": "random"
         },
         "50 TPS": {
             "enabled": true,
             "aps_rate": 50.0,
-            "time": {
-                "warmup_duration1": 15,
-                "warmup_duration2": 15,
-                "benchmark_duration": 30,
-                "benchmark_iterations": 4
-            },
+            "warmup_duration1": 15,
+            "warmup_duration2": 15,
+            "benchmark_duration": 30,
+            "benchmark_iterations": 4,
             "scenario_actions": [
                 { "id": 10 }
             ]
@@ -91,23 +83,19 @@
         "HTTP Max TPS": {
             "enabled": true,
             "aps_rate": 0.0,
-            "time": {
-                "warmup_duration1": 15,
-                "warmup_duration2": 15,
-                "benchmark_duration": 30,
-                "benchmark_iterations": 3
-            },
+            "warmup_duration1": 15,
+            "warmup_duration2": 15,
+            "benchmark_duration": 30,
+            "benchmark_iterations": 3,
             "scenario_workflow": "http"
         },
         "HTTP 1250 TPS": {
           "enabled": true,
           "aps_rate": 1250.0,
-          "time": {
-            "warmup_duration1": 15,
-            "warmup_duration2": 15,
-            "benchmark_duration": 30,
-            "benchmark_iterations": 3
-          },
+          "warmup_duration1": 15,
+          "warmup_duration2": 15,
+          "benchmark_duration": 30,
+          "benchmark_iterations": 3,
           "scenario_workflow": "http"
         }
     },
