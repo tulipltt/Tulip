@@ -498,10 +498,10 @@ table.expanded .extra-col {
     <th>Avg_Rt</th>
     <th>Std_Dev</th>
     <th>Min_Rt</th>
-    <th>p50_Rt</th>
-    <th>p90_Rt</th>
-    <th>p95_Rt</th>
-    <th>p99_Rt</th>
+    <th>P50_Rt</th>
+    <th>P90_Rt</th>
+    <th>P95_Rt</th>
+    <th>P99_Rt</th>
     <th>Max_Rt</th>
     <th class="extra-col">Max_Rtt</th>
     <th class="extra-col">AQS</th>
@@ -525,10 +525,10 @@ benchmark_columns = '''
     <th>Avg_Rt</th>
     <th>Std_Dev</th>
     <th>Min_Rt</th>
-    <th>p50_Rt</th>
-    <th>p90_Rt</th>
-    <th>p95_Rt</th>
-    <th>p99_Rt</th>
+    <th>P50_Rt</th>
+    <th>P90_Rt</th>
+    <th>P95_Rt</th>
+    <th>P99_Rt</th>
     <th>Max_Rt</th>
     <th class="extra-col">Max_Rtt</th>
     <th class="extra-col">AQS</th>
