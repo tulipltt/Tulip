@@ -1835,20 +1835,26 @@ def createConfigReport(config_json, java_json, config_filename):
                 else:
                     printf('! - \n')
             printf('!===\n')
-        # time
-        if "time" in b.keys():
-            printf('| *time* \n')
-            printf('| \n')
-            printf('[%noheader,cols="2a,1a"]\n')
-            printf('!===\n')
-            #printf('! id ! value \n')
-            for k in b["time"].keys():
-                printf('! *%s*\n'%(k))
-                if k == "benchmark_iterations":
-                    printf('! %d\n'%(b["time"][k]))
-                else:
-                    printf('! %d seconds\n'%(b["time"][k]))
-            printf('!===\n')
+        # warmup_duration1
+        if "warmup_duration1" in b.keys():
+            printf('| *warmup_duration1* | %d\n'%(b["warmup_duration1"]))
+        else:
+            printf('| *warmup_duration1* | 0\n')
+        # warmup_duration2
+        if "warmup_duration2" in b.keys():
+            printf('| *warmup_duration2* | %d\n'%(b["warmup_duration2"]))
+        else:
+            printf('| *warmup_duration2* | 0\n')
+        # benchmark_duration
+        if "benchmark_duration" in b.keys():
+            printf('| *benchmark_duration* | %d\n'%(b["benchmark_duration"]))
+        else:
+            printf('| *benchmark_duration* | 0\n')
+        # benchmark_iterations
+        if "benchmark_iterations" in b.keys():
+            printf('| *benchmark_iterations* | %d\n'%(b["benchmark_iterations"]))
+        else:
+            printf('| *benchmark_iterations* | 0\n')
 
         printf("|===\n")
 
