@@ -263,3 +263,7 @@ https://bsky.app/profile/tulip-ltt.bsky.social[@Tulip_ltt]
 YouTube::
 
 https://www.youtube.com/@Tulip_ltt[@Tulip_ltt]
+
+LinkedIn::
+
+https://www.linkedin.com/company/108187552/admin/page-posts/published/[@Tulip_ltt]
