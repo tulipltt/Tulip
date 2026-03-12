@@ -17,6 +17,5 @@ mkdir -p ~/.m2
 find ~/.m2 -name 'tulip-runtime*.jar' -print | sort
 rm -f -r ~/.m2/repository/io/github/tulipltt/tulip-runtime
 
-m -f -r ~/.jbang
-m -f -r ~/.groovy
-
+rm -f -r ~/.jbang
+rm -f -r ~/.groovy
