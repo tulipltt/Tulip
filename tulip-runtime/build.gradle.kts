@@ -37,7 +37,7 @@ java {
 val gsonVersion = "2.13.2"
 val slf4jVersion = "2.0.17"
 val logbackVersion = "1.5.32"
-val springBootVersion = "4.0.3"
+val springBootVersion = "3.5.11"
 val picocliVersion = "4.7.7"
 val kxsJsonVersion = "1.10.0"
 
@@ -60,8 +60,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.guava/guava
     implementation("com.google.guava:guava:33.5.0-jre")
 
-    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-restclient
-    api("org.springframework.boot:spring-boot-restclient:$springBootVersion")
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
+    api("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
 
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     api("org.slf4j:slf4j-api:$slf4jVersion")
