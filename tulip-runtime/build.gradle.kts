@@ -5,7 +5,7 @@ import com.diffplug.spotless.kotlin.KtfmtStep
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 group = "io.github.tulipltt.tulip"
-version = "2.3.0"
+version = "2.3.1-RC1"
 
 plugins {
     // https://plugins.gradle.org/plugin/com.github.ben-manes.versions
