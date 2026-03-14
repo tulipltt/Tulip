@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.github.wfouche.tulip</groupId>
+  <artifactId>tulip-runtime</artifactId>
+  <version>2.2.5</version>
+
+  <distributionManagement>
+    <relocation>
+      <groupId>io.github.tulipltt</groupId>
+      <artifactId>tulip-runtime</artifactId>
+    </relocation>
+  </distributionManagement>
+
+</project>
