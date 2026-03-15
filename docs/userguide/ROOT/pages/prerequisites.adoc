@@ -15,4 +15,6 @@ Tulip requires the following software to run:
 
 * [optional] https://scala-cli.virtuslab.org/[Scala-cli] is installed to run the Scala example benchmark program.
 
-* Tulip supports Linux, Windows, and macOS.
+* [optional] A build tool such https://maven.apache.org/[Maven], https://mill-build.org/mill/index.html[Mill] or https://gradle.org/[Gradle].
+
+* Tulip is tested on Linux, Windows, and macOS, but it should work on any platform that supports Java.
