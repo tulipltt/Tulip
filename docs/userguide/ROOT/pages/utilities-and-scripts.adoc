@@ -1,13 +1,6 @@
 = Utilities and Scripts
 :shiki-line-numbers: true
 
-== Asciidoc
-
-[source,shellscript]
-----
-jbang run asciidoctorj@asciidoctor filename.adoc
-----
-
 == Kwrk
 
 `kwrk` is a benchmark utility, implemented in Kotlin using the Tulip runtime, which is similar in functionality to `wrk` and `wrk2`. See article "https://nitikagarw.medium.com/getting-started-with-wrk-and-wrk2-benchmarking-6e3cdc76555f[Getting started with wrk and wrk2 benchmarking]" for more information on using these two HTTP benchmark utilities.
