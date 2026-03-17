@@ -1,5 +1,5 @@
 /// usr/bin/env jbang "$0" "$@" ; exit $?
-//DEPS io.javalin:javalin:7.0.1
+//DEPS io.javalin:javalin:7.1.0
 //DEPS org.slf4j:slf4j-simple:2.0.12
 
 import io.javalin.Javalin;

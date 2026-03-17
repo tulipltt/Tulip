@@ -28,6 +28,7 @@ object DataCollector {
         testPhase: String,
         runId: Int,
         cpuTime: Long,
+        memTime: Long,
         apsTarget: Double,
     ) {
         synchronized(lock) {
@@ -42,6 +43,7 @@ object DataCollector {
                 testPhase,
                 runId,
                 cpuTime,
+                memTime,
                 apsTarget,
             )
             actionStats.forEachIndexed { index, data ->
@@ -57,6 +59,7 @@ object DataCollector {
                             tsEnd,
                             testPhase,
                             -1,
+                            0L,
                             0L,
                             0.0,
                         )

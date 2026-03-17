@@ -27,6 +27,7 @@ data class ActionSummary(
     var pk: List<Double> = mutableListOf(),
     var pv: List<Double> = mutableListOf(),
     var processCpuTime: Long = 0,
+    var memoryCpuTime: Long = 0,
     var processCpuCores: Double = 0.0,
     var processCpuUtilization: Double = 0.0,
 )
