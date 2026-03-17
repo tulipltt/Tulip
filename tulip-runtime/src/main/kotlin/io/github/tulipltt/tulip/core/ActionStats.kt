@@ -236,53 +236,39 @@ class ActionStats {
     }
 
     @OptIn(ExperimentalEncodingApi::class)
-    fun toJson(actionId: Int): String {
-        var results = ""
-
-        // Skip actionId = -1
-        if (actionId >= 0) {
-            val name: String =
+    fun toActionStatResult(actionId: Int): ActionStatResult {
+        val name: String? =
+            if (actionId >= 0) {
                 if (actionNames.containsKey(actionId)) {
                     actionNames[actionId]!!
                 } else {
                     "action$actionId"
                 }
-            results += "\"name\": \"${name}\""
-        }
-
-        results += ", \"num_actions\": $numActions, \"num_failed\": ${numActions - numSuccess}"
-        results +=
-            ", \"avg_aps\": ${r.aps}, \"aps_target_rate\": ${r.aps_target}, \"avg_rt\": ${r.art}, \"sdev_rt\": ${r.sdev}, \"min_rt\": ${r.minRt}, \"max_rt\": ${r.maxRt}, \"max_rt_ts\": \"${r.maxRtTs}\""
-
-        results += ", \"percentiles_rt\": {"
-        var t = ""
-        r.pk.forEachIndexed { index, _ ->
-            val k = r.pk[index].toString()
-            val v = r.pv[index]
-            if (t != "") t += ", "
-            t += "\"${k}\": $v"
-        }
-        results += t
-        results += "}"
-
-        results += ", \"hdr_histogram_rt\": "
+            } else {
+                null
+            }
 
         val b = ByteBuffer.allocate(hdr_histogram.neededByteBufferCapacity)
         val numBytes = hdr_histogram.encodeIntoCompressedByteBuffer(b)
         val b64s = Base64.encode(b.array(), 0, numBytes)
-        results += '\"' + b64s + '\"'
 
-        //        if (actionId == -1) {
-        //            val b =
-        // ByteBuffer.allocate(histogram.neededByteBufferCapacity)
-        //            val numBytes = histogram.encodeIntoCompressedByteBuffer(b)
-        //            val b64s = Base64.encode(b.array(), 0, numBytes)
-        //            results += '\"' + b64s + '\"'
-        //        } else {
-        //            results += "\"\""
-        //        }
+        val pkMap = mutableMapOf<String, Double>()
+        r.pk.forEachIndexed { index, _ -> pkMap[r.pk[index].toString()] = r.pv[index] }
 
-        return results
+        return ActionStatResult(
+            name = name,
+            numActions = numActions,
+            numFailed = numActions - numSuccess,
+            avgAps = r.aps,
+            apsTargetRate = r.aps_target,
+            avgRt = r.art,
+            sdevRt = r.sdev,
+            minRt = r.minRt,
+            maxRt = r.maxRt,
+            maxRtTs = r.maxRtTs,
+            percentilesRt = pkMap,
+            hdrHistogramRt = b64s,
+        )
     }
 
     fun updateStats(task: Task) {
