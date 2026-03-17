@@ -186,13 +186,15 @@ class ActionStats {
             output.add("  maximum memory (jvm) = ${"%.3f".format(Locale.US, mm / gb1)} GB")
             output.add("")
             val cpu_time_secs: Double = r.processCpuTime / 1000000000.0
-            val cgc_time_secs: Double = (r.memoryCpuTime + 1) / 1000000000.0
+            val cgc_time_secs: Double = r.memoryCpuTime / 1000000000.0
             output.add(
                 "  cpu time (process)   = ${"%.3f".format(Locale.US, cpu_time_secs)} seconds"
             )
-            output.add(
-                "  mgc time (process)   = ${"%.3f".format(Locale.US, cgc_time_secs)} seconds"
-            )
+            if (java.lang.Runtime.version().feature() > 25) {
+                output.add(
+                    "  mgc time (process)   = ${"%.3f".format(Locale.US, cgc_time_secs)} seconds"
+                )
+            }
             r.processCpuCores = cpu_time_secs / r.durationSeconds
             output.add(
                 "  num cores used       = ${"%.3f".format(Locale.US, r.processCpuCores)} cores"
