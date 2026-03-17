@@ -3,7 +3,7 @@
 
 # https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-gradle-plugin
 [versions]
-kotlin-gradle-plugin = "2.3.10"
+kotlin-gradle-plugin = "2.3.20"
 
 [libraries]
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin-gradle-plugin" }

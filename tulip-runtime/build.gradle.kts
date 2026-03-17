@@ -17,7 +17,7 @@ plugins {
     `maven-publish`
 
     // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.serialization
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
 
     // https://plugins.gradle.org/plugin/org.jetbrains.dokka
     // id("org.jetbrains.dokka") version "2.0.0"
