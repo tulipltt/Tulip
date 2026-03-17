@@ -191,7 +191,7 @@ class ActionStats {
                 "  cpu time (process)   = ${"%.3f".format(Locale.US, cpu_time_secs)} seconds"
             )
             output.add(
-                "  cgc time (process)   = ${"%.3f".format(Locale.US, cgc_time_secs)} seconds"
+                "  mgc time (process)   = ${"%.3f".format(Locale.US, cgc_time_secs)} seconds"
             )
             r.processCpuCores = cpu_time_secs / r.durationSeconds
             output.add(

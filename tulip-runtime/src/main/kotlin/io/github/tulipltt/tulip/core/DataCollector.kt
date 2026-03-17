@@ -125,7 +125,7 @@ object DataCollector {
                 json += "\"process_cpu_utilization\": ${r.processCpuUtilization}, "
                 json += "\"process_cpu_cores\": ${r.processCpuCores}, "
                 json += "\"process_cpu_time_ns\": ${r.processCpuTime},"
-                json += "\"process_cgc_time_ns\": ${r.memoryCpuTime}"
+                json += "\"process_mgc_time_ns\": ${r.memoryCpuTime}"
 
                 val awqs: Double = wthread_queue_stats.mean
                 val mwqs: Long = wthread_queue_stats.maxValue
