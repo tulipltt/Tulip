@@ -17,6 +17,7 @@ import io.github.tulipltt.tulip.pfsm.Edge
 import io.github.tulipltt.tulip.pfsm.MarkovChain
 import java.io.File
 import java.lang.management.ManagementFactory
+import java.lang.management.MemoryMXBean
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.LinkedBlockingQueue as BlockingQueue
@@ -41,6 +42,21 @@ private val osBean: OperatingSystemMXBean =
     ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
 
 fun getProcessCpuTime(): Long = osBean.processCpuTime
+
+fun getTotalGcCpuTime(): Long {
+    val memoryBean = ManagementFactory.getMemoryMXBean()
+    try {
+        // Attempt to find the method introduced in Java 26
+        val method = MemoryMXBean::class.java.getMethod("getTotalGcCpuTime")
+        return method.invoke(memoryBean) as Long
+    } catch (e: NoSuchMethodException) {
+        // Method doesn't exist (Java 17, 21, 25)
+        return -1
+    } catch (e: Exception) {
+        // Other reflection errors
+        return -1
+    }
+}
 
 // fun getCpuLoad(): Double {
 //    return osBean.cpuLoad
@@ -172,7 +188,7 @@ private fun runtimeInit(
     for (i in 1..10) {
         // val l0 = getCpuLoad()
         val l1 = getProcessCpuTime()
-        // val l2 = getProcessCpuLoad()
+        val l2 = getTotalGcCpuTime()
     }
 }
 
@@ -450,6 +466,7 @@ private fun createActionGenerator(list: List<Int>): Iterator<Int> {
 
 private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, queueLength: Int) {
     var cpuTime: Long = 0
+    var memTime: Long = 0
     var tsBegin = LocalDateTime.now().format(formatter)
     val output = mutableListOf("")
     output.add("======================================================================")
@@ -561,6 +578,7 @@ private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, q
         }
 
         cpuTime = getProcessCpuTime()
+        memTime = getTotalGcCpuTime()
         for (aid in actionList) {
             for (uid in userList) {
                 startTask(uid, aid)
@@ -576,6 +594,7 @@ private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, q
             durationMillis = 1
         }
         cpuTime = getProcessCpuTime() - cpuTime
+        memTime = getTotalGcCpuTime() - memTime
 
         DataCollector.createSummary(
             durationMillis,
@@ -588,6 +607,7 @@ private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, q
             "Benchmark",
             0,
             cpuTime,
+            memTime,
             0.0,
         )
         DataCollector.printStats()
@@ -663,6 +683,7 @@ private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, q
         // New rate control logic - end
 
         cpuTime = getProcessCpuTime()
+        memTime = getTotalGcCpuTime()
         while (rTime < endTimeNanos) {
             // Pick a random user object to assign a task to.
             val uid = userList.random()
@@ -686,6 +707,7 @@ private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, q
             }
         }
         cpuTime = getProcessCpuTime() - cpuTime
+        memTime = getTotalGcCpuTime() - memTime
         val tsEnd = LocalDateTime.now().format(formatter)
 
         Console.put(
@@ -703,6 +725,7 @@ private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, q
             testPhase,
             runId,
             cpuTime,
+            memTime,
             apsRate,
         )
         DataCollector.printStats()

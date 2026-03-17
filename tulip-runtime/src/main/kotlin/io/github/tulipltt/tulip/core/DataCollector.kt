@@ -29,6 +29,7 @@ object DataCollector {
         testPhase: String,
         runId: Int,
         cpuTime: Long,
+        memTime: Long,
         apsTarget: Double,
     ) {
         synchronized(lock) {
@@ -43,6 +44,7 @@ object DataCollector {
                 testPhase,
                 runId,
                 cpuTime,
+                memTime,
                 apsTarget,
             )
             actionStats.forEachIndexed { index, data ->
@@ -58,6 +60,7 @@ object DataCollector {
                             tsEnd,
                             testPhase,
                             -1,
+                            0L,
                             0L,
                             0.0,
                         )
@@ -121,7 +124,8 @@ object DataCollector {
 
                 json += "\"process_cpu_utilization\": ${r.processCpuUtilization}, "
                 json += "\"process_cpu_cores\": ${r.processCpuCores}, "
-                json += "\"process_cpu_time_ns\": ${r.processCpuTime}"
+                json += "\"process_cpu_time_ns\": ${r.processCpuTime},"
+                json += "\"process_cgc_time_ns\": ${r.memoryCpuTime}"
 
                 val awqs: Double = wthread_queue_stats.mean
                 val mwqs: Long = wthread_queue_stats.maxValue
