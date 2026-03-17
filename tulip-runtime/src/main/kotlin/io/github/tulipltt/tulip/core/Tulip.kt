@@ -577,25 +577,22 @@ private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, q
         }
         cpuTime = getProcessCpuTime() - cpuTime
 
-        elapsedTimeNanos {
-            DataCollector.createSummary(
-                durationMillis,
-                testCase,
-                indexTestCase,
-                0,
-                queueLength,
-                tsBegin,
-                tsEnd,
-                "Benchmark",
-                0,
-                cpuTime,
-                0.0,
-            )
-            DataCollector.printStats()
-            if (testCase.saveStats) DataCollector.saveStatsJson(testCase.filename)
-        }
-        // Console.put("Init: Duration spend in stats processing =
-        // ${durationNanos2}")
+        DataCollector.createSummary(
+            durationMillis,
+            testCase,
+            indexTestCase,
+            0,
+            queueLength,
+            tsBegin,
+            tsEnd,
+            "Benchmark",
+            0,
+            cpuTime,
+            0.0,
+        )
+        DataCollector.printStats()
+        if (testCase.saveStats) DataCollector.saveStatsJson(testCase.filename)
+
         return
     }
 
@@ -695,27 +692,24 @@ private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, q
             "$testPhase (${testCase.name}), run ${runId + 1} of ${runIdMax + 1}: end   ($tsEnd)"
         )
 
-        elapsedTimeNanos {
-            DataCollector.createSummary(
-                durationMillis.toInt(),
-                testCase,
-                indexTestCase,
-                0,
-                queueLength,
-                tsBegin,
-                tsEnd,
-                testPhase,
-                runId,
-                cpuTime,
-                apsRate,
-            )
-            DataCollector.printStats()
-            if (testPhase == "Benchmark") {
-                if (testCase.saveStats) DataCollector.saveStatsJson(testCase.filename)
-            }
+        DataCollector.createSummary(
+            durationMillis.toInt(),
+            testCase,
+            indexTestCase,
+            0,
+            queueLength,
+            tsBegin,
+            tsEnd,
+            testPhase,
+            runId,
+            cpuTime,
+            apsRate,
+        )
+        DataCollector.printStats()
+        if (testPhase == "Benchmark") {
+            if (testCase.saveStats) DataCollector.saveStatsJson(testCase.filename)
         }
-        // Console.put("Main: Duration spend in stats processing =
-        // ${durationNanos2}")
+
         if (runId == runIdMax) {
             // Console.put("drainRspQueue: runId == runIdMax")
             if (testPhase == "Benchmark") drainRspQueue()
