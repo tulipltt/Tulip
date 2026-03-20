@@ -10,6 +10,6 @@
 #
 # https://github.com/Kotlin/kotlinx.serialization - 1.7.2 requries Kotlin 2.0.20
 #
-GRADLE_VERSION=9.4.0
+GRADLE_VERSION=9.4.1
 
 ./gradlew --no-daemon wrapper --gradle-version $GRADLE_VERSION && ./gradlew wrapper
