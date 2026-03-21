@@ -23,10 +23,17 @@ class TulipReportGeneratorTest {
         
         assertTrue(htmlFile.exists())
         val html = htmlFile.readText()
-        println("GENERATED HTML: $html")
         assertTrue(html.contains("<!DOCTYPE html>"))
         assertTrue(html.contains("Tulip Benchmark Report"))
         assertTrue(html.contains("Benchmark Summary"))
         assertTrue(html.contains("google.charts.load"))
+
+        val adocFile = File("build/tmp/test_report_c.adoc")
+        assertTrue(adocFile.exists(), "AsciiDoc file not found")
+        val adoc = adocFile.readText()
+        assertTrue(adoc.contains("= Benchmark Configuration Report"))
+
+        val adocHtmlFile = File("build/tmp/test_report_c.html")
+        assertTrue(adocHtmlFile.exists(), "AsciiDoc HTML file not found")
     }
 }
