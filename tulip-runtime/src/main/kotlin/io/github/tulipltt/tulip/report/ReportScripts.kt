@@ -37,11 +37,12 @@ object ReportScripts {
                 minorGridlines: { color: '#1c2022' }
             },
             titleTextStyle: { color: '#d8d9da', fontSize: 14, bold: true },
-            colors: ['#C735F7', '#FF0087', '#F8D82E', '#73bf69', '#3274d9', '#ff9830', '#9456ff', '#e67e22', '#2ecc71', '#e74c3c']
+            colors: ['#C735F7', '#FF0087', '#F8D82E', '#73bf69', '#3274d9', '#ff9830', '#9456ff', '#e67e22', '#2ecc71', '#e74c3c'],
+            width: '100%'
         };
 
-        // Track hidden series per chart
         const hiddenSeries = {};
+        const chartsToRedraw = [];
 
         function addSeriesToggle(chart, data, options, chartId) {
             if (!hiddenSeries[chartId]) hiddenSeries[chartId] = new Set();
@@ -49,7 +50,7 @@ object ReportScripts {
             google.visualization.events.addListener(chart, 'select', function() {
                 var selection = chart.getSelection();
                 if (selection.length > 0) {
-                    if (selection[0].row === null) { // Legend click
+                    if (selection[0].row === null) {
                         var col = selection[0].column;
                         if (hiddenSeries[chartId].has(col)) {
                             hiddenSeries[chartId].delete(col);
@@ -76,23 +77,32 @@ object ReportScripts {
                             }
                         }
                         
-                        var updatedOptions = {
-                            ...options,
-                            series: series
-                        };
-                        
+                        var updatedOptions = { ...options, series: series };
                         view.setColumns(columns);
                         chart.draw(view, updatedOptions);
+                        
+                        const idx = chartsToRedraw.findIndex(c => c.id === chartId);
+                        if (idx !== -1) {
+                            chartsToRedraw[idx].view = view;
+                            chartsToRedraw[idx].options = updatedOptions;
+                        }
                     }
                 }
             });
         }
 
+        const percentileTicks = [
+            {v:50, f:'50%'}, {v:55, f:'55%'}, {v:60, f:'60%'}, {v:65, f:'65%'}, {v:70, f:'70%'}, 
+            {v:75, f:'75%'}, {v:80, f:'80%'}, {v:85, f:'85%'}, {v:90, f:'90%'}, {v:95, f:'95%'}, 
+            {v:100, f:'100%'}
+        ];
+
         function drawPercentileChart(chartId, dataRows, title, unit) {
             var data = new google.visualization.DataTable();
             data.addColumn('number', 'Percentile');
             data.addColumn('number', 'Latency');
-            data.addRows(dataRows);
+            var filteredRows = dataRows.filter(row => row[0] >= 50 && row[0] <= 100);
+            data.addRows(filteredRows);
 
             var options = {
                 ...chartOptionsBase,
@@ -100,11 +110,8 @@ object ReportScripts {
                 hAxis: {
                     ...chartOptionsBase.hAxis,
                     title: 'Percentile',
-                    ticks: [
-                        {v:0, f:'0%'}, {v:10, f:'10%'}, {v:20, f:'20%'}, {v:30, f:'30%'}, {v:40, f:'40%'},
-                        {v:50, f:'50%'}, {v:60, f:'60%'}, {v:70, f:'70%'}, {v:80, f:'80%'}, {v:90, f:'90%'}, 
-                        {v:100, f:'100%'}
-                    ]
+                    ticks: percentileTicks,
+                    viewWindow: { min: 50, max: 100 }
                 },
                 vAxis: { ...chartOptionsBase.vAxis, title: 'Latency (' + unit + ')', minValue: 0 },
                 curveType: 'function'
@@ -114,13 +121,15 @@ object ReportScripts {
             chart.draw(data, options);
             addSeriesToggle(chart, data, options, chartId);
             window['chart_obj_' + chartId] = chart;
+            chartsToRedraw.push({id: chartId, chart: chart, data: data, options: options});
         }
 
         function drawCombinedPercentileChart(chartId, labels, dataRows, title, unit) {
             var data = new google.visualization.DataTable();
             data.addColumn('number', 'Percentile');
             labels.forEach(label => { data.addColumn('number', label); });
-            data.addRows(dataRows);
+            var filteredRows = dataRows.filter(row => row[0] >= 50 && row[0] <= 100);
+            data.addRows(filteredRows);
 
             var options = {
                 ...chartOptionsBase,
@@ -128,11 +137,8 @@ object ReportScripts {
                 hAxis: {
                     ...chartOptionsBase.hAxis,
                     title: 'Percentile',
-                    ticks: [
-                        {v:0, f:'0%'}, {v:10, f:'10%'}, {v:20, f:'20%'}, {v:30, f:'30%'}, {v:40, f:'40%'},
-                        {v:50, f:'50%'}, {v:60, f:'60%'}, {v:70, f:'70%'}, {v:80, f:'80%'}, {v:90, f:'90%'}, 
-                        {v:100, f:'100%'}
-                    ]
+                    ticks: percentileTicks,
+                    viewWindow: { min: 50, max: 100 }
                 },
                 vAxis: { ...chartOptionsBase.vAxis, title: 'Latency (' + unit + ')', minValue: 0 },
                 curveType: 'function'
@@ -142,6 +148,7 @@ object ReportScripts {
             chart.draw(data, options);
             addSeriesToggle(chart, data, options, chartId);
             window['chart_obj_' + chartId] = chart;
+            chartsToRedraw.push({id: chartId, chart: chart, data: data, options: options});
         }
 
         function drawCombinedTimeSeriesChart(chartId, labels, dataRows, title, yLabel) {
@@ -161,6 +168,7 @@ object ReportScripts {
             chart.draw(data, options);
             addSeriesToggle(chart, data, options, chartId);
             window['chart_obj_' + chartId] = chart;
+            chartsToRedraw.push({id: chartId, chart: chart, data: data, options: options});
         }
 
         function downloadChart(chartId, fileName) {
@@ -175,5 +183,41 @@ object ReportScripts {
                 document.body.removeChild(link);
             }
         }
+
+        window.addEventListener('resize', function() {
+            chartsToRedraw.forEach(item => {
+                item.chart.draw(item.view || item.data, item.options);
+            });
+        });
+
+        // Scroll Spy Logic
+        window.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('#overview, #config, #runtime, .section-title');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '-10% 0px -80% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach((section) => {
+                observer.observe(section);
+            });
+        });
     """.trimIndent()
 }

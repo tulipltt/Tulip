@@ -99,9 +99,11 @@ data class BenchmarkResult(
 
 @Serializable
 data class JavaInfo(
-    @SerialName("java.vendor") val javaVendor: String,
-    @SerialName("java.runtime.version") val javaRuntimeVersion: String,
-    @SerialName("kotlin.version") val kotlinVersion: String
+    @SerialName("java.vendor") val javaVendor: String = "",
+    @SerialName("java.runtime.version") val javaRuntimeVersion: String = "",
+    @SerialName("kotlin.version") val kotlinVersion: String = "",
+    @SerialName("jvm.system.properties") val jvmSystemProperties: Map<String, String> = emptyMap(),
+    @SerialName("jvm.runtime.options") val jvmRuntimeOptions: List<String> = emptyList()
 )
 
 @Serializable

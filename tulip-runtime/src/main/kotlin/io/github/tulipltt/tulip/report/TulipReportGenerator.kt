@@ -220,17 +220,27 @@ object TulipReportGenerator {
                                 val allPercentiles = reportData.results
                                     .flatMap { it.percentilesRt.keys }
                                     .filter { it.toDoubleOrNull() != null }
+                                    .map { it.toDouble() }
+                                    .filter { it >= 50.0 }
                                     .distinct()
-                                    .sortedBy { it.toDouble() }
+                                    .sorted()
 
-                                val dataRows = allPercentiles.map { pKey ->
-                                    val p = pKey.toDouble()
+                                val dataRows = allPercentiles.map { p ->
+                                    val pKey = if (p == 100.0) "100.0" else p.toString()
+                                    // Handle cases where 100.0 might be stored as "max" or similar, 
+                                    // but we'll try to find it in the map or use maxRt.
                                     val rowData = mutableListOf<String>()
                                     groupedResults.forEach { (bmName, results) ->
                                         val lastRes = results.last()
                                         val actionNames = results.flatMap { it.userActions.values.map { a -> a.name } }.distinct().sorted()
                                         actionNames.forEach { actionName ->
-                                            val valNanos = lastRes.userActions.values.find { it.name == actionName }?.percentilesRt?.get(pKey)
+                                            val actionStats = lastRes.userActions.values.find { it.name == actionName }
+                                            val valNanos = if (p == 100.0) {
+                                                actionStats?.maxRt
+                                            } else {
+                                                actionStats?.percentilesRt?.get(p.toString()) ?: 
+                                                actionStats?.percentilesRt?.get(p.toInt().toString() + ".0")
+                                            }
                                             val valMs = if (valNanos != null) (valNanos / 1_000_000.0) else "null"
                                             rowData.add(valMs.toString())
                                         }
@@ -273,13 +283,20 @@ object TulipReportGenerator {
                                     val allPercentiles = lastResult.userActions.values
                                         .flatMap { it.percentilesRt.keys }
                                         .filter { it.toDoubleOrNull() != null }
+                                        .map { it.toDouble() }
+                                        .filter { it >= 50.0 }
                                         .distinct()
-                                        .sortedBy { it.toDouble() }
+                                        .sorted()
 
-                                    val dataPoints = allPercentiles.map { pKey ->
-                                        val p = pKey.toDouble()
+                                    val dataPoints = allPercentiles.map { p ->
                                         val rowData = allActions.map { actionName ->
-                                            val valNanos = lastResult.userActions.values.find { it.name == actionName }?.percentilesRt?.get(pKey)
+                                            val actionStats = lastResult.userActions.values.find { it.name == actionName }
+                                            val valNanos = if (p == 100.0) {
+                                                actionStats?.maxRt
+                                            } else {
+                                                actionStats?.percentilesRt?.get(p.toString()) ?: 
+                                                actionStats?.percentilesRt?.get(p.toInt().toString() + ".0")
+                                            }
                                             if (valNanos != null) (valNanos / 1_000_000.0) else "null"
                                         }.joinToString(",")
                                         "[$p, $rowData]"

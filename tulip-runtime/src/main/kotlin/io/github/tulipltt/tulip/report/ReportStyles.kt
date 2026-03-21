@@ -46,6 +46,16 @@ object ReportStyles {
             max-width: calc(100vw - 260px);
         }
 
+        @media (max-width: 992px) {
+            .sidebar { width: 200px; }
+            .main-content { margin-left: 200px; max-width: calc(100vw - 200px); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; max-width: 100%; padding: 15px; }
+        }
+
         .logo {
             font-size: 1.8rem;
             font-weight: 900;
@@ -86,7 +96,7 @@ object ReportStyles {
         }
 
         .nav-link.active {
-            background-color: rgba(199, 53, 247, 0.1);
+            background-color: rgba(199, 53, 247, 0.15);
             color: var(--accent-color);
             border-left-color: var(--accent-color);
             font-weight: 600;
@@ -97,6 +107,7 @@ object ReportStyles {
             grid-template-columns: repeat(12, 1fr);
             gap: 24px;
             margin-bottom: 40px;
+            margin-top: 24px; /* Space from metadata cards */
         }
 
         .card {
@@ -106,6 +117,10 @@ object ReportStyles {
             padding: 24px;
             grid-column: span 6;
             transition: transform 0.2s;
+        }
+
+        @media (max-width: 1200px) {
+            .card { grid-column: span 12; }
         }
 
         .card.full-width {
@@ -127,12 +142,18 @@ object ReportStyles {
         }
 
         .stats-table-wrapper {
-            overflow-x: auto;
+            width: 100%;
+            overflow-x: auto; /* Enable scrolling */
+            border-radius: 4px;
+            margin-top: 10px;
+            background: rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
         }
 
         .stats-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 1000px; /* Ensure table is wide enough to scroll on mobile */
         }
 
         .stats-table th {
@@ -143,6 +164,9 @@ object ReportStyles {
             padding: 12px 10px;
             border-bottom: 2px solid var(--border-color);
             white-space: nowrap;
+            position: sticky;
+            top: 0;
+            background: var(--card-bg);
         }
 
         .stats-table td {
@@ -191,12 +215,13 @@ object ReportStyles {
         .section-title {
             font-size: 1.5rem;
             font-weight: 800;
-            margin: 50px 0 25px 0;
+            margin: 60px 0 25px 0;
             padding-bottom: 10px;
             border-bottom: 2px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 15px;
+            scroll-margin-top: 30px;
         }
 
         .section-title::before {
@@ -207,7 +232,6 @@ object ReportStyles {
             border-radius: 4px;
         }
 
-        /* Drill-down specific */
         .action-group {
             margin-top: 30px;
             background: rgba(255,255,255,0.02);
