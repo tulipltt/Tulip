@@ -44,6 +44,6 @@ class ReportDataTest {
         assertEquals("Context-1", firstResult.contextName)
         assertEquals("Constant TPS", firstResult.bmName)
         assertNotNull(firstResult.java)
-        assertEquals("Eclipse Adoptium", firstResult.java.javaVendor)
+        assertEquals("Eclipse Adoptium", firstResult.java?.javaVendor)
     }
 }
