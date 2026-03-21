@@ -15,16 +15,16 @@ gradle=9.4.0
 jbang=0.137.0
 
 # Kotlin
-kotlin=2.3.10
+kotlin=2.3.20
 
 # Scala
-scalacli=1.12.4
+scalacli=1.12.5
 
 # MCS
-mcs=0.9.5
+mcs=0.9.7
 
 # Maven
-maven=3.9.12
+maven=3.9.14
 
 # VisualVM
 visualvm=2.2.1

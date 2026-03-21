@@ -1,13 +1,6 @@
 = Utilities and Scripts
 :shiki-line-numbers: true
 
-== Asciidoc
-
-[source,shellscript]
-----
-jbang run asciidoctorj@asciidoctor filename.adoc
-----
-
 == Kwrk
 
 `kwrk` is a benchmark utility, implemented in Kotlin using the Tulip runtime, which is similar in functionality to `wrk` and `wrk2`. See article "https://nitikagarw.medium.com/getting-started-with-wrk-and-wrk2-benchmarking-6e3cdc76555f[Getting started with wrk and wrk2 benchmarking]" for more information on using these two HTTP benchmark utilities.
@@ -36,7 +29,7 @@ This test sends HTTP requests at a rate of 10 requests per second (rps) to <json
 .Command
 [source,bash]
 ----
-jbang run kwrk@wfouche --rate=10.0 --url=http://jsonplaceholder.typicode.com/posts/1
+jbang run kwrk@tulipltt --rate=10.0 --url=http://jsonplaceholder.typicode.com/posts/1
 ----
 
 .Command Output
@@ -86,7 +79,7 @@ jbang run HttpService.java
 .Terminal 2
 [source,shellscript]
 ----
-jbang run kwrk@wfouche --rate=10000.0 --url=http://localhost:7070/posts/1
+jbang run kwrk@tulipltt --rate=10000.0 --url=http://localhost:7070/posts/1
 
 kwrk:
   --rate 10000.0

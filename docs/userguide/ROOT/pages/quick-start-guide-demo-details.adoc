@@ -5,7 +5,7 @@
 
 Run the following command to create the Java version of the example benchmark program:
 
-* `jbang tulip-cli@wfouche init Java`
+* `jbang tulip-cli@tulipltt init Java`
 
 This command creates various files and directories:
 
@@ -30,11 +30,7 @@ This command creates various files and directories:
 [source,java]
 ----
 ///usr/bin/env jbang "$0" "$@" ; exit $?
-//DEPS io.github.wfouche.tulip:tulip-runtime:2.1.5
-//DEPS org.springframework.boot:spring-boot-starter-web:3.4.2
-//DEPS org.slf4j:slf4j-api:2.0.16
-//DEPS ch.qos.logback:logback-core:1.5.16
-//DEPS ch.qos.logback:logback-classic:1.5.16
+//DEPS io.github.tulipltt.tulip:tulip-runtime:2.3.0
 //SOURCES HttpUser.java
 //JAVA 21
 
@@ -102,12 +98,10 @@ public class App {
                     "id": 1
                 }
             ],
-            "time": {
-                "pre_warmup_duration": 30,
-                "warmup_duration": 10,
-                "benchmark_duration": 30,
-                "benchmark_iterations": 3
-            }
+            "warmup_duration1": 30,
+            "warmup_duration2": 10,
+            "benchmark_duration": 30,
+            "benchmark_iterations": 3
         },
         "REST2": {
             "enabled": true,
@@ -123,9 +117,8 @@ public class App {
                     "id": 3, "weight": 50
                 }
             ],
-            "time": {
-                "pre_warmup_duration": 30,
-                "warmup_duration": 10,
+                "warmup_duration1": 30,
+                "warmup_duration2": 10,
                 "benchmark_duration": 30,
                 "benchmark_iterations": 3
             }
@@ -134,23 +127,19 @@ public class App {
             "enabled": true,
             "aps_rate": 10.0,
             "scenario_workflow": "api-user",
-            "time": {
-                "pre_warmup_duration": 30,
-                "warmup_duration": 10,
-                "benchmark_duration": 30,
-                "benchmark_iterations": 3
-            }
+            "warmup_duration1": 30,
+            "warmup_duration2": 10,
+            "benchmark_duration": 30,
+            "benchmark_iterations": 3
         },
         "REST3.max": {
             "enabled": true,
             "aps_rate": 0.0,
             "scenario_workflow": "api-user",
-            "time": {
-                "pre_warmup_duration": 30,
-                "warmup_duration": 10,
-                "benchmark_duration": 30,
-                "benchmark_iterations": 3
-            }
+            "warmup_duration1": 30,
+            "warmup_duration2": 10,
+            "benchmark_duration": 30,
+            "benchmark_iterations": 3
         },
         "onStop": {
             "save_stats": false,

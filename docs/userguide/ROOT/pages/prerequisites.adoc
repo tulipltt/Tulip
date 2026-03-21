@@ -1,18 +1,20 @@
 = Prerequisites
 
 
-Tulip has the following software requirements that must be met it can be used:
+Tulip requires the following software to run:
 
-* https://adoptium.net/temurin/releases/[OpenJDK] 21 or later version is installed
+* https://adoptium.net/temurin/releases/[OpenJDK] 21 or later version is installed.
 
 ** Test if Java is installed by running command: `java -version`
 
-* https://www.jbang.dev/[JBang] 0.126.3 or later version is installed
+* [optional] https://www.jbang.dev/[JBang] 0.137.0 or later version is installed.
 
 ** Test if JBang is installed by running command: `jbang --version`
 
 * [optional] https://lynx.invisible-island.net/current/index.html[Lynx] text web browser is used to print a text-only version of the  benchmark report to the display console.
 
-* [optional] https://scala-cli.virtuslab.org/[Scala-cli] is installed to run the Scala example benchmark program
+* [optional] https://scala-cli.virtuslab.org/[Scala-cli] is installed to run the Scala example benchmark program.
 
-* Tulip supports Linux, Windows, and macOS.
+* [optional] A build tool such https://maven.apache.org/[Maven], https://mill-build.org/mill/index.html[Mill] or https://gradle.org/[Gradle].
+
+* Tulip is tested on Linux, Windows, and macOS, but it should work on any platform that supports Java.

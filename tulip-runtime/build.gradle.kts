@@ -17,7 +17,7 @@ plugins {
     `maven-publish`
 
     // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.serialization
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
 
     // https://plugins.gradle.org/plugin/org.jetbrains.dokka
     // id("org.jetbrains.dokka") version "2.0.0"
@@ -37,9 +37,10 @@ java {
 val gsonVersion = "2.13.2"
 val slf4jVersion = "2.0.17"
 val logbackVersion = "1.5.32"
-val springBootVersion = "3.5.11"
+val springBootVersion = "3.5.12"
 val picocliVersion = "4.7.7"
 val kxsJsonVersion = "1.10.0"
+val javalinVersion = "7.1.0"
 
 dependencies {
     // https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-jmx
@@ -97,7 +98,7 @@ dependencies {
     implementation("info.picocli:picocli:$picocliVersion")
 
     // Source: https://mvnrepository.com/artifact/io.javalin/javalin
-    testImplementation("io.javalin:javalin:7.0.1")
+    testImplementation("io.javalin:javalin:$javalinVersion")
 }
 
 tasks.withType<JavaCompile>().configureEach {
