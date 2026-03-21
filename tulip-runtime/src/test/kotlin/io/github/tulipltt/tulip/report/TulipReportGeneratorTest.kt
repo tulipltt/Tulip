@@ -19,13 +19,19 @@ class TulipReportGeneratorTest {
         val htmlFile = File("build/tmp/test_report.html")
         htmlFile.parentFile.mkdirs()
         
-        TulipReportGenerator.createReport(actualFile.absolutePath, htmlFile.absolutePath)
+        try {
+            TulipReportGenerator.createReport(actualFile.absolutePath, htmlFile.absolutePath)
+        } catch (e: Exception) {
+            println("EXCEPTION IN createReport: ${e.message}")
+            e.printStackTrace()
+            throw e
+        }
         
         assertTrue(htmlFile.exists())
         val html = htmlFile.readText()
         assertTrue(html.contains("<!DOCTYPE html>"))
-        assertTrue(html.contains("Tulip Benchmark Report"))
-        assertTrue(html.contains("Benchmark Summary"))
+        assertTrue(html.contains("Performance Test Results"))
+        assertTrue(html.contains("All Benchmarks Summary"))
         assertTrue(html.contains("google.charts.load"))
 
         val adocFile = File("build/tmp/test_report_c.adoc")
