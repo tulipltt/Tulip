@@ -18,7 +18,7 @@ jbang=0.137.0
 kotlin=2.3.20
 
 # Scala
-scalacli=1.12.4
+scalacli=1.12.5
 
 # MCS
 mcs=0.9.7
