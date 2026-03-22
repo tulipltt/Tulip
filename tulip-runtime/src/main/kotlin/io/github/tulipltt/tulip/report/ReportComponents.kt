@@ -62,12 +62,12 @@ fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>)
                     val bmId = name.replace(" ", "_")
                     val summary = aggregateResults(results)
                     
-                    // Benchmark Header Row (PURPLE background, WHITE text)
+                    // Benchmark Header Row - Matches sidebar active highlight
                     tr {
-                        style = "background-color: #5E17A8; color: #ffffff; font-weight: bold; border-top: 2px solid var(--accent-color);"
+                        style = "background-color: rgba(199, 53, 247, 0.15); color: var(--accent-color); font-weight: bold; border-top: 2px solid var(--accent-color);"
                         td { 
                             a(href = "#benchmark_$bmId") {
-                                style = "color: #ffffff; text-decoration: none;"
+                                style = "color: var(--accent-color); text-decoration: none;"
                                 +name 
                             }
                         }
@@ -86,22 +86,22 @@ fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>)
                     allActionNames.forEach { actionName ->
                         val actionResults = results.mapNotNull { it.userActions.values.find { a -> a.name == actionName } }
                         val actionSummary = aggregateActionResults(actionName, actionResults)
-                        // Action Summary Row (Semi-transparent PURPLE background, WHITE text)
+                        // Action Row - Styled like iteration rows (indented, muted text, no highlight)
                         tr {
-                            style = "background-color: rgba(94, 23, 168, 0.2); color: #ffffff; border-bottom: 1px solid var(--border-color);"
+                            style = "border-bottom: 1px solid var(--border-color);"
                             td { 
-                                style = "padding-left: 25px;"
+                                style = "padding-left: 25px; color: var(--text-muted);"
                                 +actionName 
                             }
-                            td(classes = "numeric") { +"-" }
-                            td(classes = "numeric") { +actionSummary.numActions.toString() }
+                            td(classes = "numeric") { style = "color: var(--text-muted);"; +"-" }
+                            td(classes = "numeric") { style = "color: var(--text-muted);"; +actionSummary.numActions.toString() }
                             td(classes = "numeric") { statusPill(actionSummary.numFailed) }
-                            td(classes = "numeric") { +"%.1f".format(actionSummary.avgAps) }
-                            td(classes = "numeric") { +formatDuration(actionSummary.avgRt) }
-                            td(classes = "numeric") { +formatDuration(actionSummary.p50) }
-                            td(classes = "numeric") { +formatDuration(actionSummary.p90) }
-                            td(classes = "numeric") { +formatDuration(actionSummary.p99) }
-                            td(classes = "numeric") { +formatDuration(actionSummary.maxRt) }
+                            td(classes = "numeric") { style = "color: var(--text-muted);"; +"%.1f".format(actionSummary.avgAps) }
+                            td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(actionSummary.avgRt) }
+                            td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(actionSummary.p50) }
+                            td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(actionSummary.p90) }
+                            td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(actionSummary.p99) }
+                            td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(actionSummary.maxRt) }
                         }
                     }
                 }
@@ -133,9 +133,9 @@ fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>) {
                     val actionResults = results.mapNotNull { it.userActions.values.find { a -> a.name == actionName } }
                     val actionSummary = aggregateActionResults(actionName, actionResults)
                     
-                    // Action Summary Row (Semi-transparent PURPLE background, WHITE text)
+                    // Action Summary Row - Matches sidebar active highlight
                     tr {
-                        style = "background-color: rgba(94, 23, 168, 0.2); color: #ffffff; font-weight: bold; border-top: 1px solid var(--border-color);"
+                        style = "background-color: rgba(199, 53, 247, 0.15); color: var(--accent-color); font-weight: bold; border-top: 1px solid var(--border-color);"
                         td { +"Summary: $actionName" }
                         td(classes = "numeric") { +actionSummary.numActions.toString() }
                         td(classes = "numeric") { statusPill(actionSummary.numFailed) }
@@ -155,23 +155,23 @@ fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>) {
                                     style = "padding-left: 25px; color: var(--text-muted);"
                                     +"Iteration ${res.rowId + 1}"
                                 }
-                                td(classes = "numeric") { +actionStats.numActions.toString() }
+                                td(classes = "numeric") { style = "color: var(--text-muted);"; +actionStats.numActions.toString() }
                                 td(classes = "numeric") { statusPill(actionStats.numFailed) }
-                                td(classes = "numeric") { +"%.1f".format(actionStats.avgAps) }
-                                td(classes = "numeric") { +formatDuration(actionStats.avgRt) }
-                                td(classes = "numeric") { +formatDuration(actionStats.percentilesRt["50.0"] ?: 0.0) }
-                                td(classes = "numeric") { +formatDuration(actionStats.percentilesRt["90.0"] ?: 0.0) }
-                                td(classes = "numeric") { +formatDuration(actionStats.percentilesRt["99.0"] ?: 0.0) }
-                                td(classes = "numeric") { +formatDuration(actionStats.maxRt) }
+                                td(classes = "numeric") { style = "color: var(--text-muted);"; +"%.1f".format(actionStats.avgAps) }
+                                td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(actionStats.avgRt) }
+                                td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(actionStats.percentilesRt["50.0"] ?: 0.0) }
+                                td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(actionStats.percentilesRt["90.0"] ?: 0.0) }
+                                td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(actionStats.percentilesRt["99.0"] ?: 0.0) }
+                                td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(actionStats.maxRt) }
                             }
                         }
                     }
                 }
                 
                 val summary = aggregateResults(results)
-                // Overall Benchmark Row (PURPLE background, WHITE text)
+                // Overall Benchmark Row - Matches sidebar active highlight
                 tr {
-                    style = "background-color: #5E17A8; color: #ffffff; font-weight: 800; border-top: 2px solid var(--accent-color);"
+                    style = "background-color: rgba(199, 53, 247, 0.15); color: var(--accent-color); font-weight: 800; border-top: 2px solid var(--accent-color);"
                     td { +"OVERALL BENCHMARK" }
                     td(classes = "numeric") { +summary.numActions.toString() }
                     td(classes = "numeric") { statusPill(summary.numFailed) }
@@ -448,15 +448,15 @@ fun FlowContent.actionsTable(actions: Map<String, ActionStats>) {
                 actions.values.sortedBy { it.name }.forEach { action ->
                     tr {
                         td { +action.name }
-                        td(classes = "numeric") { +action.numActions.toString() }
+                        td(classes = "numeric") { style = "color: var(--text-muted);"; +action.numActions.toString() }
                         td(classes = "numeric") { statusPill(action.numFailed) }
-                        td(classes = "numeric") { +"%.1f".format(action.avgAps) }
-                        td(classes = "numeric") { +formatDuration(action.avgRt) }
-                        td(classes = "numeric") { +formatDuration(action.minRt) }
-                        td(classes = "numeric") { +formatDuration(action.percentilesRt["50.0"] ?: 0.0) }
-                        td(classes = "numeric") { +formatDuration(action.percentilesRt["90.0"] ?: 0.0) }
-                        td(classes = "numeric") { +formatDuration(action.percentilesRt["99.0"] ?: 0.0) }
-                        td(classes = "numeric") { +formatDuration(action.maxRt) }
+                        td(classes = "numeric") { style = "color: var(--text-muted);"; +"%.1f".format(action.avgAps) }
+                        td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(action.avgRt) }
+                        td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(action.minRt) }
+                        td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(action.percentilesRt["50.0"] ?: 0.0) }
+                        td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(action.percentilesRt["90.0"] ?: 0.0) }
+                        td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(action.percentilesRt["99.0"] ?: 0.0) }
+                        td(classes = "numeric") { style = "color: var(--text-muted);"; +formatDuration(action.maxRt) }
                     }
                 }
             }
