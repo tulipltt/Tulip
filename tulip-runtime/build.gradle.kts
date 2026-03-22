@@ -23,7 +23,7 @@ plugins {
     // id("org.jetbrains.dokka") version "2.0.0"
 
     // https://plugins.gradle.org/plugin/com.diffplug.spotless
-    id("com.diffplug.spotless") version "8.3.0"
+    id("com.diffplug.spotless") version "8.4.0"
 
     // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
     id("org.owasp.dependencycheck") version "12.2.0"
@@ -80,16 +80,16 @@ dependencies {
     implementation("org.asciidoctor:asciidoctorj:3.0.1")
 
     // https://mvnrepository.com/artifact/org.asciidoctor/asciidoctorj-diagram
-    implementation("org.asciidoctor:asciidoctorj-diagram:3.2.0")
+    implementation("org.asciidoctor:asciidoctorj-diagram:3.2.1")
 
     // https://mvnrepository.com/artifact/org.asciidoctor/asciidoctorj-diagram-plantuml
-    implementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2025.3")
+    implementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2026.2")
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     implementation("org.apache.commons:commons-lang3:3.20.0")
 
     // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.2")
 
     // https://mvnrepository.com/artifact/info.picocli/picocli
     implementation("info.picocli:picocli:$picocliVersion")
