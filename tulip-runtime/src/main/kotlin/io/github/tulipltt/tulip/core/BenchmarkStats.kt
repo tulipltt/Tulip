@@ -79,7 +79,7 @@ data class BenchmarkResult(
     @SerialName("avg_aps") val avgAps: Double,
     @SerialName("aps_target_rate") val apsTargetRate: Double,
     @SerialName("avg_rt") val avgRt: Double,
-    @SerialName("sdev_rt") val sdevRt: Double,
+    @SerialName("sd_rt") val sdevRt: Double,
     @SerialName("min_rt") val minRt: Double,
     @SerialName("max_rt") val maxRt: Double,
     @SerialName("max_rt_ts") val maxRtTs: String,
