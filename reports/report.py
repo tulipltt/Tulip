@@ -510,6 +510,7 @@ table.expanded .extra-col {
     <th class="extra-col">MWT</th>
     <th class="extra-col">CPU_T</th>
     <th class="extra-col">CPU</th>
+    <th class="extra-col">CGC_T</th>
     <th class="extra-col">MEM</th>
   </tr>
 '''
@@ -537,6 +538,7 @@ benchmark_columns = '''
     <th class="extra-col">MWT</th>
     <th class="extra-col">CPU_T</th>
     <th class="extra-col">CPU</th>
+    <th class="extra-col">CGC_T</th>
     <th class="extra-col">MEM</th>
   </tr>
 '''
@@ -557,6 +559,7 @@ benchmark_header = '''
     <td></td>
     <td></td>
     <td></td>
+    <td class="extra-col"></td>
     <td class="extra-col"></td>
     <td class="extra-col"></td>
     <td class="extra-col"></td>
@@ -592,6 +595,7 @@ benchmark_empty_row = '''
     <td class="extra-col">&nbsp;</td>
     <td class="extra-col">&nbsp;</td>
     <td class="extra-col">&nbsp;</td>
+    <td class="extra-col">&nbsp;</td>
   </tr>
 '''
 
@@ -618,6 +622,7 @@ benchmark_detail_row = '''
     <td class="extra-col">%s</td>
     <td class="extra-col">%s</td>
     <td class="extra-col">%.1f</td>
+    <td class="extra-col">%s</td>
     <td class="extra-col">%.1f</td>
   </tr>
 '''
@@ -645,6 +650,7 @@ benchmark_summary_row = '''
     <td class="extra-col"><b>%s</b></td>
     <td class="extra-col"><b>%s</b></td>
     <td class="extra-col"><b>%.1f</b></td>
+    <td class="extra-col"><b>%s</b></td>
     <td class="extra-col"><b>%.1f</b></td>
   </tr>
 '''
@@ -823,6 +829,7 @@ class Summary:
         self.max_qs = 0
         self.name = ""
         self.cpu_time_ns = 0
+        self.cgc_time_ns = 0
         self.chart_t_list = []   # ['2018-04-10T20:40:33.100', 1100, 0]
         self.chart_p_list = []   # ['2018-04-10T20:40:33Z', 1, 5, 10, 20, 25, 30]
         self.aps_count = 0.0
@@ -943,9 +950,11 @@ def createReport(filename):
         avg_aps = 0.0 if sm.name in ["onStart", "onStop"] else sm.num_actions/sm.duration
         if sm.name in ["onStart", "onStop"]:
             cpu_t = "0:00:00"
+            cgc_t = "0:00:00"
             sm.cpu = 0.0
         else:
             cpu_t = str_from_cpu_time_ns(sm.cpu_time_ns)
+            cgc_t = str_from_cpu_time_ns(sm.cgc_time_ns)
 
         statsFilename = '%s_%d.html'%(odir(report_html_fn.split('.')[0]),benchmark_id)
         statsFilenameHtml = '%s_%d.html'%(odirHtml(report_html_fn.split('.')[0]),benchmark_id)
@@ -1085,6 +1094,7 @@ def createReport(filename):
             rd["MWT"] = sm.max_wt
             rd["CPU_T"] = cpu_t
             rd["CPU"] = sm.cpu
+            rd["CGC_T"] = cgc_t
             rd["MEM"] = sm.mem
 
             report_json_fh.write('        ,"summary": %s\n'%(json.dumps(rd)))
@@ -1111,6 +1121,7 @@ def createReport(filename):
             formatTime(sm.max_wt),
             cpu_t,
             sm.cpu,
+            cgc_t,
             sm.mem)
         if not print_detail_rows:
             html = html.replace("<b>","")
@@ -1284,9 +1295,11 @@ def createReport(filename):
             avg_aps = 0.0 if smx.name in ["onStart", "onStop"] else smx.num_actions/smx.duration
             if smx.name in ["onStart", "onStop"]:
                 cpu_t = "0:00:00"
+                cgc_t = "0:00:00"
                 smx.cpu = 0.0
             else:
                 cpu_t = str_from_cpu_time_ns(smx.cpu_time_ns)
+                cgc_t = str_from_cpu_time_ns(smx.cgc_time_ns)
 
             if True:
                 rd = {}
@@ -1332,6 +1345,7 @@ def createReport(filename):
                 formatTime(smx.max_wt),
                 cpu_t,
                 smx.cpu,
+                cgc_t,
                 smx.mem)
             if not print_detail_rows:
                 html = html.replace("<b>","")
@@ -1381,12 +1395,13 @@ def createReport(filename):
         jh.add(ht)
         llq_jh.add(ht)
         p_mem = 100.0 * e["jvm_memory_used"] / e["jvm_memory_maximum"]
-        p_cpu = e["process_cpu_utilization"]
         if e["bm_name"] in ["onStart", "onStop"]:
             cpu_t = "0:00:00"
+            cgc_t = "0:00:00"
             p_cpu = 0.0
         else:
             cpu_t = str_from_cpu_time_ns(e["process_cpu_time_ns"])
+            cgc_t = str_from_cpu_time_ns(e["process_cgc_time_ns"])
             p_cpu = e["process_cpu_utilization"]
         if not json_bm_names.has_key(e["bm_name"]):
             json_bm_names[e["bm_name"]] = 1
@@ -1422,6 +1437,7 @@ def createReport(filename):
             rd["MWT"] = e["max_wt"]
             rd["CPU_T"] = cpu_t
             rd["CPU"] = p_cpu
+            rd["CGC_T"] = cgc_t
             rd["MEM"] = p_mem
             if e["row_id"]+1 == 1:
                 report_json_fh.write('         "%d": %s\n'%(e["row_id"]+1,json.dumps(rd)))
@@ -1450,6 +1466,7 @@ def createReport(filename):
                 formatTime(e["max_wt"]),
                 cpu_t,
                 p_cpu,
+                cgc_t,
                 p_mem
                 ))
             if len(name2s_list) > 0:
@@ -1476,6 +1493,7 @@ def createReport(filename):
         if sm.cpu < p_cpu:
             sm.cpu = p_cpu
         sm.cpu_time_ns += e["process_cpu_time_ns"]
+        sm.cgc_time_ns += e["process_cgc_time_ns"]
         sm.aps_count += 1.0
         sm.aps_target_sum += e["aps_target_rate"]
 
@@ -1579,6 +1597,7 @@ def createReport(filename):
             if smx.cpu < p_cpu:
                 smx.cpu = p_cpu
             smx.cpu_time_ns += e["process_cpu_time_ns"]
+            smx.cgc_time_ns += e["process_cgc_time_ns"]
 
     print_action_summary()
     print_global_summary()
