@@ -114,6 +114,7 @@ object DataCollector {
                         processCpuUtilization = r.processCpuUtilization,
                         processCpuCores = r.processCpuCores,
                         processCpuTimeNs = r.processCpuTime,
+                        memoryCpuTimeNs = r.memoryCpuTime,
                         avgWthreadQsize = wthread_queue_stats.mean,
                         maxWthreadQsize = wthread_queue_stats.maxValue,
                         avgWt = r.awt,
