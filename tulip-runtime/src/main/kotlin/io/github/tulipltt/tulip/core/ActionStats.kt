@@ -192,7 +192,7 @@ class ActionStats {
             )
             if (java.lang.Runtime.version().feature() > 25) {
                 output.add(
-                    "  mgc time (process)   = ${"%.3f".format(Locale.US, cgc_time_secs)} seconds"
+                    "  cgc time (process)   = ${"%.3f".format(Locale.US, cgc_time_secs)} seconds"
                 )
             }
             r.processCpuCores = cpu_time_secs / r.durationSeconds
