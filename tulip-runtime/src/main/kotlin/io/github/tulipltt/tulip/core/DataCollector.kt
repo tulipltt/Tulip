@@ -1,6 +1,5 @@
 package io.github.tulipltt.tulip.core
 
-import io.github.tulipltt.tulip.api.TulipApi
 import java.io.BufferedWriter
 import java.io.FileWriter
 import java.time.LocalDateTime
@@ -80,109 +79,86 @@ object DataCollector {
                 if (gOutputDirname == "") filename else "$gOutputDirname/$filename"
 
             if (filename != "") {
-                val rt = Runtime.getRuntime()
-                val fm = rt.freeMemory()
-                val tm = rt.totalMemory()
-                val mm = rt.maxMemory()
-
                 val r = actionStats[NUM_ACTIONS].r
 
-                var json = "{"
-
-                val workflowName: String
-                if (gWorkflow == null) {
-                    workflowName = ""
-                } else {
-                    workflowName = gWorkflow!!.name
-                }
-
-                json += "\"context_name\": \"$gTulipContextName\", "
-                json += "\"context_id\": $gTulipContextId, "
-                json += "\"bm_name\": \"${r.testName}\", "
-                json += "\"bm_id\": ${r.testId}, "
-                json += "\"row_id\": ${r.rowId}, "
-
-                json += "\"num_users\": $gMaxNumUsers, "
-                json += "\"num_tasks\": $gMaxNumTasks, "
-                json += "\"num_threads\": $gMaxNumThreads, "
-                json += "\"queue_length\": ${r.queueLength}, "
-
-                json += "\"workflow_name\": \"$workflowName\", "
-
-                json += "\"test_begin\": \"${r.testBegin}\", "
-                json += "\"test_end\": \"${r.testEnd}\", "
-
-                json += "\"duration\": ${r.durationSeconds}, "
-
-                // json += "\"avg_cpu_process\": ${r.avgCpuProcess},
-                // \"avg_cpu_system\": ${r.avgCpuSystem}, "
-
-                json += "\"jvm_memory_used\": ${tm - fm}, "
-                json += "\"jvm_memory_free\": $fm, "
-                json += "\"jvm_memory_total\": $tm, "
-                json += "\"jvm_memory_maximum\": $mm, "
-
-                json += "\"process_cpu_utilization\": ${r.processCpuUtilization}, "
-                json += "\"process_cpu_cores\": ${r.processCpuCores}, "
-                json += "\"process_cpu_time_ns\": ${r.processCpuTime},"
-                json += "\"process_mgc_time_ns\": ${r.memoryCpuTime}"
-
-                val awqs: Double = wthread_queue_stats.mean
-                val mwqs: Long = wthread_queue_stats.maxValue
-                json += ", \"avg_wthread_qsize\": $awqs"
-                json += ", \"max_wthread_qsize\": $mwqs"
-
-                json += ", \"avg_wt\": ${r.awt}, \"max_wt\": ${r.maxWt}"
-
-                json += actionStats[NUM_ACTIONS].toJson(-1)
-
-                json += ", \"user_actions\": {"
-
-                var t = ""
+                val globalStat = actionStats[NUM_ACTIONS].toActionStatResult(-1)
+                val userActions = mutableMapOf<String, ActionStatResult>()
                 actionStats.forEachIndexed { index, data ->
-                    if (data.numActions > 0) {
-                        if (index != NUM_ACTIONS) {
-                            if (t != "") {
-                                t += ","
-                            }
-                            t += "\"${index}\": {" + data.toJson(index) + "}"
-                        }
+                    if (data.numActions > 0 && index != NUM_ACTIONS) {
+                        userActions[index.toString()] = data.toActionStatResult(index)
                     }
                 }
-                json += t
-                json += "}"
 
-                json += "}"
+                val workflowName = gWorkflow?.name ?: ""
+                val rt = Runtime.getRuntime()
+
+                val benchmarkResult =
+                    BenchmarkResult(
+                        contextName = gTulipContextName,
+                        contextId = gTulipContextId,
+                        bmName = r.testName,
+                        bmId = r.testId,
+                        rowId = r.rowId,
+                        numUsers = gMaxNumUsers,
+                        numTasks = gMaxNumTasks,
+                        numThreads = gMaxNumThreads,
+                        queueLength = r.queueLength,
+                        workflowName = workflowName,
+                        testBegin = r.testBegin,
+                        testEnd = r.testEnd,
+                        duration = r.durationSeconds,
+                        jvmMemoryUsed = rt.totalMemory() - rt.freeMemory(),
+                        jvmMemoryFree = rt.freeMemory(),
+                        jvmMemoryTotal = rt.totalMemory(),
+                        jvmMemoryMaximum = rt.maxMemory(),
+                        processCpuUtilization = r.processCpuUtilization,
+                        processCpuCores = r.processCpuCores,
+                        processCpuTimeNs = r.processCpuTime,
+                        avgWthreadQsize = wthread_queue_stats.mean,
+                        maxWthreadQsize = wthread_queue_stats.maxValue,
+                        avgWt = r.awt,
+                        maxWt = r.maxWt,
+
+                        // Global stats from globalStat
+                        numActions = globalStat.numActions,
+                        numFailed = globalStat.numFailed,
+                        avgAps = globalStat.avgAps,
+                        apsTargetRate = globalStat.apsTargetRate,
+                        avgRt = globalStat.avgRt,
+                        sdevRt = globalStat.sdevRt,
+                        minRt = globalStat.minRt,
+                        maxRt = globalStat.maxRt,
+                        maxRtTs = globalStat.maxRtTs,
+                        percentilesRt = globalStat.percentilesRt,
+                        hdrHistogramRt = globalStat.hdrHistogramRt,
+                        userActions = userActions,
+                    )
+
+                val resultJson = Json.encodeToString(benchmarkResult)
 
                 val fw = FileWriter(outputFilename(), true)
                 val bw =
                     BufferedWriter(fw).apply {
                         when (fileWriteId) {
                             0 -> {
-                                // val gson =
-                                // GsonBuilder().setPrettyPrinting().create()
-                                // val jsonString = gson.toJson(g_config)
-                                val jsonString = Json.encodeToString(gConfig)
-                                // val jsonString = "${g_config}"
-                                write("{  ")
-                                newLine()
-                                write("  \"version\": \"${VERSION}\"")
-                                newLine()
-                                write(
-                                    ", \"timestamp\": \"${LocalDateTime.now().format(formatter)}\""
-                                )
-                                newLine()
-                                write(", \"java\": ${TulipApi.getJavaInformation()}")
-                                newLine()
-                                write(", \"config\": $jsonString")
-                                newLine()
+                                val header =
+                                    BenchmarkHeader(
+                                        version = VERSION,
+                                        timestamp = LocalDateTime.now().format(formatter),
+                                        java = getJavaInfo(),
+                                        config = gConfig,
+                                    )
+                                val headerJson = Json.encodeToString(header)
+                                // Strip trailing '}' to append 'results' array
+                                val partialHeader = headerJson.substring(0, headerJson.length - 1)
+                                write(partialHeader)
                                 write(", \"results\": [")
                                 newLine()
-                                write(" $json")
+                                write(" $resultJson")
                             }
 
                             else -> {
-                                write(",$json")
+                                write(",$resultJson")
                             }
                         }
                         newLine()
