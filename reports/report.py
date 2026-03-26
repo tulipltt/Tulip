@@ -495,15 +495,15 @@ table.expanded .extra-col {
     <th>#F</th>
     <th>Time</th>
     <th>APS</th>
-    <th>Avg_Rt</th>
-    <th>Std_Dev</th>
-    <th>Min_Rt</th>
-    <th>P50_Rt</th>
-    <th>P90_Rt</th>
-    <th>P95_Rt</th>
-    <th>P99_Rt</th>
-    <th>Max_Rt</th>
-    <th class="extra-col">Max_Rtt</th>
+    <th>AVG_RT</th>
+    <th>SD_RT</th>
+    <th>MIN_RT</th>
+    <th>P50_RT</th>
+    <th>P90_RT</th>
+    <th>P95_RT</th>
+    <th>P99_RT</th>
+    <th>MAX_RT</th>
+    <th class="extra-col">MAX_RTT</th>
     <th class="extra-col">AQS</th>
     <th class="extra-col">MQS</th>
     <th class="extra-col">AWT</th>
@@ -523,15 +523,15 @@ benchmark_columns = '''
     <th>#F</th>
     <th>Time</th>
     <th>APS</th>
-    <th>Avg_Rt</th>
-    <th>Std_Dev</th>
-    <th>Min_Rt</th>
-    <th>P50_Rt</th>
-    <th>P90_Rt</th>
-    <th>P95_Rt</th>
-    <th>P99_Rt</th>
-    <th>Max_Rt</th>
-    <th class="extra-col">Max_Rtt</th>
+    <th>AVG_RT</th>
+    <th>SD_RT</th>
+    <th>MIN_RT</th>
+    <th>P50_RT</th>
+    <th>P90_RT</th>
+    <th>P95_RT</th>
+    <th>P99_RT</th>
+    <th>MAX_RT</th>
+    <th class="extra-col">MAX_RTT</th>
     <th class="extra-col">AQS</th>
     <th class="extra-col">MQS</th>
     <th class="extra-col">AWT</th>
@@ -1080,7 +1080,7 @@ def createReport(filename):
             rd["min_aps"] = sm.aps_min
             rd["max_aps"] = sm.aps_max
             rd["avg_rt"] = jh.getMean()
-            rd["std_dev"] = jh.getStdDeviation()
+            rd["sd_rt"] = jh.getStdDeviation()
             rd["min_rt"] = sm.min_rt
             rd["p50_rt"] = jh.getValueAtPercentile(50.0)
             rd["p90_rt"] = jh.getValueAtPercentile(90.0)
@@ -1308,7 +1308,7 @@ def createReport(filename):
                 rd["duration"] = str(datetime.timedelta(seconds=int(sm.duration)))
                 rd["avg_aps"] = avg_aps
                 rd["avg_rt"] = jhx.getMean()
-                rd["std_dev"] = jhx.getStdDeviation()
+                rd["sd_rt"] = jhx.getStdDeviation()
                 rd["min_rt"] = smx.min_rt
                 rd["p50_rt"] = jhx.getValueAtPercentile(50.0)
                 rd["p90_rt"] = jhx.getValueAtPercentile(90.0)
@@ -1423,7 +1423,7 @@ def createReport(filename):
             rd["duration"] = str(datetime.timedelta(seconds=int(e["duration"])))
             rd["avg_aps"] = 0.0 if e["bm_name"] in ["onStart", "onStop"] else e["avg_aps"]
             rd["avg_rt"] = e["avg_rt"]
-            rd["std_dev"] = ht.getStdDeviation()
+            rd["sd_rt"] = ht.getStdDeviation()
             rd["min_rt"] = e["min_rt"]
             rd["p50_rt"] = e["percentiles_rt"]["50.0"]
             rd["p90_rt"] = e["percentiles_rt"]["90.0"]
