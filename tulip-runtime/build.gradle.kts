@@ -37,7 +37,7 @@ java {
 val gsonVersion = "2.13.2"
 val slf4jVersion = "2.0.17"
 val logbackVersion = "1.5.32"
-val springBootVersion = "3.5.12"
+val springBootVersion = "3.5.13"
 val picocliVersion = "4.7.7"
 val kxsJsonVersion = "1.10.0"
 val javalinVersion = "7.1.0"
