@@ -55,9 +55,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kxsJsonVersion")
 
-    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-html-jvm
-    implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0")
-
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:$gsonVersion")
 
