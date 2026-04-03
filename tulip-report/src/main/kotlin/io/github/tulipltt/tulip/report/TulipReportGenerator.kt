@@ -10,7 +10,7 @@ import org.asciidoctor.Options
 import org.asciidoctor.SafeMode
 
 object TulipReportGenerator {
-    private const val DEFAULT_THEME = "blue-grey" // Change this to switch themes
+    private const val DEFAULT_THEME = "w3-theme-blue-grey" // Change this to switch themes
     private const val DEFAULT_MODE = "dark" // Change this to light if you prefer
 
     private val json = Json {
@@ -58,7 +58,7 @@ object TulipReportGenerator {
                 meta { charset = "UTF-8" }
                 title { +"Tulip Performance Report" }
                 link(rel = "stylesheet", href = "https://www.w3schools.com/w3css/4/w3.css")
-                link(rel = "stylesheet", href = "https://www.w3schools.com/lib/w3-theme-${theme}.css")
+                link(rel = "stylesheet", href = "https://www.w3schools.com/lib/${theme}.css")
                 style { unsafe { +ReportStyles.getStyles(theme, mode) } }
                 script { src = "https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" }
                 script { unsafe { +ReportScripts.getScripts(theme, mode) } }
