@@ -10,7 +10,7 @@ import org.asciidoctor.Options
 import org.asciidoctor.SafeMode
 
 object TulipReportGenerator {
-    private const val DEFAULT_THEME = "blue" // Change this to switch themes
+    private const val DEFAULT_THEME = "blue-grey" // Change this to switch themes
     private const val DEFAULT_MODE = "dark" // Change this to light if you prefer
 
     private val json = Json {
@@ -73,9 +73,12 @@ object TulipReportGenerator {
                     +"☰"
                 }
 
-                div("sidebar w3-sidebar w3-bar-block w3-collapse w3-theme-l5") {
+                val sidebarClass = if (isDark) "w3-theme-d5" else "w3-theme-l5"
+                val sidebarHeaderClass = if (isDark) "w3-theme-d2" else "w3-theme"
+
+                div("sidebar w3-sidebar w3-bar-block w3-collapse $sidebarClass") {
                     id = "mySidebar"
-                    div("w3-container w3-theme") {
+                    div("w3-container $sidebarHeaderClass") {
                         div("w3-padding-16 w3-center") {
                             unsafe { +logoSvg }
                             h3 { +"Tulip" }
@@ -103,7 +106,8 @@ object TulipReportGenerator {
                 }
 
                 div("main-content w3-main") {
-                    header("w3-container") {
+                    val headerClass = if (isDark) "w3-theme-d1" else "w3-theme"
+                    header("w3-container $headerClass") {
                         div("w3-cell-row w3-padding-24") {
                             div("w3-cell w3-cell-middle w3-text-theme") {
                                 style = "width: 80px"
@@ -133,7 +137,7 @@ object TulipReportGenerator {
                         div {
                             id = "overview"
                             statsCard("All Benchmarks Summary", isDark = isDark, classes = "full-width") {
-                                summaryTable(groupedResults)
+                                summaryTable(groupedResults, isDark)
                             }
 
                             val maxRows = groupedResults.values.maxOfOrNull { it.size } ?: 0

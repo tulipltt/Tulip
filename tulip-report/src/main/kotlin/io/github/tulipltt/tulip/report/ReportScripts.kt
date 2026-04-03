@@ -106,8 +106,8 @@ object ReportScripts {
             } else if (current === 'light') {
                 next = 'dark';
             } else {
-                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                next = isDark ? 'light' : 'dark';
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                next = prefersDark ? 'dark' : 'light';
             }
             
             document.documentElement.setAttribute('data-theme', next);

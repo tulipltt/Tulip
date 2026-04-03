@@ -10,7 +10,8 @@ fun FlowContent.statsCard(titleText: String, isDark: Boolean = false, classes: S
     val cardBg = if (isDark) "w3-theme-d4" else "w3-theme-l5"
     val cardClasses = if (classes != null) "card w3-card $cardBg w3-margin-bottom $classes" else "card w3-card $cardBg w3-margin-bottom"
     div(classes = cardClasses) {
-        header(classes = "w3-container w3-theme-l2") {
+        val headerThemeClass = if (isDark) "w3-theme-d2" else "w3-theme-l2"
+        header(classes = "w3-container $headerThemeClass") {
             div(classes = "w3-cell-row") {
                 div(classes = "w3-cell w3-cell-middle") {
                     h5 { +titleText }
@@ -33,11 +34,13 @@ fun FlowContent.statsCard(titleText: String, isDark: Boolean = false, classes: S
     }
 }
 
-fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>) {
+fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>, isDark: Boolean) {
+    val headerClass = if (isDark) "w3-theme-d3" else "w3-theme-l3"
+    val rowClass = if (isDark) "w3-theme-d2" else "w3-theme-l3"
     div(classes = "stats-table-wrapper") {
         table(classes = "w3-table-all w3-hoverable") {
             thead {
-                tr(classes = "w3-theme-d3") {
+                tr(classes = headerClass) {
                     th { +"Benchmark / Action" }
                     th { +"Users" }
                     th { +"# Actions" }
@@ -56,8 +59,8 @@ fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>)
                     val summary = aggregateResults(results)
                     
                     // Benchmark Header Row
-                    tr(classes = "w3-theme-l3") {
-                        td { 
+                    tr(classes = rowClass) {
+                        td {
                             a(href = "#benchmark_$bmId") {
                                 b { +name }
                             }
