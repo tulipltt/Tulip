@@ -20,8 +20,8 @@ class ReportComponentsTest {
         }
         val html = out.toString()
         println("GENERATED HTML: $html")
-        assertTrue(html.contains("class=\"card\""))
-        assertTrue(html.contains("class=\"card-header\""))
+        assertTrue(html.contains("class=\"card w3-card w3-theme-l5 w3-margin-bottom\""))
+        assertTrue(html.contains("class=\"w3-container w3-theme-l2\""))
         assertTrue(html.contains("Test Title"))
         assertTrue(html.contains("Card Content"))
     }
