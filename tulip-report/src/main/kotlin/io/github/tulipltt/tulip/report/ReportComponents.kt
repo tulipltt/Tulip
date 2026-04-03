@@ -6,7 +6,7 @@ import org.HdrHistogram.Histogram
 import java.nio.ByteBuffer
 import java.util.*
 
-fun FlowContent.statsCard(titleText: String, isDark: Boolean = false, classes: String? = null, isChart: Boolean = false, block: DIV.() -> Unit) {
+fun FlowContent.statsCard(titleText: String, isDark: Boolean = false, classes: String? = null, isChart: Boolean = false, isTable: Boolean = false, tableId: String? = null, block: DIV.() -> Unit) {
     val cardBg = if (isDark) "w3-theme-d4" else "w3-theme-l5"
     val cardClasses = if (classes != null) "card w3-card $cardBg w3-margin-bottom $classes" else "card w3-card $cardBg w3-margin-bottom"
     div(classes = cardClasses) {
@@ -21,6 +21,19 @@ fun FlowContent.statsCard(titleText: String, isDark: Boolean = false, classes: S
                         span(classes = "w3-tiny w3-opacity") { +"Use toolbox buttons: Pan/Zoom, Reset, Save, Fullscreen" }
                     }
                 }
+                if (isTable && tableId != null) {
+                    div(classes = "w3-cell w3-cell-middle w3-right-align") {
+                        val titleSlug = titleText.lowercase().replace(" ", "_").replace("/", "_")
+                        button(classes = "w3-button w3-tiny w3-theme-d2 w3-margin-right") {
+                            attributes["onclick"] = "downloadTableAsCSV('$tableId','${titleSlug}.csv')"
+                            +"CSV"
+                        }
+                        button(classes = "w3-button w3-tiny w3-theme-d2") {
+                            attributes["onclick"] = "downloadTableAsJSON('$tableId','${titleSlug}.json')"
+                            +"JSON"
+                        }
+                    }
+                }
             }
         }
         div(classes = "w3-container w3-padding-16") {
@@ -29,11 +42,12 @@ fun FlowContent.statsCard(titleText: String, isDark: Boolean = false, classes: S
     }
 }
 
-fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>, isDark: Boolean) {
+fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>, isDark: Boolean, tableId: String = "summaryTable") {
     val headerClass = if (isDark) "w3-theme-d3" else "w3-theme-l3"
     val rowClass = if (isDark) "w3-theme-d2" else "w3-theme-l3"
     div(classes = "stats-table-wrapper") {
         table(classes = "w3-table-all w3-hoverable") {
+            id = tableId
             thead {
                 tr(classes = headerClass) {
                     th { +"Benchmark / Action" }
@@ -100,11 +114,12 @@ fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>,
     }
 }
 
-fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>) {
+fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>, tableId: String = "detailedTable") {
     val allActionNames = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
     
     div(classes = "stats-table-wrapper") {
         table(classes = "w3-table-all w3-hoverable") {
+            id = tableId
             thead {
                 tr(classes = "w3-theme-d3") {
                     th { +"Action / Iteration" }

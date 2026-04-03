@@ -136,8 +136,8 @@ object TulipReportGenerator {
                     div("w3-container") {
                         div {
                             id = "overview"
-                            statsCard("All Benchmarks Summary", isDark = isDark, classes = "full-width") {
-                                summaryTable(groupedResults, isDark)
+                            statsCard("All Benchmarks Summary", isDark = isDark, classes = "full-width", isTable = true, tableId = "summary_table") {
+                                summaryTable(groupedResults, isDark, "summary_table")
                             }
 
                             val maxRows = groupedResults.values.maxOfOrNull { it.size } ?: 0
@@ -271,8 +271,8 @@ object TulipReportGenerator {
                             }
                             
                             div {
-                                statsCard("Action Results", isDark = isDark, classes = "full-width") {
-                                    detailedBenchmarkTable(results)
+                                statsCard("Action Results", isDark = isDark, classes = "full-width", isTable = true, tableId = "detail_${bmId}_table") {
+                                    detailedBenchmarkTable(results, "detail_${bmId}_table")
                                 }
 
                                 val allActions = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
