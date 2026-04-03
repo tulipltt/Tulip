@@ -18,12 +18,7 @@ fun FlowContent.statsCard(titleText: String, isDark: Boolean = false, classes: S
                 }
                 if (isChart) {
                     div(classes = "w3-cell w3-cell-middle w3-right-align") {
-                        span(classes = "w3-tiny w3-opacity") { +"Mouse: Pan/Zoom • Toolbox: Reset" }
-                        button(classes = "w3-button w3-round w3-tiny w3-theme-d1 btn-fullscreen") {
-                            title = "Toggle Fullscreen"
-                            attributes["onclick"] = "toggleFullscreen(this.parentElement.parentElement.parentElement.nextElementSibling.id)"
-                            +"盍"
-                        }
+                        span(classes = "w3-tiny w3-opacity") { +"Use toolbox buttons: Pan/Zoom, Reset, Save, Fullscreen" }
                     }
                 }
             }
