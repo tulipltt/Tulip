@@ -3,12 +3,47 @@ package io.github.tulipltt.tulip.report
 object ReportStyles {
     fun getStyles(theme: String, mode: String): String {
         return """
-        /* Essential Layout only */
-        html, body {
-            height: 100%;
+        :root {
+            --pico-font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        /* Sticky Sidebar Layout */
+        body {
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh;
             margin: 0;
-            font-family: system-ui, -apple-system, sans-serif;
-            color: #333;
+        }
+
+        aside {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            border-right: 1px solid var(--pico-muted-border-color);
+            padding: var(--pico-spacing);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        aside nav ul {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        aside nav li {
+            width: 100%;
+            padding: 0;
+        }
+        aside nav a {
+            display: block;
+            width: 100%;
+            padding: calc(var(--pico-spacing) * 0.5) 0;
+        }
+
+        main {            flex: 1;
+            margin-left: 260px;
+            padding: var(--pico-spacing);
+            min-width: 0; /* Prevent flex overflow */
         }
 
         .chart-container {
@@ -22,44 +57,24 @@ object ReportStyles {
             font-family: 'JetBrains Mono', monospace;
         }
 
-        .sidebar {
-            height: 100%;
-            width: 260px;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            overflow-x: hidden;
-            transition: 0.3s;
+        /* Pill styling */
+        .pill {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
         }
+        .pill-fail { background-color: var(--pico-ins-color); color: white; } /* Using Pico red-ish */
+        .pill-pass { background-color: var(--pico-primary-background); color: white; }
 
-        .main-content {
-            transition: margin-left .3s;
-            margin-left: 260px;
-        }
-
-        .sidebar.hidden {
-            margin-left: -260px;
-        }
-
-        .main-content.sidebar-hidden {
-            margin-left: 0;
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 2;
-        }
-
-        .stats-table-wrapper {
-            width: 100%;
-            overflow-x: auto;
+        @media (max-width: 992px) {
+            aside { transform: translateX(-100%); }
+            aside.open { transform: translateX(0); }
+            main { margin-left: 0; }
         }
 
         /* Fullscreen handling */
-        .card.fullscreen {
+        article.fullscreen {
             position: fixed;
             top: 0;
             left: 0;
@@ -67,60 +82,77 @@ object ReportStyles {
             height: 100vh !important;
             z-index: 2000;
             margin: 0 !important;
+            overflow-y: auto;
         }
-        .card.fullscreen .chart-container {
-            height: calc(100vh - 100px);
-        }
-
-        /* Dark Mode overrides - ONLY active when data-theme is dark */
-        html[data-theme="dark"] {
-            background-color: #121212;
-            color: #eee;
+        article.fullscreen .chart-container {
+            height: calc(100vh - 150px);
         }
 
-        html[data-theme="dark"] body {
-            background-color: #121212;
-            color: #eee;
+        /* Professional Sidebar Enhancements */
+        aside {
+            background-color: var(--pico-card-background-color);
+            padding: 0;
+            display: flex;
+            flex-direction: column;
         }
 
-        html[data-theme="dark"] .w3-theme,
-        html[data-theme="dark"] .w3-theme-l1,
-        html[data-theme="dark"] .w3-theme-l2,
-        html[data-theme="dark"] .w3-theme-l3,
-        html[data-theme="dark"] .w3-theme-l4,
-        html[data-theme="dark"] .w3-theme-l5,
-        html[data-theme="dark"] .w3-theme-d1,
-        html[data-theme="dark"] .w3-theme-d2,
-        html[data-theme="dark"] .w3-theme-d3,
-        html[data-theme="dark"] .w3-theme-d4,
-        html[data-theme="dark"] .w3-theme-d5 {
-            background-color: #1b1b1b !important;
-            color: #eee !important;
+        aside header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--pico-muted-border-color);
+            margin-bottom: 1rem;
         }
 
-        html[data-theme="dark"] .w3-sidebar,
-        html[data-theme="dark"] .sidebar,
-        html[data-theme="dark"] .main-content,
-        html[data-theme="dark"] .card {
-            background-color: #1b1b1b !important;
-            color: #eee !important;
+        aside nav {
+            padding: 0 0.75rem;
         }
 
-        html[data-theme="dark"] .w3-table-all { background-color: #222 !important; color: #eee !important; }
-        html[data-theme="dark"] .w3-table-all tr { background-color: #222 !important; color: #eee !important; border-bottom: 1px solid #444 !important; }
-        html[data-theme="dark"] .w3-table-all tr:nth-child(even) { background-color: #2a2a2a !important; }
-        html[data-theme="dark"] .w3-hoverable tbody tr:hover { background-color: #383838 !important; }
-
-        html[data-theme="dark"] .w3-light-grey,
-        html[data-theme="dark"] .w3-light-gray,
-        html[data-theme="dark"] .w3-white,
-        html[data-theme="dark"] .w3-card {
-            background-color: #222 !important;
-            color: #eee !important;
+        aside nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 4px;
         }
 
-        /* Ensure table text is readable in light mode */
-        .w3-table-all { color: #000; }
+        .nav-section {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.05rem;
+            opacity: 0.5;
+            margin: 1.25rem 0 0.5rem 0.75rem;
+        }
+
+        .nav-link {
+            display: flex !important;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem !important;
+            border-radius: 8px;
+            color: var(--pico-color);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover {
+            background-color: var(--pico-secondary-hover-background);
+            color: var(--pico-primary);
+        }
+
+        .nav-link.active {
+            background-color: var(--pico-primary-background);
+            color: var(--pico-primary-inverse);
+            font-weight: 600;
+        }
+
+        .nav-link.active .nav-icon {
+            stroke: var(--pico-primary-inverse);
+        }
+
+        .nav-icon {
+            opacity: 0.8;
+            flex-shrink: 0;
+        }
         """.trimIndent()
     }
 }

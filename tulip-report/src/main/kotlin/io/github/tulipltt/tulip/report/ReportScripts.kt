@@ -13,43 +13,32 @@ object ReportScripts {
         }
 
         function probeColors() {
-            const dummy = document.createElement('div');
-            dummy.style.visibility = 'hidden';
-            dummy.style.position = 'absolute';
-            document.body.appendChild(dummy);
-
-            const getColor = (classes) => {
-                dummy.className = classes;
-                return getComputedStyle(dummy).backgroundColor;
-            };
-            const getTextColor = (classes) => {
-                dummy.className = classes;
-                return getComputedStyle(dummy).color;
+            const style = getComputedStyle(document.documentElement);
+            
+            const getColor = (name, fallback) => {
+                const val = style.getPropertyValue(name).trim();
+                return val || fallback;
             };
 
-            // Diversified palette using standard W3.CSS framework colors
+            // Professional palette using standard colors that work in light/dark
             const palette = [
-                getColor('w3-theme'), // Use primary theme color first
-                getColor('w3-blue'),
-                getColor('w3-red'),
-                getColor('w3-green'),
-                getColor('w3-orange'),
-                getColor('w3-purple'),
-                getColor('w3-teal'),
-                getColor('w3-indigo'),
-                getColor('w3-amber'),
-                getColor('w3-pink')
+                '#3b82f6', // blue
+                '#ef4444', // red
+                '#22c55e', // green
+                '#f59e0b', // amber
+                '#8b5cf6', // purple
+                '#06b6d4', // cyan
+                '#ec4899', // pink
+                '#f97316', // orange
+                '#14b8a6', // teal
+                '#64748b'  // slate
             ];
 
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const cardClass = isDark ? 'w3-theme-d4' : 'w3-theme-l5';
-            const bg = getColor(cardClass);
-            const text = getTextColor(cardClass);
-            const muted = getTextColor('w3-text-theme');
-            const accent = getColor('w3-theme');
-            const border = isDark ? '#444' : '#ddd';
-
-            document.body.removeChild(dummy);
+            const bg = getColor('--pico-background-color', '#fff');
+            const text = getColor('--pico-color', '#000');
+            const muted = getColor('--pico-muted-color', '#666');
+            const accent = getColor('--pico-primary', '#3b82f6');
+            const border = getColor('--pico-muted-border-color', '#ddd');
 
             return { palette, bg, text, muted, border, accent };
         }
@@ -58,17 +47,16 @@ object ReportScripts {
             const colors = probeColors();
             
             echartsTheme = {
-                backgroundColor: colors.bg,
+                backgroundColor: 'transparent', // Let CSS handle background
                 textStyle: { color: colors.text, fontFamily: 'system-ui, sans-serif' },
                 title: { textStyle: { color: colors.text, fontSize: 14, fontWeight: 'bold' } },
                 legend: { 
                     textStyle: { color: colors.text, fontSize: 11 },
                     pageTextStyle: { color: colors.text },
-                    backgroundColor: colors.bg,
-                    borderColor: colors.border,
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    padding: 5
+                    orient: 'vertical',
+                    right: 10,
+                    top: 'middle',
+                    type: 'scroll'
                 },
                 tooltip: { 
                     backgroundColor: colors.bg,
@@ -76,7 +64,7 @@ object ReportScripts {
                     textStyle: { color: colors.text, fontSize: 12 },
                     confine: true
                 },
-                grid: { left: '15%', right: '4%', bottom: '15%', top: '15%', containLabel: true },
+                grid: { left: '8%', right: '22%', bottom: '15%', top: '15%', containLabel: true },
                 categoryAxis: {
                     axisLine: { lineStyle: { color: colors.text, opacity: 0.3 } },
                     axisLabel: { color: colors.text, fontSize: 10, opacity: 0.7 },
@@ -92,7 +80,6 @@ object ReportScripts {
 
             // Update all existing charts with the new theme
             charts.forEach((chart, id) => {
-                // ECharts merges setOption by default, so we just need to send the theme properties
                 chart.setOption(echartsTheme);
             });
         }
@@ -114,6 +101,18 @@ object ReportScripts {
             localStorage.setItem('tulip-theme', next);
             location.reload(); 
         }
+
+        function updateActiveLink() {
+            const hash = window.location.hash || '#overview';
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const linkHash = link.getAttribute('href');
+                if (linkHash && linkHash.startsWith('#')) {
+                    link.classList.toggle('active', linkHash === hash);
+                }
+            });
+        }
+        window.addEventListener('hashchange', updateActiveLink);
+        window.addEventListener('DOMContentLoaded', updateActiveLink);
 
         function initChart(chartId, option) {
             const chartDom = document.getElementById(chartId);
@@ -148,7 +147,7 @@ object ReportScripts {
 
             const myChart = echarts.init(chartDom);
             myChart._chartId = chartId;
-            myChart.setOption(mergedOption);
+            myChart.setOption(mergedOption, true); // Use notMerge=true to ensure clean state
             charts.set(chartId, myChart);
             return myChart;
         }
@@ -165,8 +164,8 @@ object ReportScripts {
             const option = {
                 title: { text: title },
                 tooltip: { trigger: 'axis' },
-                legend: { data: labels, orient: 'vertical', left: 'left', top: 'middle', type: 'scroll' },
-                grid: { left: '15%', right: '4%', bottom: '15%', top: '15%', containLabel: true },
+                xAxis: { name: 'Percentile', type: 'value', min: 50, max: 100 },
+                yAxis: { name: 'Latency (' + unit + ')', type: 'value' },
                 toolbox: {
                     show: true,
                     feature: {
@@ -182,8 +181,6 @@ object ReportScripts {
                     right: 40
                 },
                 dataZoom: [{ type: 'inside', zoomOnMouseWheel: false, start: 0, end: 100, xAxisIndex: 0, yAxisIndex: 0 }, { type: 'slider', start: 0, end: 100, xAxisIndex: 0, yAxisIndex: 0 }],
-                xAxis: { name: 'Percentile', type: 'value', min: 50, max: 100 },
-                yAxis: { name: 'Latency (' + unit + ')', type: 'value' },
                 dataset: { source: dataRows },
                 series: series
             };
@@ -203,8 +200,8 @@ object ReportScripts {
             const option = {
                 title: { text: title },
                 tooltip: { trigger: 'axis' },
-                legend: { data: labels, orient: 'vertical', left: 'left', top: 'middle', type: 'scroll' },
-                grid: { left: '15%', right: '4%', bottom: '15%', top: '15%', containLabel: true },
+                xAxis: { name: 'Iteration', type: 'value' },
+                yAxis: { name: yLabel, type: 'value' },
                 toolbox: {
                     show: true,
                     feature: {
@@ -220,8 +217,6 @@ object ReportScripts {
                     right: 40
                 },
                 dataZoom: [{ type: 'inside', zoomOnMouseWheel: false, xAxisIndex: 0, yAxisIndex: 0 }, { type: 'slider', xAxisIndex: 0, yAxisIndex: 0 }],
-                xAxis: { name: 'Iteration', type: 'value' },
-                yAxis: { name: yLabel, type: 'value' },
                 dataset: { source: dataRows },
                 series: series
             };
@@ -232,7 +227,7 @@ object ReportScripts {
         function toggleFullscreen(chartId) {
             const chartDom = document.getElementById(chartId);
             if (!chartDom) return;
-            const card = chartDom.closest('.card');
+            const card = chartDom.closest('article');
             card.classList.toggle('fullscreen');
             const chart = charts.get(chartId);
             if (chart) {
@@ -350,15 +345,18 @@ object ReportScripts {
             charts.forEach(chart => chart.resize());
         });
 
+        window.addEventListener('hashchange', updateActiveLink);
+
         window.addEventListener('DOMContentLoaded', () => {
             updateEchartsTheme();
+            updateActiveLink();
 
-            const sections = document.querySelectorAll('#overview, #config, #runtime, h3');
+            const targetSections = document.querySelectorAll('div[id], article[id], section[id]');
             const navLinks = document.querySelectorAll('.nav-link');
 
             const observerOptions = {
                 root: null,
-                rootMargin: '-10% 0px -80% 0px',
+                rootMargin: '-10% 0px -70% 0px',
                 threshold: 0
             };
 
@@ -368,9 +366,10 @@ object ReportScripts {
                         const id = entry.target.getAttribute('id');
                         if (id) {
                             navLinks.forEach(link => {
-                                link.classList.remove('active', 'w3-theme-l3');
-                                if (link.getAttribute('href') === '#' + id) {
-                                    link.classList.add('active', 'w3-theme-l3');
+                                const href = link.getAttribute('href');
+                                if (href === '#' + id) {
+                                    navLinks.forEach(l => l.classList.remove('active'));
+                                    link.classList.add('active');
                                 }
                             });
                         }
@@ -378,15 +377,8 @@ object ReportScripts {
                 });
             }, observerOptions);
 
-            sections.forEach((section) => {
+            targetSections.forEach((section) => {
                 observer.observe(section);
-            });
-
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    navLinks.forEach(l => l.classList.remove('active', 'w3-theme-l3'));
-                    link.classList.add('active', 'w3-theme-l3');
-                });
             });
         });
         """.trimIndent()

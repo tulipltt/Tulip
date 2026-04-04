@@ -33,7 +33,7 @@ class TulipReportGeneratorTest {
         assertTrue(html.contains("Performance Test Results"))
         assertTrue(html.contains("All Benchmarks Summary"))
         assertTrue(html.contains("echarts.init"))
-        assertTrue(html.contains("https://www.w3schools.com/lib/w3-theme-purple.css"))
+        assertTrue(html.contains("https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"))
 
         val adocFile = File("build/tmp/test_report_c.adoc")
         assertTrue(adocFile.exists(), "AsciiDoc file not found")

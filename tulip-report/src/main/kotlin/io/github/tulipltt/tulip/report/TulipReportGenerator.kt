@@ -10,7 +10,6 @@ import org.asciidoctor.Options
 import org.asciidoctor.SafeMode
 
 object TulipReportGenerator {
-    private const val DEFAULT_THEME = "w3-theme-blue-grey" // Change this to switch themes
     private const val DEFAULT_MODE = "dark" // Change this to light if you prefer
 
     private val json = Json {
@@ -46,8 +45,6 @@ object TulipReportGenerator {
         out.append("<!DOCTYPE html>\n")
         out.appendHTML().html {
             lang = "en"
-            // Use internal default theme/mode values; ReportData does not carry styling fields.
-            val theme = DEFAULT_THEME
             val mode = DEFAULT_MODE
             val isDark = mode == "dark"
 
@@ -57,83 +54,99 @@ object TulipReportGenerator {
             head {
                 meta { charset = "UTF-8" }
                 title { +"Tulip Performance Report" }
-                link(rel = "stylesheet", href = "https://www.w3schools.com/w3css/4/w3.css")
-                link(rel = "stylesheet", href = "https://www.w3schools.com/lib/${theme}.css")
-                style { unsafe { +ReportStyles.getStyles(theme, mode) } }
+                link(rel = "stylesheet", href = "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css")
+                style { unsafe { +ReportStyles.getStyles("", mode) } }
                 script { src = "https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" }
-                script { unsafe { +ReportScripts.getScripts(theme, mode) } }
+                script { unsafe { +ReportScripts.getScripts("", mode) } }
             }
             body {
                 val groupedResults = reportData.results.groupBy { it.bmName }
-                val bodyClass = if (isDark) "w3-theme-d5" else "w3-light-grey"
-                classes = setOf(bodyClass)
                 
-                button(classes = "sidebar-toggle w3-button w3-theme w3-xlarge w3-hide-large") {
-                    attributes["onclick"] = "toggleSidebar()"
-                    +"☰"
-                }
-
-                val sidebarClass = if (isDark) "w3-theme-d5" else "w3-theme-l5"
-                val sidebarHeaderClass = if (isDark) "w3-theme-d2" else "w3-theme"
-
-                div("sidebar w3-sidebar w3-bar-block w3-collapse $sidebarClass") {
+                aside {
                     id = "mySidebar"
-                    div("w3-container $sidebarHeaderClass") {
-                        div("w3-padding-16 w3-center") {
-                            unsafe { +logoSvg }
-                            h3 { +"Tulip" }
+                    header {
+                        style = "display: flex; align-items: center; gap: 0.75rem; padding: 1.5rem;"
+                        unsafe { +logoSvg }
+                        h3 { 
+                            style = "margin: 0; font-size: 1.25rem;"
+                            +"Tulip" 
                         }
                     }
                     nav {
-                        div("w3-bar-item w3-small w3-opacity") { +"Overview" }
-                        a(href = "#overview", classes = "nav-link w3-bar-item w3-button active") { +"Summary Dashboard" }
-                        
-                        div("w3-bar-item w3-small w3-opacity w3-margin-top") { +"Benchmarks" }
-                        groupedResults.keys.forEach { name ->
-                            a(href = "#benchmark_${name.replace(" ", "_")}", classes = "nav-link w3-bar-item w3-button") { +name }
-                        }
+                        ul {
+                            li { div(classes = "nav-section") { +"Overview" } }
+                            li { 
+                                a(href = "#overview", classes = "nav-link") { 
+                                    unsafe { +ReportIcons.DASHBOARD }
+                                    +"Summary Dashboard" 
+                                } 
+                            }
+                            
+                            li { div(classes = "nav-section") { +"Benchmarks" } }
+                            groupedResults.keys.forEach { name ->
+                                li { 
+                                    a(href = "#benchmark_${name.replace(" ", "_")}", classes = "nav-link") { 
+                                        unsafe { +ReportIcons.ACTIVITY }
+                                        +name 
+                                    } 
+                                }
+                            }
 
-                        div("w3-bar-item w3-small w3-opacity w3-margin-top") { +"Configuration" }
-                        a(href = "#config", classes = "nav-link w3-bar-item w3-button") { +"Benchmark Config" }
-                        a(href = "#runtime", classes = "nav-link w3-bar-item w3-button") { +"Tulip Runtime" }
+                            li { div(classes = "nav-section") { +"Configuration" } }
+                            li { 
+                                a(href = "#config", classes = "nav-link") { 
+                                    unsafe { +ReportIcons.SETTINGS }
+                                    +"Benchmark Config" 
+                                } 
+                            }
+                            li { 
+                                a(href = "#runtime", classes = "nav-link") { 
+                                    unsafe { +ReportIcons.INFO }
+                                    +"Tulip Runtime" 
+                                } 
+                            }
 
-                        div("w3-bar-item w3-small w3-opacity w3-margin-top") { +"Appearance" }
-                        a(href = "javascript:void(0)", classes = "nav-link w3-bar-item w3-button") {
-                            attributes["onclick"] = "toggleTheme()"
-                            +"🌓 Toggle Theme"
+                            li { div(classes = "nav-section") { +"Appearance" } }
+                            li {
+                                a(href = "javascript:void(0)", classes = "nav-link") {
+                                    attributes["onclick"] = "toggleTheme()"
+                                    unsafe { +ReportIcons.THEME }
+                                    +"Toggle Theme"
+                                }
+                            }
                         }
                     }
                 }
 
-                div("main-content w3-main") {
-                    val headerClass = if (isDark) "w3-theme-d1" else "w3-theme"
-                    header("w3-container $headerClass") {
-                        div("w3-cell-row w3-padding-24") {
-                            div("w3-cell w3-cell-middle w3-text-theme") {
-                                style = "width: 80px"
+                main {
+                    header {
+                        div(classes = "grid") {
+                            div {
+                                style = "display: flex; align-items: center; gap: 1rem;"
                                 unsafe { 
                                     val largeLogo = logoSvg.replace("width=\"32\" height=\"32\"", "width=\"64\" height=\"64\"")
                                     +largeLogo 
                                 }
-                            }
-                            div("w3-cell w3-cell-middle") {
-                                h2 { +"Performance Test Results" }
-                                div("w3-opacity w3-small") {
-                                    +"Tulip Performance Tool • Version ${reportData.version}"
+                                div {
+                                    h2 { 
+                                        style = "margin: 0;"
+                                        +"Performance Test Results" 
+                                    }
+                                    small { style = "opacity: 0.5;"; +"Tulip Performance Tool • Version ${reportData.version}" }
                                 }
                             }
                         }
                         
-                        div("w3-row-padding w3-margin-bottom") {
-                            metricCard("Timestamp", reportData.timestamp, isDark)
-                            metricCard("Benchmarks", groupedResults.size.toString(), isDark)
-                            metricCard("Total Actions", reportData.results.sumOf { it.numActions.toLong() }.toString(), isDark)
+                        div(classes = "grid") {
+                            metricCard("Timestamp", reportData.timestamp)
+                            metricCard("Benchmarks", groupedResults.size.toString())
+                            metricCard("Total Actions", reportData.results.sumOf { it.numActions.toLong() }.toString())
                             val totalFailed = reportData.results.sumOf { it.numFailed.toLong() }
-                            metricCard("Total Failed", totalFailed.toString(), isDark)
+                            metricCard("Total Failed", totalFailed.toString())
                         }
                     }
 
-                    div("w3-container") {
+                    div {
                         div {
                             id = "overview"
                             statsCard("All Benchmarks Summary", isDark = isDark, classes = "full-width", isTable = true, tableId = "summary_table") {
@@ -265,116 +278,87 @@ object TulipReportGenerator {
                         // Detailed sections for each benchmark
                         groupedResults.forEach { (bmName, results) ->
                             val bmId = bmName.replace(" ", "_")
-                            h3("w3-container w3-theme-l1 w3-padding w3-margin-top") {
-                                id = "benchmark_$bmId"
-                                +bmName 
-                            }
-                            
                             div {
-                                statsCard("Action Results", isDark = isDark, classes = "full-width", isTable = true, tableId = "detail_${bmId}_table") {
-                                    detailedBenchmarkTable(results, "detail_${bmId}_table")
+                                id = "benchmark_$bmId"
+                                h3 {
+                                    style = "margin-top: 2rem; border-bottom: 2px solid var(--pico-primary);"
+                                    +bmName
                                 }
 
-                                val allActions = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
-
-                                statsCard("Latency Distribution per Action", isDark = isDark, classes = "full-width", isChart = true) {
-                                    div("chart-container") { id = "chart_dist_$bmId" }
-                                    script {
-                                        val lastResult = results.last()
-                                        val labels = allActions.joinToString(",") { "'$it'" }
-                                        
-                                        val allPercentiles = lastResult.userActions.values
-                                            .flatMap { it.percentilesRt.keys }
-                                            .filter { it.toDoubleOrNull() != null }
-                                            .map { it.toDouble() }
-                                            .filter { it >= 50.0 }
-                                            .distinct()
-                                            .sorted()
-
-                                        val dataPoints = allPercentiles.map { p ->
-                                            val rowData = allActions.map { actionName ->
-                                                val actionStats = lastResult.userActions.values.find { it.name == actionName }
-                                                val valNanos = if (p == 100.0) {
-                                                    actionStats?.maxRt
-                                                } else {
-                                                    actionStats?.percentilesRt?.get(p.toString()) ?: 
-                                                    actionStats?.percentilesRt?.get(p.toInt().toString() + ".0")
-                                                }
-                                                if (valNanos != null) (valNanos / 1_000_000.0) else "null"
+                                statsCard("Detailed Benchmark Results", isDark = isDark, classes = "full-width", isTable = true, tableId = "table_$bmId") {
+                                    detailedBenchmarkTable(results, "table_$bmId")
+                                }
+                                
+                                div {
+                                    statsCard("Throughput (APS) per Action", isDark = isDark, classes = "full-width", isChart = true) {
+                                        div("chart-container") { id = "chart_aps_$bmId" }
+                                        script {
+                                            val allActions = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
+                                            val labels = allActions.flatMap { listOf("'$it'", "'$it (Errors)'") }.joinToString(",")
+                                            
+                                            val dataRows = results.map { res ->
+                                                val rowData = allActions.map { actionName ->
+                                                    val actionStats = res.userActions.values.find { it.name == actionName }
+                                                    val aps = actionStats?.avgAps ?: 0.0
+                                                    val errAps = if (actionStats != null && res.duration > 0) actionStats.numFailed.toDouble() / res.duration else 0.0
+                                                    "$aps, $errAps"
+                                                }.joinToString(",")
+                                                "[${res.rowId}, $rowData]"
                                             }.joinToString(",")
-                                            "[$p, $rowData]"
-                                        }.joinToString(",")
-                                        
-                                        unsafe {
-                                            +"""
-                                                createPercentileChart('chart_dist_$bmId', [$labels], [$dataPoints], 'Tail Latency per Action (ms)', 'ms');
-                                            """.trimIndent()
+
+                                            unsafe {
+                                                +"""
+                                                    createTimeSeriesChart('chart_aps_$bmId', [$labels], [$dataRows], 'Throughput per Action', 'APS');
+                                                """.trimIndent()
+                                            }
                                         }
                                     }
-                                }
-
-                                statsCard("Throughput (APS) per Action", isDark = isDark, classes = "full-width", isChart = true) {
-                                    div("chart-container") { id = "chart_aps_$bmId" }
-                                    script {
-                                        val labels = allActions.flatMap { listOf("'$it'", "'$it (Errors)'") }.joinToString(",")
-                                        
-                                        val dataRows = results.map { res ->
-                                            val rowData = allActions.map { actionName ->
-                                                val actionStats = res.userActions.values.find { it.name == actionName }
-                                                val aps = actionStats?.avgAps ?: 0.0
-                                                val errAps = if (actionStats != null && res.duration > 0) actionStats.numFailed.toDouble() / res.duration else 0.0
-                                                "$aps, $errAps"
+                                    statsCard("Average Latency per Action", isDark = isDark, classes = "full-width", isChart = true) {
+                                        div("chart-container") { id = "chart_rt_$bmId" }
+                                        script {
+                                            val allActions = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
+                                            val labels = allActions.joinToString(",") { "'$it'" }
+                                            val dataRows = results.map { res ->
+                                                val rowData = allActions.map { actionName ->
+                                                    val actionStats = res.userActions.values.find { it.name == actionName }
+                                                    if (actionStats != null) (actionStats.avgRt / 1_000_000.0) else "null"
+                                                }.joinToString(",")
+                                                "[${res.rowId}, $rowData]"
                                             }.joinToString(",")
-                                            "[${res.rowId}, $rowData]"
-                                        }.joinToString(",")
 
-                                        unsafe {
-                                            +"""
-                                                createTimeSeriesChart('chart_aps_$bmId', [$labels], [$dataRows], 'Throughput per Action', 'APS');
-                                            """.trimIndent()
-                                        }
-                                    }
-                                }
-
-                                statsCard("Average Latency per Action", isDark = isDark, classes = "full-width", isChart = true) {
-                                    div("chart-container") { id = "chart_rt_$bmId" }
-                                    script {
-                                        val labels = allActions.joinToString(",") { "'$it'" }
-                                        val dataRows = results.map { res ->
-                                            val rowData = allActions.map { actionName ->
-                                                val actionStats = res.userActions.values.find { it.name == actionName }
-                                                if (actionStats != null) (actionStats.avgRt / 1_000_000.0) else "null"
-                                            }.joinToString(",")
-                                            "[${res.rowId}, $rowData]"
-                                        }.joinToString(",")
-
-                                        unsafe {
-                                            +"""
-                                                createTimeSeriesChart('chart_rt_$bmId', [$labels], [$dataRows], 'Avg Latency per Action (ms)', 'ms');
-                                            """.trimIndent()
+                                            unsafe {
+                                                +"""
+                                                    createTimeSeriesChart('chart_rt_$bmId', [$labels], [$dataRows], 'Avg Latency per Action (ms)', 'ms');
+                                                """.trimIndent()
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
 
-                        // Benchmark Configuration Section
-                        h3("w3-container w3-theme-l1 w3-padding w3-margin-top") {
-                            id = "config"
-                            +"Benchmark Configuration"
-                        }
                         div {
+                            id = "config"
+                            h3 {
+                                style = "margin-top: 2rem; border-bottom: 2px solid var(--pico-primary);"
+                                +"Configuration"
+                            }
                             configSection(reportData.config, isDark)
                         }
 
-                        // Tulip Runtime Information Section
-                        h3("w3-container w3-theme-l1 w3-padding w3-margin-top") {
-                            id = "runtime"
-                            +"Tulip Runtime"
-                        }
                         div {
+                            id = "runtime"
+                            h3 {
+                                style = "margin-top: 2rem; border-bottom: 2px solid var(--pico-primary);"
+                                +"Runtime Information"
+                            }
                             runtimeSection(reportData, isDark)
                         }
+                    }
+
+                    footer {
+                        style = "text-align: center; padding: 2rem 0; opacity: 0.5;"
+                        p { +"Generated by Tulip Performance Tool • ${reportData.timestamp}" }
                     }
                 }
             }
@@ -382,12 +366,13 @@ object TulipReportGenerator {
         return out.toString()
     }
 
-    private fun FlowContent.metricCard(label: String, value: String, isDark: Boolean) {
-        div("w3-quarter w3-margin-bottom") {
-            val cardClass = if (isDark) "w3-theme-d4" else "w3-white"
-            div("w3-container w3-card $cardClass") {
-                h6("w3-opacity w3-small w3-margin-top") { +label }
-                p("w3-large") { +value }
+    private fun FlowContent.metricCard(label: String, value: String) {
+        article {
+            style = "padding: 1rem; margin-bottom: 0;"
+            small { style = "opacity: 0.5; display: block;"; +label }
+            strong { 
+                style = "font-size: 1.2rem;"
+                +value 
             }
         }
     }

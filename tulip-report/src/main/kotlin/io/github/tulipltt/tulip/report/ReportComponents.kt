@@ -7,28 +7,27 @@ import java.nio.ByteBuffer
 import java.util.*
 
 fun FlowContent.statsCard(titleText: String, isDark: Boolean = false, classes: String? = null, isChart: Boolean = false, isTable: Boolean = false, tableId: String? = null, block: DIV.() -> Unit) {
-    val cardBg = if (isDark) "w3-theme-d4" else "w3-theme-l5"
-    val cardClasses = if (classes != null) "card w3-card $cardBg w3-margin-bottom $classes" else "card w3-card $cardBg w3-margin-bottom"
-    div(classes = cardClasses) {
-        val headerThemeClass = if (isDark) "w3-theme-d2" else "w3-theme-l2"
-        header(classes = "w3-container $headerThemeClass") {
-            div(classes = "w3-cell-row") {
-                div(classes = "w3-cell w3-cell-middle") {
-                    h5 { +titleText }
-                }
+    article(classes = classes) {
+        header {
+            div(classes = "grid") {
+                div { h5 { +titleText } }
                 if (isChart) {
-                    div(classes = "w3-cell w3-cell-middle w3-right-align") {
-                        span(classes = "w3-tiny w3-opacity") { +"Use toolbox buttons: Pan/Zoom, Reset, Save, Fullscreen" }
+                    div { 
+                        style = "text-align: right"
+                        small { +"Use toolbox buttons: Pan/Zoom, Reset, Save" } 
                     }
                 }
                 if (isTable && tableId != null) {
-                    div(classes = "w3-cell w3-cell-middle w3-right-align") {
+                    div {
+                        style = "text-align: right"
                         val titleSlug = titleText.lowercase().replace(" ", "_").replace("/", "_")
-                        button(classes = "w3-button w3-tiny w3-theme-d2 w3-margin-right") {
+                        button(classes = "outline secondary contrast") {
+                            style = "padding: 4px 8px; font-size: 0.8em; margin-right: 8px;"
                             attributes["onclick"] = "downloadTableAsCSV('$tableId','${titleSlug}.csv')"
                             +"CSV"
                         }
-                        button(classes = "w3-button w3-tiny w3-theme-d2") {
+                        button(classes = "outline secondary contrast") {
+                            style = "padding: 4px 8px; font-size: 0.8em;"
                             attributes["onclick"] = "downloadTableAsJSON('$tableId','${titleSlug}.json')"
                             +"JSON"
                         }
@@ -36,20 +35,18 @@ fun FlowContent.statsCard(titleText: String, isDark: Boolean = false, classes: S
                 }
             }
         }
-        div(classes = "w3-container w3-padding-16") {
+        div {
             block()
         }
     }
 }
 
 fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>, isDark: Boolean, tableId: String = "summaryTable") {
-    val headerClass = if (isDark) "w3-theme-d3" else "w3-theme-l3"
-    val rowClass = if (isDark) "w3-theme-d2" else "w3-theme-l3"
-    div(classes = "stats-table-wrapper") {
-        table(classes = "w3-table-all w3-hoverable") {
+    div(classes = "overflow-auto") {
+        table(classes = "striped") {
             id = tableId
             thead {
-                tr(classes = headerClass) {
+                tr {
                     th { +"Benchmark / Action" }
                     th { +"Users" }
                     th { +"# Actions" }
@@ -68,7 +65,7 @@ fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>,
                     val summary = aggregateResults(results)
                     
                     // Benchmark Header Row
-                    tr(classes = rowClass) {
+                    tr {
                         td {
                             a(href = "#benchmark_$bmId") {
                                 b { +name }
@@ -97,15 +94,15 @@ fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>,
                                     +actionName 
                                 }
                             }
-                            td(classes = "numeric w3-opacity") { +"-" }
-                            td(classes = "numeric w3-opacity") { +actionSummary.numActions.toString() }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +"-" }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +actionSummary.numActions.toString() }
                             td(classes = "numeric") { statusPill(actionSummary.numFailed.toLong()) }
-                            td(classes = "numeric w3-opacity") { +"%.1f".format(actionSummary.avgAps) }
-                            td(classes = "numeric w3-opacity") { +formatDuration(actionSummary.avgRt) }
-                            td(classes = "numeric w3-opacity") { +formatDuration(actionSummary.p50) }
-                            td(classes = "numeric w3-opacity") { +formatDuration(actionSummary.p90) }
-                            td(classes = "numeric w3-opacity") { +formatDuration(actionSummary.p99) }
-                            td(classes = "numeric w3-opacity") { +formatDuration(actionSummary.maxRt) }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +"%.1f".format(actionSummary.avgAps) }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.avgRt) }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.p50) }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.p90) }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.p99) }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.maxRt) }
                         }
                     }
                 }
@@ -117,11 +114,11 @@ fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>,
 fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>, tableId: String = "detailedTable") {
     val allActionNames = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
     
-    div(classes = "stats-table-wrapper") {
-        table(classes = "w3-table-all w3-hoverable") {
+    div(classes = "overflow-auto") {
+        table(classes = "striped") {
             id = tableId
             thead {
-                tr(classes = "w3-theme-d3") {
+                tr {
                     th { +"Action / Iteration" }
                     th { +"# Count" }
                     th { +"# Failed" }
@@ -139,7 +136,7 @@ fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>, tableId: 
                     val actionSummary = aggregateActionResults(actionName, actionResults)
                     
                     // Action Summary Row
-                    tr(classes = "w3-theme-l4") {
+                    tr {
                         td { b { +"Summary: $actionName" } }
                         td(classes = "numeric") { +actionSummary.numActions.toString() }
                         td(classes = "numeric") { statusPill(actionSummary.numFailed.toLong()) }
@@ -161,14 +158,14 @@ fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>, tableId: 
                                         +"Iteration ${res.rowId + 1}"
                                     }
                                 }
-                                td(classes = "numeric w3-opacity") { +actionStats.numActions.toString() }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +actionStats.numActions.toString() }
                                 td(classes = "numeric") { statusPill(actionStats.numFailed.toLong()) }
-                                td(classes = "numeric w3-opacity") { +"%.1f".format(actionStats.avgAps) }
-                                td(classes = "numeric w3-opacity") { +formatDuration(actionStats.avgRt) }
-                                td(classes = "numeric w3-opacity") { +formatDuration(actionStats.percentilesRt["50.0"] ?: 0.0) }
-                                td(classes = "numeric w3-opacity") { +formatDuration(actionStats.percentilesRt["90.0"] ?: 0.0) }
-                                td(classes = "numeric w3-opacity") { +formatDuration(actionStats.percentilesRt["99.0"] ?: 0.0) }
-                                td(classes = "numeric w3-opacity") { +formatDuration(actionStats.maxRt) }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +"%.1f".format(actionStats.avgAps) }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.avgRt) }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.percentilesRt["50.0"] ?: 0.0) }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.percentilesRt["90.0"] ?: 0.0) }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.percentilesRt["99.0"] ?: 0.0) }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.maxRt) }
                             }
                         }
                     }
@@ -176,7 +173,7 @@ fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>, tableId: 
                 
                 val summary = aggregateResults(results)
                 // Overall Benchmark Row
-                tr(classes = "w3-theme-d1") {
+                tr {
                     td { b { +"OVERALL BENCHMARK" } }
                     td(classes = "numeric") { +summary.numActions.toString() }
                     td(classes = "numeric") { statusPill(summary.numFailed.toLong()) }
@@ -194,9 +191,9 @@ fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>, tableId: 
 
 private fun TD.statusPill(failed: Long) {
     if (failed > 0) {
-        span(classes = "w3-tag w3-round w3-red") { +failed.toString() }
+        span(classes = "pill pill-fail") { +failed.toString() }
     } else {
-        span(classes = "w3-tag w3-round w3-theme") { +"0" }
+        span(classes = "pill pill-pass") { +"0" }
     }
 }
 
@@ -276,8 +273,8 @@ fun aggregateActionResults(name: String, actionStatsList: List<ActionStatResult>
 fun FlowContent.configSection(config: TulipConfig, isDark: Boolean = false) {
     statsCard(titleText = "General Config", isDark = isDark, classes = "full-width") {
         val actions = config.actions
-        div(classes = "stats-table-wrapper") {
-            table(classes = "w3-table-all") {
+        div(classes = "overflow-auto") {
+            table {
                 tbody {
                     tr { td { +"Description" }; td { +actions.description } }
                     tr { td { +"User Class" }; td { +actions.userClass } }
@@ -287,10 +284,10 @@ fun FlowContent.configSection(config: TulipConfig, isDark: Boolean = false) {
             }
         }
         
-        h5(classes = "w3-text-theme w3-margin-top") { b { +"User Parameters" } }
-        div(classes = "stats-table-wrapper") {
-            table(classes = "w3-table-all") {
-                thead { tr(classes = "w3-light-grey") { th { +"Key" }; th { +"Value" } } }
+        h5 { b { +"User Parameters" } }
+        div(classes = "overflow-auto") {
+            table {
+                thead { tr { th { +"Key" }; th { +"Value" } } }
                 tbody {
                     actions.userParams.forEach { (k, v) ->
                         tr { td { +k }; td { +v.toString() } }
@@ -299,10 +296,10 @@ fun FlowContent.configSection(config: TulipConfig, isDark: Boolean = false) {
             }
         }
 
-        h5(classes = "w3-text-theme w3-margin-top") { b { +"User Actions" } }
-        div(classes = "stats-table-wrapper") {
-            table(classes = "w3-table-all") {
-                thead { tr(classes = "w3-light-grey") { th { +"ID" }; th { +"Description" } } }
+        h5 { b { +"User Actions" } }
+        div(classes = "overflow-auto") {
+            table {
+                thead { tr { th { +"ID" }; th { +"Description" } } }
                 tbody {
                     actions.userActions.forEach { (k, v) ->
                         tr { td { +k.toString() }; td { +v } }
@@ -315,9 +312,9 @@ fun FlowContent.configSection(config: TulipConfig, isDark: Boolean = false) {
     if (config.contexts.isNotEmpty()) {
         statsCard(titleText = "Contexts", isDark = isDark, classes = "full-width") {
             config.contexts.forEach { (name, ctx) ->
-                h5(classes = "w3-text-theme w3-margin-top") { b { +name } }
-                div(classes = "stats-table-wrapper") {
-                    table(classes = "w3-table-all") {
+                h5 { b { +name } }
+                div(classes = "overflow-auto") {
+                    table {
                         tbody {
                             tr { td { +"Enabled" }; td { +ctx.enabled.toString() } }
                             tr { td { +"Num Users" }; td { +ctx.numUsers.toString() } }
@@ -330,9 +327,9 @@ fun FlowContent.configSection(config: TulipConfig, isDark: Boolean = false) {
 
     statsCard(titleText = "Benchmark Configurations", isDark = isDark, classes = "full-width") {
         config.benchmarks.forEach { (name, cfg) ->
-            h5(classes = "w3-text-theme w3-margin-top") { b { +name } }
-            div(classes = "stats-table-wrapper") {
-                table(classes = "w3-table-all") {
+            h5 { b { +name } }
+            div(classes = "overflow-auto") {
+                table {
                     tbody {
                         tr { td { +"Enabled" }; td { +cfg.enabled.toString() } }
                         tr { td { +"APS Rate" }; td { +"%.1f".format(cfg.throughputRate) } }
@@ -360,17 +357,18 @@ fun FlowContent.configSection(config: TulipConfig, isDark: Boolean = false) {
     if (config.workflows.isNotEmpty()) {
         statsCard(titleText = "Workflows", isDark = isDark, classes = "full-width") {
             config.workflows.forEach { (name, flow) ->
-                h5(classes = "w3-text-theme w3-margin-top") { b { +name } }
-                div(classes = "stats-table-wrapper") {
-                    table(classes = "w3-table-all") {
-                        thead { tr(classes = "w3-light-grey") { th { +"From ID" }; th { +"To ID (Weight)" } } }
+                h5 { b { +name } }
+                div(classes = "overflow-auto") {
+                    table {
+                        thead { tr { th { +"From ID" }; th { +"To ID (Weight)" } } }
                         tbody {
                             flow.forEach { (fromId, transitions) ->
                                 tr {
                                     td { +fromId }
                                     td {
                                         transitions.forEach { (toId, weight) ->
-                                            span(classes = "w3-margin-right") { 
+                                            span { 
+                                                style = "margin-right: 16px;"
                                                 +"$toId ($weight)" 
                                             }
                                         }
@@ -389,9 +387,9 @@ fun FlowContent.runtimeSection(reportData: ReportData, isDark: Boolean = false) 
     statsCard(titleText = "Tulip Runtime Information", isDark = isDark, classes = "full-width") {
         val java = reportData.java
         
-        h5(classes = "w3-text-theme w3-margin-top") { b { +"Java System Properties" } }
-        div(classes = "stats-table-wrapper") {
-            table(classes = "w3-table-all") {
+        h5 { b { +"Java System Properties" } }
+        div(classes = "overflow-auto") {
+            table {
                 tbody {
                     java.systemProperties.forEach { (k, v) ->
                         tr { td { +k }; td { +v } }
@@ -400,13 +398,13 @@ fun FlowContent.runtimeSection(reportData: ReportData, isDark: Boolean = false) 
             }
         }
 
-        h5(classes = "w3-text-theme w3-margin-top") { b { +"Java Runtime Options" } }
-        div(classes = "stats-table-wrapper") {
-            table(classes = "w3-table-all") {
+        h5 { b { +"Java Runtime Options" } }
+        div(classes = "overflow-auto") {
+            table {
                 tbody {
                     java.runtimeOptions.forEach { opt: String ->
                         tr { 
-                            td(classes = "numeric w3-opacity") { style="text-align:left"; +"Option" }
+                            td(classes = "numeric") { style="text-align:left; opacity: 0.5;"; +"Option" }
                             td { 
                                 style = "word-break: break-all;"
                                 span(classes = "numeric") { +opt }
@@ -426,4 +424,18 @@ fun formatDuration(nanos: Double): String {
         nanos < 1_000_000_000 -> "%.1f ms".format(nanos / 1_000_000.0)
         else -> "%.2f s".format(nanos / 1_000_000_000.0)
     }
+}
+
+object ReportIcons {
+    private fun iconBase(path: String) = """
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+            $path
+        </svg>
+    """.trimIndent()
+
+    val DASHBOARD = iconBase("""<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>""")
+    val ACTIVITY = iconBase("""<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>""")
+    val SETTINGS = iconBase("""<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>""")
+    val INFO = iconBase("""<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>""")
+    val THEME = iconBase("""<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>""")
 }
