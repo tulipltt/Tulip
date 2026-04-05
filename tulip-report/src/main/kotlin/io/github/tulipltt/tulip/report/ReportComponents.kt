@@ -47,16 +47,20 @@ fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>,
             id = tableId
             thead {
                 tr {
-                    th { +"Benchmark / Action" }
-                    th { +"Users" }
-                    th { +"# Actions" }
-                    th { +"# Failed" }
-                    th { +"Avg APS" }
-                    th { +"Avg RT" }
-                    th { +"p50" }
-                    th { +"p90" }
-                    th { +"p99" }
-                    th { +"Max" }
+                    th { +"Benchmark" }
+                    th { +"Run Id" }
+                    th { +"#N" }
+                    th { +"#F" }
+                    th { +"Time" }
+                    th { +"APS" }
+                    th { +"AVG_RT" }
+                    th { +"SD_RT" }
+                    th { +"MIN_RT" }
+                    th { +"P50_RT" }
+                    th { +"P90_RT" }
+                    th { +"P95_RT" }
+                    th { +"P99_RT" }
+                    th { +"MAX_RT" }
                 }
             }
             tbody {
@@ -71,13 +75,17 @@ fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>,
                                 b { +name }
                             }
                         }
-                        td(classes = "numeric") { +summary.numUsers.toString() }
+                        td(classes = "numeric") { +"-" }
                         td(classes = "numeric") { +summary.numActions.toString() }
                         td(classes = "numeric") { statusPill(summary.numFailed.toLong()) }
+                        td(classes = "numeric") { +formatTime(summary.duration) }
                         td(classes = "numeric") { +"%.1f".format(summary.avgAps) }
                         td(classes = "numeric") { +formatDuration(summary.avgRt) }
+                        td(classes = "numeric") { +formatDuration(summary.sdevRt) }
+                        td(classes = "numeric") { +formatDuration(summary.minRt) }
                         td(classes = "numeric") { +formatDuration(summary.p50) }
                         td(classes = "numeric") { +formatDuration(summary.p90) }
+                        td(classes = "numeric") { +formatDuration(summary.p95) }
                         td(classes = "numeric") { +formatDuration(summary.p99) }
                         td(classes = "numeric") { +formatDuration(summary.maxRt) }
                     }
@@ -85,7 +93,7 @@ fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>,
                     val allActionNames = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
                     allActionNames.forEach { actionName ->
                         val actionResults = results.mapNotNull { it.userActions.values.find { a -> a.name == actionName } }
-                        val actionSummary = aggregateActionResults(actionName, actionResults)
+                        val actionSummary = aggregateActionResults(actionName, actionResults, summary.duration)
                         // Action Row
                         tr {
                             td { 
@@ -97,10 +105,14 @@ fun FlowContent.summaryTable(groupedResults: Map<String, List<BenchmarkResult>>,
                             td(classes = "numeric") { style = "opacity: 0.5;"; +"-" }
                             td(classes = "numeric") { style = "opacity: 0.5;"; +actionSummary.numActions.toString() }
                             td(classes = "numeric") { statusPill(actionSummary.numFailed.toLong()) }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +formatTime(actionSummary.duration) }
                             td(classes = "numeric") { style = "opacity: 0.5;"; +"%.1f".format(actionSummary.avgAps) }
                             td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.avgRt) }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.sdevRt) }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.minRt) }
                             td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.p50) }
                             td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.p90) }
+                            td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.p95) }
                             td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.p99) }
                             td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionSummary.maxRt) }
                         }
@@ -120,30 +132,41 @@ fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>, tableId: 
             thead {
                 tr {
                     th { +"Action / Iteration" }
-                    th { +"# Count" }
-                    th { +"# Failed" }
-                    th { +"Avg APS" }
-                    th { +"Avg RT" }
-                    th { +"p50" }
-                    th { +"p90" }
-                    th { +"p99" }
-                    th { +"Max" }
+                    th { +"Run Id" }
+                    th { +"#N" }
+                    th { +"#F" }
+                    th { +"Time" }
+                    th { +"APS" }
+                    th { +"AVG_RT" }
+                    th { +"SD_RT" }
+                    th { +"MIN_RT" }
+                    th { +"P50_RT" }
+                    th { +"P90_RT" }
+                    th { +"P95_RT" }
+                    th { +"P99_RT" }
+                    th { +"MAX_RT" }
                 }
             }
             tbody {
                 allActionNames.forEach { actionName ->
                     val actionResults = results.mapNotNull { it.userActions.values.find { a -> a.name == actionName } }
-                    val actionSummary = aggregateActionResults(actionName, actionResults)
+                    val totalDuration = results.sumOf { it.duration }
+                    val actionSummary = aggregateActionResults(actionName, actionResults, totalDuration)
                     
                     // Action Summary Row
                     tr {
                         td { b { +"Summary: $actionName" } }
+                        td(classes = "numeric") { +"-" }
                         td(classes = "numeric") { +actionSummary.numActions.toString() }
                         td(classes = "numeric") { statusPill(actionSummary.numFailed.toLong()) }
+                        td(classes = "numeric") { +formatTime(actionSummary.duration) }
                         td(classes = "numeric") { +"%.1f".format(actionSummary.avgAps) }
                         td(classes = "numeric") { +formatDuration(actionSummary.avgRt) }
+                        td(classes = "numeric") { +formatDuration(actionSummary.sdevRt) }
+                        td(classes = "numeric") { +formatDuration(actionSummary.minRt) }
                         td(classes = "numeric") { +formatDuration(actionSummary.p50) }
                         td(classes = "numeric") { +formatDuration(actionSummary.p90) }
+                        td(classes = "numeric") { +formatDuration(actionSummary.p95) }
                         td(classes = "numeric") { +formatDuration(actionSummary.p99) }
                         td(classes = "numeric") { +formatDuration(actionSummary.maxRt) }
                     }
@@ -158,12 +181,17 @@ fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>, tableId: 
                                         +"Iteration ${res.rowId + 1}"
                                     }
                                 }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +(res.rowId + 1).toString() }
                                 td(classes = "numeric") { style = "opacity: 0.5;"; +actionStats.numActions.toString() }
                                 td(classes = "numeric") { statusPill(actionStats.numFailed.toLong()) }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +formatTime(res.duration) }
                                 td(classes = "numeric") { style = "opacity: 0.5;"; +"%.1f".format(actionStats.avgAps) }
                                 td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.avgRt) }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.sdevRt) }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.minRt) }
                                 td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.percentilesRt["50.0"] ?: 0.0) }
                                 td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.percentilesRt["90.0"] ?: 0.0) }
+                                td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.percentilesRt["95.0"] ?: 0.0) }
                                 td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.percentilesRt["99.0"] ?: 0.0) }
                                 td(classes = "numeric") { style = "opacity: 0.5;"; +formatDuration(actionStats.maxRt) }
                             }
@@ -175,12 +203,17 @@ fun FlowContent.detailedBenchmarkTable(results: List<BenchmarkResult>, tableId: 
                 // Overall Benchmark Row
                 tr {
                     td { b { +"OVERALL BENCHMARK" } }
+                    td(classes = "numeric") { +"-" }
                     td(classes = "numeric") { +summary.numActions.toString() }
                     td(classes = "numeric") { statusPill(summary.numFailed.toLong()) }
+                    td(classes = "numeric") { +formatTime(summary.duration) }
                     td(classes = "numeric") { +"%.1f".format(summary.avgAps) }
                     td(classes = "numeric") { +formatDuration(summary.avgRt) }
+                    td(classes = "numeric") { +formatDuration(summary.sdevRt) }
+                    td(classes = "numeric") { +formatDuration(summary.minRt) }
                     td(classes = "numeric") { +formatDuration(summary.p50) }
                     td(classes = "numeric") { +formatDuration(summary.p90) }
+                    td(classes = "numeric") { +formatDuration(summary.p95) }
                     td(classes = "numeric") { +formatDuration(summary.p99) }
                     td(classes = "numeric") { +formatDuration(summary.maxRt) }
                 }
@@ -197,20 +230,107 @@ private fun TD.statusPill(failed: Long) {
     }
 }
 
+fun formatTime(seconds: Double): String {
+    return "%.1f s".format(seconds)
+}
+
+fun FlowContent.llqPercentileTable(results: List<BenchmarkResult>, tableId: String) {
+    val lastRes = results.last()
+    div(classes = "overflow-auto") {
+        style = "max-height: 400px;"
+        table(classes = "striped") {
+            id = tableId
+            thead {
+                tr {
+                    th { +"Value" }
+                    th { +"Percentile" }
+                    th { +"Total Count" }
+                    th { +"Bucket Size" }
+                    th { +"Percentage" }
+                    th { +"Above Count" }
+                }
+            }
+            tbody {
+                // Simplified LLQ representation based on report.py logic
+                val distributionPoints = listOf(0.0, 50.0, 75.0, 90.0, 95.0, 99.0, 99.9, 99.99, 99.999, 100.0)
+                val totalCount = lastRes.numActions.toLong()
+                
+                distributionPoints.forEach { p ->
+                    val valueNanos = if (p == 100.0) lastRes.maxRt else lastRes.percentilesRt[p.toString()] ?: 0.0
+                    val countAtP = (totalCount * (p / 100.0)).toLong()
+                    tr {
+                        td(classes = "numeric") { +formatDuration(valueNanos) }
+                        td(classes = "numeric") { +"%.6f".format(p / 100.0) }
+                        td(classes = "numeric") { +countAtP.toString() }
+                        td(classes = "numeric") { +"-" }
+                        td(classes = "numeric") { +"%.3f".format(p) }
+                        td(classes = "numeric") { +(totalCount - countAtP).toString() }
+                    }
+                }
+            }
+        }
+    }
+}
+
+fun FlowContent.hdrPercentileTable(results: List<BenchmarkResult>, tableId: String) {
+    val lastRes = results.last()
+    val base64 = lastRes.hdrHistogramRt ?: return
+    val bytes = Base64.getDecoder().decode(base64)
+    val histogram = Histogram.decodeFromCompressedByteBuffer(ByteBuffer.wrap(bytes), 0)
+
+    div(classes = "overflow-auto") {
+        style = "max-height: 400px;"
+        table(classes = "striped") {
+            id = tableId
+            thead {
+                tr {
+                    th { +"Value" }
+                    th { +"Percentile" }
+                    th { +"TotalCount" }
+                    th { +"1/(1-Percentile)" }
+                    th { +"AboveCount" }
+                }
+            }
+            tbody {
+                val totalCount = histogram.totalCount
+                // Matching report.py logic: output reverse order for high detail in tail
+                val data = mutableListOf<Triple<Double, Double, Long>>()
+                histogram.percentiles(5).forEach { iv ->
+                    data.add(Triple(iv.percentileLevelIteratedTo, iv.valueIteratedTo.toDouble(), iv.totalCountToThisValue))
+                }
+                data.asReversed().forEach { (p, value, count) ->
+                    val factor = if (p < 100.0) "%.2f".format(100.0 / (100.0 - p)) else ""
+                    tr {
+                        td(classes = "numeric") { +formatDuration(value) }
+                        td(classes = "numeric") { +"%.12f".format(p / 100.0) }
+                        td(classes = "numeric") { +count.toString() }
+                        td(classes = "numeric") { +factor }
+                        td(classes = "numeric") { +(totalCount - count).toString() }
+                    }
+                }
+            }
+        }
+    }
+}
+
 data class AggregatedStats(
     val numUsers: Int,
     val numActions: Long,
     val numFailed: Long,
+    val duration: Double,
     val avgAps: Double,
     val avgRt: Double,
+    val sdevRt: Double,
+    val minRt: Double,
     val p50: Double,
     val p90: Double,
+    val p95: Double,
     val p99: Double,
     val maxRt: Double
 )
 
 fun aggregateResults(results: List<BenchmarkResult>): AggregatedStats {
-    if (results.isEmpty()) return AggregatedStats(0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    if (results.isEmpty()) return AggregatedStats(0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     
     val totalActions = results.sumOf { it.numActions.toLong() }
     val totalFailed = results.sumOf { it.numFailed.toLong() }
@@ -231,17 +351,21 @@ fun aggregateResults(results: List<BenchmarkResult>): AggregatedStats {
         numUsers = results.maxOf { it.numUsers },
         numActions = totalActions,
         numFailed = totalFailed,
+        duration = totalDuration,
         avgAps = if (totalDuration > 0) totalActions / totalDuration else 0.0,
         avgRt = aggregateHistogram.mean,
+        sdevRt = aggregateHistogram.stdDeviation,
+        minRt = aggregateHistogram.minValue.toDouble(),
         p50 = aggregateHistogram.getValueAtPercentile(50.0).toDouble(),
         p90 = aggregateHistogram.getValueAtPercentile(90.0).toDouble(),
+        p95 = aggregateHistogram.getValueAtPercentile(95.0).toDouble(),
         p99 = aggregateHistogram.getValueAtPercentile(99.0).toDouble(),
         maxRt = aggregateHistogram.maxValue.toDouble()
     )
 }
 
-fun aggregateActionResults(name: String, actionStatsList: List<ActionStatResult>): AggregatedStats {
-    if (actionStatsList.isEmpty()) return AggregatedStats(0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+fun aggregateActionResults(name: String, actionStatsList: List<ActionStatResult>, totalDuration: Double): AggregatedStats {
+    if (actionStatsList.isEmpty()) return AggregatedStats(0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     
     val totalActions = actionStatsList.sumOf { it.numActions.toLong() }
     val totalFailed = actionStatsList.sumOf { it.numFailed.toLong() }
@@ -261,10 +385,14 @@ fun aggregateActionResults(name: String, actionStatsList: List<ActionStatResult>
         numUsers = 0,
         numActions = totalActions,
         numFailed = totalFailed,
-        avgAps = if (actionStatsList.size > 0) actionStatsList.sumOf { it.avgAps } / actionStatsList.size else 0.0,
+        duration = totalDuration,
+        avgAps = if (totalDuration > 0) totalActions / totalDuration else 0.0,
         avgRt = aggregateHistogram.mean,
+        sdevRt = aggregateHistogram.stdDeviation,
+        minRt = aggregateHistogram.minValue.toDouble(),
         p50 = aggregateHistogram.getValueAtPercentile(50.0).toDouble(),
         p90 = aggregateHistogram.getValueAtPercentile(90.0).toDouble(),
+        p95 = aggregateHistogram.getValueAtPercentile(95.0).toDouble(),
         p99 = aggregateHistogram.getValueAtPercentile(99.0).toDouble(),
         maxRt = aggregateHistogram.maxValue.toDouble()
     )

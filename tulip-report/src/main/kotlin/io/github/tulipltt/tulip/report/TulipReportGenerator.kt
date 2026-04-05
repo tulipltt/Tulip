@@ -3,7 +3,10 @@ package io.github.tulipltt.tulip.report
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import java.io.File
+import java.nio.ByteBuffer
+import java.util.*
 import kotlinx.serialization.json.Json
+import org.HdrHistogram.Histogram
 import org.asciidoctor.Asciidoctor
 import org.asciidoctor.Attributes
 import org.asciidoctor.Options
@@ -226,45 +229,45 @@ object TulipReportGenerator {
                                 }
                             }
 
-                            statsCard("Latency Distribution Comparison (All Actions)", isDark = isDark, classes = "full-width", isChart = true) {
+                            statsCard("Percentile Response Time Distribution (All Benchmarks)", isDark = isDark, classes = "full-width", isChart = true) {
                                 div("chart-container") { id = "chart_combined_dist" }
                                 script {
-                                    val seriesLabels = mutableListOf<String>()
+                                    val actionNamesList = mutableListOf<String>()
+                                    val actionHistos = mutableListOf<Histogram>()
+                                    
                                     groupedResults.forEach { (bmName, results) ->
-                                        val actionNames = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
-                                        actionNames.forEach { actionName ->
-                                            seriesLabels.add("'$bmName - $actionName'")
+                                        val lastRes = results.last()
+                                        val names = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
+                                        names.forEach { actionName ->
+                                            actionNamesList.add("$bmName - $actionName")
+                                            val stats = lastRes.userActions.values.find { it.name == actionName }
+                                            val h: Histogram = if (stats?.hdrHistogramRt != null) {
+                                                val bytes = Base64.getDecoder().decode(stats.hdrHistogramRt)
+                                                Histogram.decodeFromCompressedByteBuffer(ByteBuffer.wrap(bytes), 0)
+                                            } else {
+                                                Histogram(3)
+                                            }
+                                            actionHistos.add(h)
                                         }
                                     }
-                                    val labels = seriesLabels.joinToString(",")
+                                    
+                                    val labels = actionNamesList.joinToString(",") { "'$it'" }
+                                    
+                                    // Use a unified set of percentile points for the chart
+                                    val commonPoints = mutableSetOf<Double>()
+                                    actionHistos.forEach { h: Histogram ->
+                                        h.percentiles(5).forEach { commonPoints.add(it.percentileLevelIteratedTo) }
+                                    }
+                                    val sortedPoints = commonPoints.toList().sorted()
 
-                                    val allPercentiles = reportData.results
-                                        .flatMap { it.percentilesRt.keys }
-                                        .filter { it.toDoubleOrNull() != null }
-                                        .map { it.toDouble() }
-                                        .filter { it >= 50.0 }
-                                        .distinct()
-                                        .sorted()
-
-                                    val dataRows = allPercentiles.map { p ->
-                                        val rowData = mutableListOf<String>()
-                                        groupedResults.forEach { (_, results) ->
-                                            val lastRes = results.last()
-                                            val actionNames = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
-                                            actionNames.forEach { actionName ->
-                                                val actionStats = lastRes.userActions.values.find { it.name == actionName }
-                                                val valNanos = if (p == 100.0) {
-                                                    actionStats?.maxRt
-                                                } else {
-                                                    actionStats?.percentilesRt?.get(p.toString()) ?: 
-                                                    actionStats?.percentilesRt?.get(p.toInt().toString() + ".0")
-                                                }
-                                                val valMs = if (valNanos != null) (valNanos / 1_000_000.0) else "null"
-                                                rowData.add(valMs.toString())
-                                            }
+                                    val dataRows = sortedPoints.joinToString(",") { p ->
+                                        val x = if (p < 100.0) 100.0 / (100.0 - p) else 1000000000.0
+                                        val rowData = actionHistos.joinToString(",") { h ->
+                                            val valNanos = h.getValueAtPercentile(p)
+                                            (valNanos / 1_000_000.0).toString()
                                         }
-                                        "[$p, ${rowData.joinToString(",")}]"
-                                    }.joinToString(",")
+                                        "[$x, $rowData]"
+                                    }
 
                                     unsafe {
                                         +"""
@@ -331,6 +334,58 @@ object TulipReportGenerator {
                                                     createTimeSeriesChart('chart_rt_$bmId', [$labels], [$dataRows], 'Avg Latency per Action (ms)', 'ms');
                                                 """.trimIndent()
                                             }
+                                        }
+                                    }
+
+                                    statsCard("Percentile Response Time Distribution", isDark = isDark, classes = "full-width", isChart = true) {
+                                        div("chart-container") { id = "chart_dist_$bmId" }
+                                        script {
+                                            val lastRes = results.last()
+                                            val allActions = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
+                                            val labels = allActions.joinToString(",") { "'$it'" }
+                                            
+                                            val actionHistos = allActions.map { actionName ->
+                                                val stats = lastRes.userActions.values.find { it.name == actionName }
+                                                if (stats?.hdrHistogramRt != null) {
+                                                    val bytes = Base64.getDecoder().decode(stats.hdrHistogramRt)
+                                                    Histogram.decodeFromCompressedByteBuffer(ByteBuffer.wrap(bytes), 0)
+                                                } else {
+                                                    Histogram(3)
+                                                }
+                                            }
+                                            
+                                            val commonPoints = mutableSetOf<Double>()
+                                            actionHistos.forEach { h: Histogram ->
+                                                h.percentiles(5).forEach { commonPoints.add(it.percentileLevelIteratedTo) }
+                                            }
+                                            val sortedPoints = commonPoints.toList().sorted()
+
+                                            val dataPoints = sortedPoints.joinToString(",") { p ->
+                                                val x = if (p < 100.0) 100.0 / (100.0 - p) else 1000000000.0
+                                                val rowData = actionHistos.joinToString(",") { h ->
+                                                    val valNanos = h.getValueAtPercentile(p)
+                                                    (valNanos / 1_000_000.0).toString()
+                                                }
+                                                "[$x, $rowData]"
+                                            }
+                                            
+                                            unsafe {
+                                                +"""
+                                                    createPercentileChart('chart_dist_$bmId', [$labels], [$dataPoints], 'Tail Latency per Action (ms)', 'ms');
+                                                """.trimIndent()
+                                            }
+                                        }
+                                    }
+
+                                    details {
+                                        summary { +"View Percentile Distribution Tables (LLQ & HDR)" }
+                                        
+                                        statsCard("LLQ Percentile Distribution", isDark = isDark, classes = "full-width", isTable = true, tableId = "llq_table_$bmId") {
+                                            llqPercentileTable(results, "llq_table_$bmId")
+                                        }
+                                        
+                                        statsCard("HDR Percentile Distribution", isDark = isDark, classes = "full-width", isTable = true, tableId = "hdr_table_$bmId") {
+                                            hdrPercentileTable(results, "hdr_table_$bmId")
                                         }
                                     }
                                 }

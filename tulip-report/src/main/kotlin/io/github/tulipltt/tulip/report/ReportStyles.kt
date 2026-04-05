@@ -153,6 +153,43 @@ object ReportStyles {
             opacity: 0.8;
             flex-shrink: 0;
         }
+
+        /* Sticky Table Headers */
+        thead th {
+            position: sticky;
+            top: 0;
+            background-color: var(--pico-background-color) !important;
+            z-index: 10;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Expandable Sections */
+        details {
+            border: 1px solid var(--pico-muted-border-color);
+            border-radius: var(--pico-border-radius);
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+        }
+        details summary {
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+        details summary::before {
+            content: "▶";
+            transition: transform 0.2s ease;
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
         """.trimIndent()
     }
 }

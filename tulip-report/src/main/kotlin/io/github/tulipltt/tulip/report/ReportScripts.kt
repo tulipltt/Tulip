@@ -163,8 +163,47 @@ object ReportScripts {
 
             const option = {
                 title: { text: title },
-                tooltip: { trigger: 'axis' },
-                xAxis: { name: 'Percentile', type: 'value', min: 50, max: 100 },
+                tooltip: { 
+                    trigger: 'axis',
+                    formatter: (params) => {
+                        const x = params[0].value[0];
+                        let pText = "";
+                        if (x >= 1000000000) {
+                            pText = "100% (Max)";
+                        } else {
+                            const p = 100.0 - (100.0 / x);
+                            pText = `${'$'}{p.toFixed(6)}%`;
+                        }
+                        let res = `Percentile: ${'$'}{pText} (1/(1-P): ${'$'}{x.toFixed(2)})<br/>`;
+                        params.forEach(param => {
+                            const val = param.value[param.encode.y[0]];
+                            const valText = (val !== null && val !== undefined) ? val.toFixed(2) : "N/A";
+                            res += `${'$'}{param.marker} ${'$'}{param.seriesName}: ${'$'}{valText} ${'$'}{unit}<br/>`;
+                        });
+                        return res;
+                    }
+                },
+                xAxis: { 
+                    name: '1/(1-Percentile)', 
+                    type: 'log',
+                    min: 1,
+                    max: 1000000000,
+                    axisLabel: {
+                        formatter: (value) => {
+                            if (value === 1) return '0%';
+                            if (value === 10) return '90%';
+                            if (value === 100) return '99%';
+                            if (value === 1000) return '99.9%';
+                            if (value === 10000) return '99.99%';
+                            if (value === 100000) return '99.999%';
+                            if (value === 1000000) return '99.9999%';
+                            if (value === 10000000) return '99.99999%';
+                            if (value === 100000000) return '99.999999%';
+                            if (value === 1000000000) return 'Max';
+                            return '';
+                        }
+                    }
+                },
                 yAxis: { name: 'Latency (' + unit + ')', type: 'value' },
                 toolbox: {
                     show: true,
