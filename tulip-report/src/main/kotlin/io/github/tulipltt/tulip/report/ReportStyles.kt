@@ -87,6 +87,10 @@ object ReportStyles {
         article.fullscreen .chart-container {
             height: calc(100vh - 150px);
         }
+        article.fullscreen .overflow-auto {
+            max-height: calc(100vh - 120px) !important;
+            border: 1px solid var(--pico-muted-border-color);
+        }
 
         /* Professional Sidebar Enhancements */
         aside {

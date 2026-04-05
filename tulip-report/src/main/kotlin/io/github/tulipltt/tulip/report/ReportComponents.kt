@@ -19,15 +19,23 @@ fun FlowContent.statsCard(titleText: String, isDark: Boolean = false, classes: S
                 }
                 if (isTable && tableId != null) {
                     div {
-                        style = "text-align: right"
+                        style = "text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 8px;"
                         val titleSlug = titleText.lowercase().replace(" ", "_").replace("/", "_")
+                        
                         button(classes = "outline secondary contrast") {
-                            style = "padding: 4px 8px; font-size: 0.8em; margin-right: 8px;"
+                            style = "padding: 4px 8px; font-size: 0.8em; margin: 0; display: flex; align-items: center;"
+                            attributes["onclick"] = "toggleFullscreen('$tableId')"
+                            attributes["title"] = "Maximize Table"
+                            unsafe { +ReportIcons.MAXIMIZE }
+                        }
+
+                        button(classes = "outline secondary contrast") {
+                            style = "padding: 4px 8px; font-size: 0.8em; margin: 0;"
                             attributes["onclick"] = "downloadTableAsCSV('$tableId','${titleSlug}.csv')"
                             +"CSV"
                         }
                         button(classes = "outline secondary contrast") {
-                            style = "padding: 4px 8px; font-size: 0.8em;"
+                            style = "padding: 4px 8px; font-size: 0.8em; margin: 0;"
                             attributes["onclick"] = "downloadTableAsJSON('$tableId','${titleSlug}.json')"
                             +"JSON"
                         }
@@ -566,4 +574,5 @@ object ReportIcons {
     val SETTINGS = iconBase("""<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>""")
     val INFO = iconBase("""<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>""")
     val THEME = iconBase("""<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>""")
+    val MAXIMIZE = iconBase("""<path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/>""")
 }
