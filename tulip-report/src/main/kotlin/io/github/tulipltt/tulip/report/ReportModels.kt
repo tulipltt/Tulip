@@ -3,12 +3,18 @@ package io.github.tulipltt.tulip.report
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Information about the Java Runtime Environment used during the benchmark.
+ */
 @Serializable
 data class JavaInfo(
     @SerialName("jvm.system.properties") val systemProperties: Map<String, String> = emptyMap(),
     @SerialName("jvm.runtime.options") val runtimeOptions: List<String> = emptyList(),
 )
 
+/**
+ * Statistics for a specific user action within a benchmark iteration.
+ */
 @Serializable
 data class ActionStatResult(
     val name: String? = null,
@@ -25,6 +31,9 @@ data class ActionStatResult(
     @SerialName("hdr_histogram_rt") val hdrHistogramRt: String = "",
 )
 
+/**
+ * Results for a single benchmark iteration.
+ */
 @Serializable
 data class BenchmarkResult(
     @SerialName("context_name") val contextName: String = "",
@@ -53,7 +62,6 @@ data class BenchmarkResult(
     @SerialName("avg_wt") val avgWt: Double = 0.0,
     @SerialName("max_wt") val maxWt: Double = 0.0,
 
-    // Global action stats (flattened from ActionStatResult)
     @SerialName("num_actions") val numActions: Int = 0,
     @SerialName("num_failed") val numFailed: Int = 0,
     @SerialName("avg_aps") val avgAps: Double = 0.0,
@@ -66,4 +74,35 @@ data class BenchmarkResult(
     @SerialName("percentiles_rt") val percentilesRt: Map<String, Double> = emptyMap(),
     @SerialName("hdr_histogram_rt") val hdrHistogramRt: String = "",
     @SerialName("user_actions") val userActions: Map<String, ActionStatResult> = emptyMap(),
+)
+
+/**
+ * Data class representing aggregated statistics for a benchmark or action.
+ */
+data class AggregatedStats(
+    val numUsers: Int,
+    val numActions: Long,
+    val numFailed: Long,
+    val duration: Double,
+    val avgAps: Double,
+    val avgRt: Double,
+    val sdevRt: Double,
+    val minRt: Double,
+    val p50: Double,
+    val p90: Double,
+    val p95: Double,
+    val p99: Double,
+    val maxRt: Double
+)
+
+/**
+ * Configuration for chart rendering.
+ */
+data class ReportChartConfig(
+    val id: String,
+    val labels: String,
+    val data: String,
+    val title: String,
+    val unit: String,
+    val type: String
 )

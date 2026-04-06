@@ -1,8 +1,15 @@
 package io.github.tulipltt.tulip.report
 
+/**
+ * Provides the CSS styles used in the Tulip performance report.
+ * This includes layout, typography, and theme-specific adjustments.
+ */
 object ReportStyles {
-    fun getStyles(theme: String, mode: String): String {
-        return """
+    /**
+     * The complete CSS bundle for the report.
+     */
+    val styles: String =
+        """
         :root {
             --pico-font-family: system-ui, -apple-system, sans-serif;
         }
@@ -24,23 +31,43 @@ object ReportStyles {
             padding: var(--pico-spacing);
             z-index: 1000;
             transition: transform 0.3s ease;
+            background-color: var(--pico-card-background-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        aside header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--pico-muted-border-color);
+            margin-bottom: 1rem;
+        }
+
+        aside nav {
+            padding: 0 0.75rem;
         }
 
         aside nav ul {
             flex-direction: column;
             align-items: flex-start;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 4px;
         }
+        
         aside nav li {
             width: 100%;
             padding: 0;
         }
+        
         aside nav a {
             display: block;
             width: 100%;
             padding: calc(var(--pico-spacing) * 0.5) 0;
         }
 
-        main {            flex: 1;
+        main {            
+            flex: 1;
             margin-left: 260px;
             padding: var(--pico-spacing);
             min-width: 0; /* Prevent flex overflow */
@@ -64,7 +91,7 @@ object ReportStyles {
             font-size: 0.8em;
             font-weight: bold;
         }
-        .pill-fail { background-color: var(--pico-ins-color); color: white; } /* Using Pico red-ish */
+        .pill-fail { background-color: var(--pico-ins-color); color: white; } 
         .pill-pass { background-color: var(--pico-primary-background); color: white; }
 
         @media (max-width: 992px) {
@@ -90,31 +117,6 @@ object ReportStyles {
         article.fullscreen .overflow-auto {
             max-height: calc(100vh - 120px) !important;
             border: 1px solid var(--pico-muted-border-color);
-        }
-
-        /* Professional Sidebar Enhancements */
-        aside {
-            background-color: var(--pico-card-background-color);
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        aside header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--pico-muted-border-color);
-            margin-bottom: 1rem;
-        }
-
-        aside nav {
-            padding: 0 0.75rem;
-        }
-
-        aside nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            gap: 4px;
         }
 
         .nav-section {
@@ -195,5 +197,4 @@ object ReportStyles {
             transform: rotate(90deg);
         }
         """.trimIndent()
-    }
 }

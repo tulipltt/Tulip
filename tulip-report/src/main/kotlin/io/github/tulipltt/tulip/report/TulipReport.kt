@@ -1,7 +1,7 @@
 package io.github.tulipltt.tulip.report
 
-import java.io.File
 import kotlinx.serialization.json.Json
+import java.io.File
 
 fun createHtmlReport(outputFilename: String) {
     val jsonFile = File(outputFilename)
@@ -9,13 +9,13 @@ fun createHtmlReport(outputFilename: String) {
         println("JSON output file not found: $outputFilename")
         return
     }
-    
+
     // Determine HTML output path from JSON config
     val jsonText = jsonFile.readText()
     val json = Json { ignoreUnknownKeys = true }
     val reportData = json.decodeFromString<ReportData>(jsonText)
     val htmlOutputPath = reportData.config.actions.htmlFilename.ifEmpty { "benchmark_report.html" }
-    
+
     println("Generating HTML report: $htmlOutputPath")
     TulipReportGenerator.createReport(outputFilename, htmlOutputPath)
 }

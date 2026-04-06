@@ -1,17 +1,29 @@
 package io.github.tulipltt.tulip.report
 
+/**
+ * Provides the JavaScript code used in the Tulip performance report.
+ * This includes logic for ECharts initialization, theme toggling,
+ * chart interactivity, and data export.
+ */
 object ReportScripts {
-    fun getScripts(theme: String, mode: String): String {
-        return """
+    /**
+     * The complete JavaScript bundle for the report.
+     */
+    val scripts: String =
+        """
         let echartsTheme = {};
         const charts = new Map();
 
-        // Apply saved theme immediately
+        // Apply saved theme immediately from localStorage to prevent flash of unstyled content
         const savedTheme = localStorage.getItem('tulip-theme');
         if (savedTheme) {
             document.documentElement.setAttribute('data-theme', savedTheme);
         }
 
+        /**
+         * Probes the current CSS variables to determine the colors for ECharts.
+         * This allows the charts to adapt to light/dark modes automatically.
+         */
         function probeColors() {
             const style = getComputedStyle(document.documentElement);
             
@@ -43,11 +55,14 @@ object ReportScripts {
             return { palette, bg, text, muted, border, accent };
         }
 
+        /**
+         * Updates the ECharts theme object based on current CSS variables.
+         */
         function updateEchartsTheme() {
             const colors = probeColors();
             
             echartsTheme = {
-                backgroundColor: 'transparent', // Let CSS handle background
+                backgroundColor: 'transparent',
                 textStyle: { color: colors.text, fontFamily: 'system-ui, sans-serif' },
                 title: { textStyle: { color: colors.text, fontSize: 14, fontWeight: 'bold' } },
                 legend: { 
@@ -84,6 +99,9 @@ object ReportScripts {
             });
         }
 
+        /**
+         * Toggles between light and dark themes.
+         */
         function toggleTheme() {
             const current = document.documentElement.getAttribute('data-theme');
             let next = 'dark';
@@ -102,6 +120,9 @@ object ReportScripts {
             location.reload(); 
         }
 
+        /**
+         * Updates the active state of navigation links in the sidebar.
+         */
         function updateActiveLink() {
             const hash = window.location.hash || '#overview';
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -114,6 +135,9 @@ object ReportScripts {
         window.addEventListener('hashchange', updateActiveLink);
         window.addEventListener('DOMContentLoaded', updateActiveLink);
 
+        /**
+         * Initializes an EChart with the given ID and options.
+         */
         function initChart(chartId, option) {
             const chartDom = document.getElementById(chartId);
             if (!chartDom) return;
@@ -135,23 +159,28 @@ object ReportScripts {
                 mergedOption.tooltip = { ...echartsTheme.tooltip, ...option.tooltip };
             }
             
-            // Handle axis merging - map theme's category/value axis styles to option's xAxis/yAxis
+            // Handle axis merging
             if (option.xAxis) {
-                const axisStyle = option.xAxis.type === 'category' ? echartsTheme.categoryAxis : echartsTheme.valueAxis;
+                const axisStyle = option.xAxis.type === 'category' ? 
+                                  echartsTheme.categoryAxis : echartsTheme.valueAxis;
                 mergedOption.xAxis = { ...axisStyle, ...option.xAxis };
             }
             if (option.yAxis) {
-                const axisStyle = option.yAxis.type === 'category' ? echartsTheme.categoryAxis : echartsTheme.valueAxis;
+                const axisStyle = option.yAxis.type === 'category' ? 
+                                  echartsTheme.categoryAxis : echartsTheme.valueAxis;
                 mergedOption.yAxis = { ...axisStyle, ...option.yAxis };
             }
 
             const myChart = echarts.init(chartDom);
             myChart._chartId = chartId;
-            myChart.setOption(mergedOption, true); // Use notMerge=true to ensure clean state
+            myChart.setOption(mergedOption, true);
             charts.set(chartId, myChart);
             return myChart;
         }
 
+        /**
+         * Creates a percentile distribution chart.
+         */
         function createPercentileChart(chartId, labels, dataRows, title, unit) {
             const series = labels.map((label, index) => ({
                 name: label,
@@ -177,7 +206,8 @@ object ReportScripts {
                         let res = `Percentile: ${'$'}{pText} (1/(1-P): ${'$'}{x.toFixed(2)})<br/>`;
                         params.forEach(param => {
                             const val = param.value[param.encode.y[0]];
-                            const valText = (val !== null && val !== undefined) ? val.toFixed(2) : "N/A";
+                            const valText = (val !== null && val !== undefined) ? 
+                                            val.toFixed(2) : "N/A";
                             res += `${'$'}{param.marker} ${'$'}{param.seriesName}: ${'$'}{valText} ${'$'}{unit}<br/>`;
                         });
                         return res;
@@ -212,14 +242,19 @@ object ReportScripts {
                             show: true,
                             title: 'Fullscreen',
                             icon: 'path://M432.45,595.444c0,2.177-4.661,6.82-11.308,6.82c-6.648,0-11.309-4.643-11.309-6.82s4.661-6.82,11.309-6.82C427.789,588.624,432.45,593.267,432.45,595.444L432.45,595.444zM586.767,666.258c7.656,0,13.854,6.337,13.854,14.141c0,7.804-6.198,14.141-13.854,14.141c-7.664,0-13.854-6.337-13.854-14.141C572.913,672.595,579.103,666.258,586.767,666.258L586.767,666.258zM568.629,667.071c-7.654,0-13.854,6.198-13.854,13.854c0,7.664,6.2,13.854,13.854,13.854c7.664,0,13.854-6.19,13.854-13.854C582.483,673.269,576.293,667.071,568.629,667.071L568.629,667.071zM356.99,505.941c0-2.177,4.661-6.82,11.309-6.82c6.648,0,11.308,4.643,11.308,6.82s-4.66,6.82-11.308,6.82C361.651,512.761,356.99,508.118,356.99,505.941L356.99,505.941zM878.342,505.941c0-2.177-4.661-6.82-11.309-6.82s-11.308,4.643-11.308,6.82s4.661,6.82,11.308,6.82S878.342,508.118,878.342,505.941L878.342,505.941zM586.767,414.969c7.664,0,13.854-6.198,13.854-13.854c0-7.664-6.19-13.854-13.854-13.854c-7.654,0-13.854,6.19-13.854,13.854C572.913,408.771,579.113,414.969,586.767,414.969L586.767,414.969zM640-86h-640v640h640V-86L640-86zM568.629,413.782c-7.664,0-13.854,6.198-13.854,13.854c0,7.664,6.19,13.854,13.854,13.854c7.654,0,13.854-6.19,13.854-13.854C582.483,419.98,576.293,413.782,568.629,413.782L568.629,413.782zM630,86h-620v620h620V86L630,86z',
-                            onclick: (function(id) { return function() { toggleFullscreen(id); }; })(chartId)
+                            onclick: (function(id) { return function() { 
+                                toggleFullscreen(id); 
+                            }; })(chartId)
                         },
                         restore: {},
                         saveAsImage: {}
                     },
                     right: 40
                 },
-                dataZoom: [{ type: 'inside', zoomOnMouseWheel: false, start: 0, end: 100, xAxisIndex: 0, yAxisIndex: 0 }, { type: 'slider', start: 0, end: 100, xAxisIndex: 0, yAxisIndex: 0 }],
+                dataZoom: [
+                    { type: 'inside', zoomOnMouseWheel: false, start: 0, end: 100 },
+                    { type: 'slider', start: 0, end: 100 }
+                ],
                 dataset: { source: dataRows },
                 series: series
             };
@@ -227,6 +262,9 @@ object ReportScripts {
             initChart(chartId, option);
         }
 
+        /**
+         * Creates a time-series chart (e.g., for throughput or latency over time).
+         */
         function createTimeSeriesChart(chartId, labels, dataRows, title, yLabel) {
             const series = labels.map((label, index) => ({
                 name: label,
@@ -248,14 +286,19 @@ object ReportScripts {
                             show: true,
                             title: 'Fullscreen',
                             icon: 'path://M432.45,595.444c0,2.177-4.661,6.82-11.308,6.82c-6.648,0-11.309-4.643-11.309-6.82s4.661-6.82,11.309-6.82C427.789,588.624,432.45,593.267,432.45,595.444L432.45,595.444zM586.767,666.258c7.656,0,13.854,6.337,13.854,14.141c0,7.804-6.198,14.141-13.854,14.141c-7.664,0-13.854-6.337-13.854-14.141C572.913,672.595,579.103,666.258,586.767,666.258L586.767,666.258zM568.629,667.071c-7.654,0-13.854,6.198-13.854,13.854c0,7.664,6.2,13.854,13.854,13.854c7.664,0,13.854-6.19,13.854-13.854C582.483,673.269,576.293,667.071,568.629,667.071L568.629,667.071zM356.99,505.941c0-2.177,4.661-6.82,11.309-6.82c6.648,0,11.308,4.643,11.308,6.82s-4.66,6.82-11.308,6.82C361.651,512.761,356.99,508.118,356.99,505.941L356.99,505.941zM878.342,505.941c0-2.177-4.661-6.82-11.309-6.82s-11.308,4.643-11.308,6.82s4.661,6.82,11.308,6.82S878.342,508.118,878.342,505.941L878.342,505.941zM586.767,414.969c7.664,0,13.854-6.198,13.854-13.854c0-7.664-6.19-13.854-13.854-13.854c-7.654,0-13.854,6.19-13.854,13.854C572.913,408.771,579.113,414.969,586.767,414.969L586.767,414.969zM640-86h-640v640h640V-86L640-86zM568.629,413.782c-7.664,0-13.854,6.198-13.854,13.854c0,7.664,6.19,13.854,13.854,13.854c7.654,0,13.854-6.19,13.854-13.854C582.483,419.98,576.293,413.782,568.629,413.782L568.629,413.782zM630,86h-620v620h620V86L630,86z',
-                            onclick: (function(id) { return function() { toggleFullscreen(id); }; })(chartId)
+                            onclick: (function(id) { return function() { 
+                                toggleFullscreen(id); 
+                            }; })(chartId)
                         },
                         restore: {},
                         saveAsImage: {}
                     },
                     right: 40
                 },
-                dataZoom: [{ type: 'inside', zoomOnMouseWheel: false, xAxisIndex: 0, yAxisIndex: 0 }, { type: 'slider', xAxisIndex: 0, yAxisIndex: 0 }],
+                dataZoom: [
+                    { type: 'inside', zoomOnMouseWheel: false },
+                    { type: 'slider' }
+                ],
                 dataset: { source: dataRows },
                 series: series
             };
@@ -263,6 +306,9 @@ object ReportScripts {
             initChart(chartId, option);
         }
 
+        /**
+         * Toggles fullscreen mode for a chart or table card.
+         */
         function toggleFullscreen(chartId) {
             const chartDom = document.getElementById(chartId);
             if (!chartDom) return;
@@ -279,6 +325,9 @@ object ReportScripts {
             }
         }
 
+        /**
+         * Toggles the sidebar visibility.
+         */
         function toggleSidebar() {
             const sidebar = document.getElementById('mySidebar');
             const content = document.querySelector('.main-content');
@@ -290,6 +339,9 @@ object ReportScripts {
             }, 310);
         }
 
+        /**
+         * Extracts data from an HTML table into an array of objects.
+         */
         function tableToArray(tableId) {
             const table = document.getElementById(tableId);
             if (!table) {
@@ -300,7 +352,6 @@ object ReportScripts {
             const headers = [];
             const data = [];
             
-            // Extract headers from thead
             const thead = table.querySelector('thead');
             if (thead) {
                 const headerRow = thead.querySelector('tr');
@@ -311,7 +362,6 @@ object ReportScripts {
                 }
             }
             
-            // Extract data from tbody
             const tbody = table.querySelector('tbody');
             if (tbody) {
                 tbody.querySelectorAll('tr').forEach(row => {
@@ -328,14 +378,14 @@ object ReportScripts {
             return data;
         }
 
+        /**
+         * Converts an array of objects to a CSV string.
+         */
         function arrayToCsv(data, delimiter = ',') {
-            if (!data || data.length === 0) {
-                return '';
-            }
+            if (!data || data.length === 0) return '';
             
             const headers = Object.keys(data[0]);
             const csvHeaders = headers.map(h => {
-                // Escape quotes and wrap in quotes if contains delimiter or quotes or newlines
                 if (h.includes(delimiter) || h.includes('"') || h.includes('\n')) {
                     return '"' + h.replace(/"/g, '""') + '"';
                 }
@@ -345,7 +395,6 @@ object ReportScripts {
             const csvRows = data.map(row => {
                 return headers.map(header => {
                     const value = row[header] || '';
-                    // Escape quotes and wrap in quotes if contains delimiter or quotes or newlines
                     if (value.includes(delimiter) || value.includes('"') || value.includes('\n')) {
                         return '"' + value.replace(/"/g, '""') + '"';
                     }
@@ -356,6 +405,9 @@ object ReportScripts {
             return [csvHeaders, ...csvRows].join('\n');
         }
 
+        /**
+         * Triggers a browser download for the given content.
+         */
         function downloadFile(content, fileName, mimeType) {
             const blob = new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
@@ -380,6 +432,7 @@ object ReportScripts {
             downloadFile(json, fileName, 'application/json;charset=utf-8;');
         }
 
+        // Global listeners
         window.addEventListener('resize', () => {
             charts.forEach(chart => chart.resize());
         });
@@ -390,6 +443,7 @@ object ReportScripts {
             updateEchartsTheme();
             updateActiveLink();
 
+            // Setup IntersectionObserver for active link highlighting
             const targetSections = document.querySelectorAll('div[id], article[id], section[id]');
             const navLinks = document.querySelectorAll('.nav-link');
 
@@ -421,5 +475,4 @@ object ReportScripts {
             });
         });
         """.trimIndent()
-    }
 }

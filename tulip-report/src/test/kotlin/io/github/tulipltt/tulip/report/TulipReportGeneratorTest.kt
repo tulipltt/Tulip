@@ -5,12 +5,11 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 class TulipReportGeneratorTest {
-
     @Test
     fun `test generateHtml`() {
         val jsonFile = File("../reports/report_output.json")
         val actualFile = if (jsonFile.exists()) jsonFile else File("reports/report_output.json")
-        
+
         if (!actualFile.exists()) {
             println("Skipping test: report_output.json not found")
             return
@@ -18,7 +17,7 @@ class TulipReportGeneratorTest {
 
         val htmlFile = File("build/tmp/test_report.html")
         htmlFile.parentFile.mkdirs()
-        
+
         try {
             TulipReportGenerator.createReport(actualFile.absolutePath, htmlFile.absolutePath)
         } catch (e: Exception) {
@@ -26,7 +25,7 @@ class TulipReportGeneratorTest {
             e.printStackTrace()
             throw e
         }
-        
+
         assertTrue(htmlFile.exists())
         val html = htmlFile.readText()
         assertTrue(html.contains("<!DOCTYPE html>"))
