@@ -53,7 +53,7 @@ dependencies {
     implementation("org.python:jython-slim:2.7.4")
 
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kxsJsonVersion")
+    implementation(libs.kotlin.serialization.json)
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:$gsonVersion")
