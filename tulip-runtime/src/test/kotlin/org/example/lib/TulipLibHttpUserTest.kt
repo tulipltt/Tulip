@@ -207,7 +207,7 @@ class TulipLibHttpUserTest {
             assertEquals(0, 1)
         }
         logger().info("HEAD /postz response: {}", rsp)
-        val contentLength = rsp.headers().contentLength
+        val contentLength = rsp.headers.contentLength
         assertEquals(contentLength, 1024)
     }
 
