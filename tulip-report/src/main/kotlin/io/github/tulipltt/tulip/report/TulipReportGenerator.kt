@@ -1,18 +1,21 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports", "WildcardImport")
+
 package io.github.tulipltt.tulip.report
 
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
-import java.io.File
 import kotlinx.serialization.json.Json
+import java.io.File
 
 /**
  * Main generator for Tulip performance reports.
  */
 object TulipReportGenerator {
-    private val json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-    }
+    private val json =
+        Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
 
     /**
      * Generates a complete HTML report from the provided [ReportData].
@@ -28,7 +31,7 @@ object TulipReportGenerator {
                 title { +"Tulip Performance Report" }
                 link(
                     rel = "stylesheet",
-                    href = "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+                    href = "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css",
                 )
                 style { unsafe { +ReportStyles.styles } }
                 script { src = "https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" }
@@ -59,7 +62,10 @@ object TulipReportGenerator {
             header {
                 style = "display: flex; align-items: center; gap: 0.75rem; padding: 1.5rem;"
                 unsafe { +ReportLogos.SMALL }
-                h3 { style = "margin: 0; font-size: 1.25rem;"; +"Tulip" }
+                h3 {
+                    style = "margin: 0; font-size: 1.25rem;"
+                    +"Tulip"
+                }
             }
             nav {
                 ul {
@@ -85,18 +91,22 @@ object TulipReportGenerator {
         }
     }
 
-    private fun UL.renderNavLink(href: String, label: String, icon: String) {
-        li { 
-            a(href = href, classes = "nav-link") { 
+    private fun UL.renderNavLink(
+        href: String,
+        label: String,
+        icon: String,
+    ) {
+        li {
+            a(href = href, classes = "nav-link") {
                 unsafe { +icon }
-                +label 
-            } 
+                +label
+            }
         }
     }
 
     private fun FlowContent.renderMainHeader(
         reportData: ReportData,
-        groupedResults: Map<String, List<BenchmarkResult>>
+        groupedResults: Map<String, List<BenchmarkResult>>,
     ) {
         header {
             div(classes = "grid") {
@@ -104,8 +114,14 @@ object TulipReportGenerator {
                     style = "display: flex; align-items: center; gap: 1rem;"
                     unsafe { +ReportLogos.LARGE }
                     div {
-                        h2 { style = "margin: 0;"; +"Performance Test Results" }
-                        small { style = "opacity: 0.5;"; +"Tulip Performance Tool • Version ${reportData.version}" }
+                        h2 {
+                            style = "margin: 0;"
+                            +"Performance Test Results"
+                        }
+                        small {
+                            style = "opacity: 0.5;"
+                            +"Tulip Performance Tool • Version ${reportData.version}"
+                        }
                     }
                 }
             }
@@ -165,26 +181,38 @@ object TulipReportGenerator {
         }
     }
 
-    private fun FlowContent.metricCard(label: String, value: String) {
+    private fun FlowContent.metricCard(
+        label: String,
+        value: String,
+    ) {
         article {
             style = "padding: 1rem; margin-bottom: 0;"
-            small { style = "opacity: 0.5; display: block;"; +label }
-            strong { style = "font-size: 1.2rem;"; +value }
+            small {
+                style = "opacity: 0.5; display: block;"
+                +label
+            }
+            strong {
+                style = "font-size: 1.2rem;"
+                +value
+            }
         }
     }
 
     /**
      * Entry point for creating both HTML and AsciiDoc reports.
      */
-    fun createReport(jsonPath: String, htmlOutputPath: String) {
+    fun createReport(
+        jsonPath: String,
+        htmlOutputPath: String,
+    ) {
         val jsonText = File(jsonPath).readText()
         val reportData = json.decodeFromString<ReportData>(jsonText)
-        
+
         File(htmlOutputPath).writeText(generateHtml(reportData))
-        
+
         val adocPath = htmlOutputPath.replace(".html", "_c.adoc")
         File(adocPath).writeText(ReportAdoc.generateAsciiDoc(reportData))
-        
+
         ReportAdoc.convertAdocToHtml(adocPath)
     }
 }
@@ -193,8 +221,11 @@ object TulipReportGenerator {
  * SVG Logos for the Tulip brand.
  */
 object ReportLogos {
-    private const val LOGO_SVG = """<svg width="SIZE" height="SIZE" viewBox="0 0 1388.98 1388.98" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g><g><defs><rect id="SVGID_1_" x="663.89" y="1093.34" width="61.19" height="187.33"/></defs><clipPath id="cp1"><use xlink:href="#SVGID_1_" style="overflow:visible;"/></clipPath><rect x="669.07" y="1025.56" style="clip-path:url(#cp1);fill:currentColor;" width="50.83" height="445.27"/></g><path style="fill:none;" d="M694.49,56.69c352.24,0,637.8,285.55,637.8,637.8s-285.55,637.8-637.8,637.8s-637.8-285.55-637.8-637.8S342.24,56.69,694.49,56.69z M108.66,694.49c0,323.54,262.28,585.83,585.83,585.83s585.83-262.28,585.83-585.83s-262.28-585.83-585.83-585.83S108.66,370.94,108.66,694.49z"/><path style="fill:currentColor;" d="M1332.28,694.49c0,352.24-285.55,637.8-637.8,637.8s-637.8-285.55-637.8-637.8s285.55-637.8,637.8-637.8S1332.28,342.24,1332.28,694.49z M694.49,108.66c-323.54,0-585.83,262.28-585.83,585.83s262.28,585.83,585.83,585.83s585.83-262.28,585.83-585.83S1018.03,108.66,694.49,108.66z"/><path style="fill:currentColor;" d="M884.47,434.38c41.01,71.05,64.48,153.37,64.48,241.03s-23.47,169.98-64.48,241.03c-42.46,73.55-103.65,134.84-177.02,177.28l-12.84,3.19l-13.08-3.19c-73.37-42.44-134.56-103.72-177.02-177.28c-41.01-71.05-64.48-153.37-64.48-241.03s23.47-169.98,64.48-241.03c42.46-73.55,103.65-134.84,177.02-177.28l12.96-7.5l12.96,7.5C780.81,299.54,842.01,360.83,884.47,434.38 M897.11,675.41c0-78.55-20.89-152.07-57.39-215.31c-35.32-61.19-85.32-112.93-145.23-150.44c-59.9,37.51-109.91,89.24-145.23,150.44c-36.5,63.24-57.39,136.76-57.39,215.31s20.89,152.07,57.39,215.31c35.32,61.19,85.32,112.93,145.23,150.44c59.9-37.51,109.91-89.24,145.23-150.44C876.22,827.48,897.11,753.95,897.11,675.41z"/><g><defs><path id="SVGID_2_" d="M821.02,455.52c-59.74,42.13-109.56,100.06-142.45,171.21c-32.93,71.24-44.81,146.74-38.21,219.52c6.39,70.46,30.11,138.48,68.81,197.71c314.48-34.13,349.64-209.29,332.88-392.12c-4.32-47.11-12.03-95.46-19.49-142.19c-7.13-44.71-14.04-87.96-17.71-128.3C938.89,391.49,875.82,416.87,821.02,455.52 M1053.1,324.24l1.39,26.85c2.35,45.48,10.56,96.89,19.1,150.45c7.56,47.37,15.38,96.38,19.89,145.63c19.46,212.32-26.12,415.55-399,449.72l-14.43-2.3l-4.84-8.53c-48.79-69.31-78.62-150.61-86.29-235.16c-7.41-81.65,5.85-166.22,42.66-245.84c36.85-79.71,92.69-144.63,159.66-191.87c69.26-48.85,150.53-78.75,235.08-86.5L1053.1,324.24z"/></defs><clipPath id="cp2"><use xlink:href="#SVGID_2_" style="overflow:visible;"/></clipPath><rect x="581.52" y="324.24" style="clip-path:url(#cp2);fill:currentColor;" width="531.42" height="772.65"/></g><g><defs><path id="SVGID_3_" d="M567.95,455.52c-54.8-38.65-117.87-64.03-183.83-74.18c-3.67,40.34-10.58,83.6-17.71,128.3c-7.46,46.73-15.17,95.07-19.49,142.19c-16.76,182.83,18.4,357.99,332.88,392.12c38.7-59.22,62.42-127.24,68.81-197.71c6.6-72.78-5.28-148.28-38.21-219.52C677.51,555.58,627.69,497.65,567.95,455.52 M362.64,326.7c84.55,7.75,165.82,37.65,235.08,86.5c66.97,47.23,122.81,112.15,159.66,191.87c36.81,79.62,50.07,164.19,42.66,245.84c-7.67,84.55-37.5,165.85-86.29,235.16l-4.84,8.53l-14.43,2.3c-372.88-34.18-418.46-237.41-399-449.72c4.51-49.25,12.34-98.26,19.89-145.63c8.55-53.55,16.75-104.97,19.1-150.45l1.39-26.85L362.64,326.7z"/></defs><clipPath id="cp3"><use xlink:href="#SVGID_3_" style="overflow:visible;"/></clipPath><rect x="276.03" y="324.24" style="clip-path:url(#cp3);fill:currentColor;" width="531.42" height="772.65"/></g></g></svg>"""
-    val SMALL = LOGO_SVG.replace("SIZE", "32")
-    val LARGE = LOGO_SVG.replace("SIZE", "64")
+    private val LOGO_SVG by lazy {
+        ReportLogos::class.java.getResource("tulip_logo.svg")?.readText()
+            ?: error("Resource tulip_logo.svg not found")
+    }
+
+    val SMALL by lazy { LOGO_SVG.replace("SIZE", "32") }
+    val LARGE by lazy { LOGO_SVG.replace("SIZE", "64") }
 }

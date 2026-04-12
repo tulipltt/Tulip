@@ -11,17 +11,18 @@ import java.util.Base64
  */
 fun aggregateResults(results: List<BenchmarkResult>): AggregatedStats {
     if (results.isEmpty()) return emptyStats()
-    
+
     val totalActions = results.sumOf { it.numActions.toLong() }
     val totalFailed = results.sumOf { it.numFailed.toLong() }
     val totalDuration = results.sumOf { it.duration }
-    
+
     val aggregateHistogram = Histogram(ReportConstants.HISTOGRAM_PRECISION)
     results.forEach { res ->
         decodeHistogram(res.hdrHistogramRt)?.let { iterationHistogram ->
             try {
                 aggregateHistogram.add(iterationHistogram)
-            } catch (ignore: Exception) { }
+            } catch (ignore: Exception) {
+            }
         }
     }
 
@@ -30,7 +31,7 @@ fun aggregateResults(results: List<BenchmarkResult>): AggregatedStats {
         totalActions,
         totalFailed,
         totalDuration,
-        aggregateHistogram
+        aggregateHistogram,
     )
 }
 
@@ -39,19 +40,20 @@ fun aggregateResults(results: List<BenchmarkResult>): AggregatedStats {
  */
 fun aggregateActionResults(
     actionStatsList: List<ActionStatResult>,
-    totalDuration: Double
+    totalDuration: Double,
 ): AggregatedStats {
     if (actionStatsList.isEmpty()) return emptyStats()
-    
+
     val totalActions = actionStatsList.sumOf { it.numActions.toLong() }
     val totalFailed = actionStatsList.sumOf { it.numFailed.toLong() }
-    
+
     val aggregateHistogram = Histogram(ReportConstants.HISTOGRAM_PRECISION)
     actionStatsList.forEach { stat ->
         decodeHistogram(stat.hdrHistogramRt)?.let { iterationHistogram ->
             try {
                 aggregateHistogram.add(iterationHistogram)
-            } catch (ignore: Exception) { }
+            } catch (ignore: Exception) {
+            }
         }
     }
 
@@ -78,7 +80,7 @@ private fun statsFromHistogram(
     actions: Long,
     failed: Long,
     duration: Double,
-    h: Histogram
+    h: Histogram,
 ) = AggregatedStats(
     numUsers = numUsers,
     numActions = actions,
@@ -92,7 +94,7 @@ private fun statsFromHistogram(
     p90 = h.getValueAtPercentile(ReportConstants.P90).toDouble(),
     p95 = h.getValueAtPercentile(ReportConstants.P95).toDouble(),
     p99 = h.getValueAtPercentile(ReportConstants.P99).toDouble(),
-    maxRt = h.maxValue.toDouble()
+    maxRt = h.maxValue.toDouble(),
 )
 
 /**

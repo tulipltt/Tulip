@@ -11,20 +11,13 @@ class TulipReportGeneratorTest {
         val actualFile = if (jsonFile.exists()) jsonFile else File("reports/report_output.json")
 
         if (!actualFile.exists()) {
-            println("Skipping test: report_output.json not found")
             return
         }
 
         val htmlFile = File("build/tmp/test_report.html")
         htmlFile.parentFile.mkdirs()
 
-        try {
-            TulipReportGenerator.createReport(actualFile.absolutePath, htmlFile.absolutePath)
-        } catch (e: Exception) {
-            println("EXCEPTION IN createReport: ${e.message}")
-            e.printStackTrace()
-            throw e
-        }
+        TulipReportGenerator.createReport(actualFile.absolutePath, htmlFile.absolutePath)
 
         assertTrue(htmlFile.exists())
         val html = htmlFile.readText()

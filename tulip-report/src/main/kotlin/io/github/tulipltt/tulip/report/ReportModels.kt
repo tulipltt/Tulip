@@ -61,7 +61,6 @@ data class BenchmarkResult(
     @SerialName("max_wthread_qsize") val maxWthreadQsize: Long = 0L,
     @SerialName("avg_wt") val avgWt: Double = 0.0,
     @SerialName("max_wt") val maxWt: Double = 0.0,
-
     @SerialName("num_actions") val numActions: Int = 0,
     @SerialName("num_failed") val numFailed: Int = 0,
     @SerialName("avg_aps") val avgAps: Double = 0.0,
@@ -92,7 +91,7 @@ data class AggregatedStats(
     val p90: Double,
     val p95: Double,
     val p99: Double,
-    val maxRt: Double
+    val maxRt: Double,
 )
 
 /**
@@ -104,5 +103,5 @@ data class ReportChartConfig(
     val data: String,
     val title: String,
     val unit: String,
-    val type: String
+    val type: String,
 )

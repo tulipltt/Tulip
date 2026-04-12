@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports", "WildcardImport")
+
 package io.github.tulipltt.tulip.report
 
 import io.github.tulipltt.tulip.core.TulipConfig
@@ -11,16 +13,16 @@ fun FlowContent.statsCard(
     classes: String? = null,
     isChart: Boolean = false,
     tableId: String? = null,
-    block: DIV.() -> Unit
+    block: DIV.() -> Unit,
 ) {
     article(classes = classes) {
         header {
             div(classes = "grid") {
                 div { h5 { +titleText } }
                 if (isChart) {
-                    div { 
+                    div {
                         style = "text-align: right"
-                        small { +"Use toolbox buttons: Pan/Zoom, Reset, Save" } 
+                        small { +"Use toolbox buttons: Pan/Zoom, Reset, Save" }
                     }
                 }
                 if (tableId != null) {
@@ -37,11 +39,14 @@ fun FlowContent.statsCard(
 /**
  * Renders the control buttons for a table (maximize, export).
  */
-private fun FlowContent.tableControls(titleText: String, tableId: String) {
+private fun FlowContent.tableControls(
+    titleText: String,
+    tableId: String,
+) {
     div {
         style = "text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 8px;"
         val titleSlug = titleText.lowercase().replace(" ", "_").replace("/", "_")
-        
+
         button(classes = "outline secondary contrast") {
             style = "padding: 4px 8px; font-size: 0.8em; margin: 0; display: flex; align-items: center;"
             attributes["onclick"] = "toggleFullscreen('$tableId')"
@@ -51,12 +56,12 @@ private fun FlowContent.tableControls(titleText: String, tableId: String) {
 
         button(classes = "outline secondary contrast") {
             style = "padding: 4px 8px; font-size: 0.8em; margin: 0;"
-            attributes["onclick"] = "downloadTableAsCSV('$tableId','${titleSlug}.csv')"
+            attributes["onclick"] = "downloadTableAsCSV('$tableId','$titleSlug.csv')"
             +"CSV"
         }
         button(classes = "outline secondary contrast") {
             style = "padding: 4px 8px; font-size: 0.8em; margin: 0;"
-            attributes["onclick"] = "downloadTableAsJSON('$tableId','${titleSlug}.json')"
+            attributes["onclick"] = "downloadTableAsJSON('$tableId','$titleSlug.json')"
             +"JSON"
         }
     }
@@ -76,14 +81,26 @@ fun FlowContent.configSection(config: TulipConfig) {
         div(classes = "overflow-auto") {
             table {
                 tbody {
-                    tr { td { +"Description" }; td { +actions.description } }
-                    tr { td { +"User Class" }; td { +actions.userClass } }
-                    tr { td { +"Output File" }; td { +actions.jsonFilename } }
-                    tr { td { +"Report File" }; td { +actions.htmlFilename } }
+                    tr {
+                        td { +"Description" }
+                        td { +actions.description }
+                    }
+                    tr {
+                        td { +"User Class" }
+                        td { +actions.userClass }
+                    }
+                    tr {
+                        td { +"Output File" }
+                        td { +actions.jsonFilename }
+                    }
+                    tr {
+                        td { +"Report File" }
+                        td { +actions.htmlFilename }
+                    }
                 }
             }
         }
-        
+
         h5 { b { +"User Parameters" } }
         renderMapTable(actions.userParams)
 
@@ -103,8 +120,14 @@ private fun FlowContent.renderContexts(config: TulipConfig) {
             div(classes = "overflow-auto") {
                 table {
                     tbody {
-                        tr { td { +"Enabled" }; td { +ctx.enabled.toString() } }
-                        tr { td { +"Num Users" }; td { +ctx.numUsers.toString() } }
+                        tr {
+                            td { +"Enabled" }
+                            td { +ctx.enabled.toString() }
+                        }
+                        tr {
+                            td { +"Num Users" }
+                            td { +ctx.numUsers.toString() }
+                        }
                     }
                 }
             }
@@ -119,23 +142,44 @@ private fun FlowContent.renderBenchmarkConfigs(config: TulipConfig) {
             div(classes = "overflow-auto") {
                 table {
                     tbody {
-                        tr { td { +"Enabled" }; td { +cfg.enabled.toString() } }
-                        tr { td { +"APS Rate" }; td { +"%.1f".format(cfg.throughputRate) } }
-                        tr { td { +"Scenario Workflow" }; td { +cfg.workflow } }
+                        tr {
+                            td { +"Enabled" }
+                            td { +cfg.enabled.toString() }
+                        }
+                        tr {
+                            td { +"APS Rate" }
+                            td { +"%.1f".format(cfg.throughputRate) }
+                        }
+                        tr {
+                            td { +"Scenario Workflow" }
+                            td { +cfg.workflow }
+                        }
                         if (cfg.actions.isNotEmpty()) {
-                            tr { 
+                            tr {
                                 td { +"Scenario Actions" }
-                                td { 
+                                td {
                                     cfg.actions.forEach { action ->
                                         div { +"ID: ${action.id}, Weight: ${action.weight}" }
                                     }
                                 }
                             }
                         }
-                        tr { td { +"Warmup 1 Duration" }; td { +cfg.startupDuration.toString() } }
-                        tr { td { +"Warmup 2 Duration" }; td { +cfg.warmupDuration.toString() } }
-                        tr { td { +"Benchmark Duration" }; td { +cfg.mainDuration.toString() } }
-                        tr { td { +"Benchmark Iterations" }; td { +cfg.mainDurationRepeatCount.toString() } }
+                        tr {
+                            td { +"Warmup 1 Duration" }
+                            td { +cfg.startupDuration.toString() }
+                        }
+                        tr {
+                            td { +"Warmup 2 Duration" }
+                            td { +cfg.warmupDuration.toString() }
+                        }
+                        tr {
+                            td { +"Benchmark Duration" }
+                            td { +cfg.mainDuration.toString() }
+                        }
+                        tr {
+                            td { +"Benchmark Iterations" }
+                            td { +cfg.mainDurationRepeatCount.toString() }
+                        }
                     }
                 }
             }
@@ -149,16 +193,21 @@ private fun FlowContent.renderWorkflows(config: TulipConfig) {
             h5 { b { +name } }
             div(classes = "overflow-auto") {
                 table {
-                    thead { tr { th { +"From ID" }; th { +"To ID (Weight)" } } }
+                    thead {
+                        tr {
+                            th { +"From ID" }
+                            th { +"To ID (Weight)" }
+                        }
+                    }
                     tbody {
                         flow.forEach { (fromId, transitions) ->
                             tr {
                                 td { +fromId }
                                 td {
                                     transitions.forEach { (toId, weight) ->
-                                        span { 
+                                        span {
                                             style = "margin-right: 16px;"
-                                            +"$toId ($weight)" 
+                                            +"$toId ($weight)"
                                         }
                                     }
                                 }
@@ -174,10 +223,18 @@ private fun FlowContent.renderWorkflows(config: TulipConfig) {
 private fun FlowContent.renderMapTable(map: Map<out Any, Any>) {
     div(classes = "overflow-auto") {
         table {
-            thead { tr { th { +"Key" }; th { +"Value" } } }
+            thead {
+                tr {
+                    th { +"Key" }
+                    th { +"Value" }
+                }
+            }
             tbody {
                 map.forEach { (k, v) ->
-                    tr { td { +k.toString() }; td { +v.toString() } }
+                    tr {
+                        td { +k.toString() }
+                        td { +v.toString() }
+                    }
                 }
             }
         }
@@ -190,7 +247,7 @@ private fun FlowContent.renderMapTable(map: Map<out Any, Any>) {
 fun FlowContent.runtimeSection(reportData: ReportData) {
     statsCard(titleText = "Tulip Runtime Information", classes = "full-width") {
         val java = reportData.java
-        
+
         h5 { b { +"Java System Properties" } }
         renderMapTable(java.systemProperties)
 
@@ -199,12 +256,15 @@ fun FlowContent.runtimeSection(reportData: ReportData) {
             table {
                 tbody {
                     java.runtimeOptions.forEach { opt: String ->
-                        tr { 
-                            td(classes = "numeric") { style="text-align:left; opacity: 0.5;"; +"Option" }
-                            td { 
+                        tr {
+                            td(classes = "numeric") {
+                                style = "text-align:left; opacity: 0.5;"
+                                +"Option"
+                            }
+                            td {
                                 style = "word-break: break-all;"
                                 span(classes = "numeric") { +opt }
-                            } 
+                            }
                         }
                     }
                 }
