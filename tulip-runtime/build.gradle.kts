@@ -59,7 +59,7 @@ dependencies {
     implementation("com.google.code.gson:gson:$gsonVersion")
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
-    implementation("com.google.guava:guava:33.5.0-jre")
+    implementation("com.google.guava:guava:33.6.0-jre")
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     api("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
