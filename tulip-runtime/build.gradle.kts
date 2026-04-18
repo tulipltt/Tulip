@@ -30,6 +30,9 @@ plugins {
 
     // https://plugins.gradle.org/plugin/com.gradleup.shadow
     id("com.gradleup.shadow") version "9.4.1"
+
+    // https://plugins.gradle.org/plugin/org.jetbrains.dokka
+    id("org.jetbrains.dokka") version "2.2.0"
 }
 
 java {
