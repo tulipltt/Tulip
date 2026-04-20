@@ -9,7 +9,7 @@ version = "2.3.1-RC1"
 
 plugins {
     // https://plugins.gradle.org/plugin/com.github.ben-manes.versions
-    id("com.github.ben-manes.versions") version "0.53.0"
+    id("com.github.ben-manes.versions") version "0.54.0"
 
     // Gradle convention plugin for Kotlin libraries
     id("buildlogic.kotlin-library-conventions")
