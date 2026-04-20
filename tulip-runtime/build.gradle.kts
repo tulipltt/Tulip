@@ -43,7 +43,7 @@ val logbackVersion = "1.5.32"
 val springBootVersion = "3.5.13"
 val picocliVersion = "4.7.7"
 val kxsJsonVersion = "1.10.0"
-val javalinVersion = "7.1.0"
+val javalinVersion = "7.2.0"
 
 dependencies {
     // https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-jmx
