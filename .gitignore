@@ -7,3 +7,7 @@ build/
 
 # Kotlin 2.0
 .kotlin/
+
+
+# Super Powers
+docs/superpowers
