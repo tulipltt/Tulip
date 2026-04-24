@@ -20,8 +20,7 @@ fun FlowContent.statsCard(
             div(classes = "grid") {
                 div { h5 { +titleText } }
                 if (isChart) {
-                    div {
-                        style = "text-align: right"
+                    div(classes = "text-right") {
                         small { +"Use toolbox buttons: Pan/Zoom, Reset, Save" }
                     }
                 }
@@ -43,24 +42,24 @@ private fun FlowContent.tableControls(
     titleText: String,
     tableId: String,
 ) {
-    div {
-        style = "text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 8px;"
+    div(classes = "text-right align-center flex-end flex-gap-8") {
+        style = "display: flex;"
         val titleSlug = titleText.lowercase().replace(" ", "_").replace("/", "_")
 
-        button(classes = "outline secondary contrast") {
-            style = "padding: 4px 8px; font-size: 0.8em; margin: 0; display: flex; align-items: center;"
+        button(classes = "outline secondary contrast align-center") {
+            style = "padding: 4px 8px; margin: 0; display: flex;"
             attributes["onclick"] = "toggleFullscreen('$tableId')"
             attributes["title"] = "Maximize Table"
             unsafe { +ReportIcons.MAXIMIZE }
         }
 
-        button(classes = "outline secondary contrast") {
-            style = "padding: 4px 8px; font-size: 0.8em; margin: 0;"
+        button(classes = "outline secondary contrast p-0 m-0 font-08em") {
+            style = "padding: 4px 8px;"
             attributes["onclick"] = "downloadTableAsCSV('$tableId','$titleSlug.csv')"
             +"CSV"
         }
-        button(classes = "outline secondary contrast") {
-            style = "padding: 4px 8px; font-size: 0.8em; margin: 0;"
+        button(classes = "outline secondary contrast p-0 m-0 font-08em") {
+            style = "padding: 4px 8px;"
             attributes["onclick"] = "downloadTableAsJSON('$tableId','$titleSlug.json')"
             +"JSON"
         }
@@ -205,8 +204,8 @@ private fun FlowContent.renderWorkflows(config: TulipConfig) {
                                 td { +fromId }
                                 td {
                                     transitions.forEach { (toId, weight) ->
-                                        span {
-                                            style = "margin-right: 16px;"
+                                        span(classes = "flex-gap-16") {
+                                            style = "display: inline-block; margin-right: 16px;"
                                             +"$toId ($weight)"
                                         }
                                     }
@@ -220,7 +219,11 @@ private fun FlowContent.renderWorkflows(config: TulipConfig) {
     }
 }
 
-private fun FlowContent.renderMapTable(map: Map<out Any, Any>) {
+private fun FlowContent.renderMapTable(map: Map<out Any, Any>?) {
+    if (map == null || map.isEmpty()) {
+        p { +"No data available." }
+        return
+    }
     div(classes = "overflow-auto") {
         table {
             thead {
@@ -255,10 +258,9 @@ fun FlowContent.runtimeSection(reportData: ReportData) {
         div(classes = "overflow-auto") {
             table {
                 tbody {
-                    java.runtimeOptions.forEach { opt: String ->
+                    java.runtimeOptions?.forEach { opt: String ->
                         tr {
-                            td(classes = "numeric") {
-                                style = "text-align:left; opacity: 0.5;"
+                            td(classes = "numeric opacity-50 text-left") {
                                 +"Option"
                             }
                             td {
@@ -266,7 +268,7 @@ fun FlowContent.runtimeSection(reportData: ReportData) {
                                 span(classes = "numeric") { +opt }
                             }
                         }
-                    }
+                    } ?: tr { td { +"No options found." } }
                 }
             }
         }

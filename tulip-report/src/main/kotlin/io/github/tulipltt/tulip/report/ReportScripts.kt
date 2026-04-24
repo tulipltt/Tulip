@@ -6,11 +6,18 @@ package io.github.tulipltt.tulip.report
  * chart interactivity, and data export.
  */
 object ReportScripts {
+    private fun loadResource(name: String): String {
+        return ReportScripts::class.java.getResource(name)?.readText()
+            ?: throw IllegalStateException("Resource $name not found")
+    }
+
+    /**
+     * The ECharts library.
+     */
+    val echartsJs: String = loadResource("echarts.min.js")
+
     /**
      * The complete JavaScript bundle for the report.
      */
-    val scripts: String by lazy {
-        ReportScripts::class.java.getResource("scripts.js")?.readText()
-            ?: error("Resource scripts.js not found")
-    }
+    val scripts: String = loadResource("scripts.js")
 }

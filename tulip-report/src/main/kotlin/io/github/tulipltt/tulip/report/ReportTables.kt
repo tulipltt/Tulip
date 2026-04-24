@@ -23,13 +23,13 @@ fun FlowContent.summaryTable(
 
                     val actions =
                         results.flatMap {
-                            it.userActions.values.map { a -> a.name ?: "" }
+                            it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
                         }.distinct().sorted()
 
                     actions.forEach { actionName ->
                         val actionResults =
                             results.mapNotNull {
-                                it.userActions.values.find { a -> a.name == actionName }
+                                it.userActions?.values?.find { a -> a.name == actionName }
                             }
                         val actionSummary = aggregateActionResults(actionResults, summary.duration)
                         renderActionRow(actionName, actionSummary)
@@ -122,7 +122,7 @@ fun FlowContent.detailedBenchmarkTable(
     results: List<BenchmarkResult>,
     tableId: String = "detailedTable",
 ) {
-    val actions = results.flatMap { it.userActions.values.map { a -> a.name ?: "" } }.distinct().sorted()
+    val actions = results.flatMap { it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList() }.distinct().sorted()
 
     div(classes = "overflow-auto") {
         table(classes = "striped") {
@@ -130,8 +130,8 @@ fun FlowContent.detailedBenchmarkTable(
             renderTableHead("Action / Iteration")
             tbody {
                 actions.forEach { actionName ->
-                    val actionResults = results.mapNotNull { it.userActions.values.find { a -> a.name == actionName } }
-                    val totalDuration = results.sumOf { it.duration }
+                    val actionResults = results.mapNotNull { it.userActions?.values?.find { a -> a.name == actionName } }
+                    val totalDuration = results.sumOf { it.duration ?: 0.0 }
                     val actionSummary = aggregateActionResults(actionResults, totalDuration)
 
                     tr {
@@ -140,7 +140,7 @@ fun FlowContent.detailedBenchmarkTable(
                     }
 
                     results.forEach { res ->
-                        val stats = res.userActions.values.find { it.name == actionName }
+                        val stats = res.userActions?.values?.find { it.name == actionName }
                         if (stats != null) {
                             renderIterationRow(res, stats)
                         }
@@ -165,7 +165,7 @@ private fun TBODY.renderIterationRow(
         td {
             div {
                 style = "padding-left: ${ReportConstants.ACTION_INDENT_PX}px;"
-                +"Iteration ${res.rowId + 1}"
+                +"Iteration ${(res.rowId ?: 0) + 1}"
             }
         }
         renderIterationStats(res, stats)
@@ -184,21 +184,21 @@ private fun TR.renderIterationStats(
             +v
         }
 
-    tdM((res.rowId + 1).toString())
-    tdM(stats.numActions.toString())
-    td(classes = "numeric") { statusPill(stats.numFailed.toLong()) }
-    tdM(formatTime(res.duration))
-    tdM("%.1f".format(stats.avgAps))
-    tdM(formatDuration(stats.avgRt))
-    tdM(formatDuration(stats.sdevRt))
-    tdM(formatDuration(stats.minRt))
+    tdM(((res.rowId ?: 0) + 1).toString())
+    tdM((stats.numActions ?: 0).toString())
+    td(classes = "numeric") { statusPill((stats.numFailed ?: 0).toLong()) }
+    tdM(formatTime(res.duration ?: 0.0))
+    tdM("%.1f".format(stats.avgAps ?: 0.0))
+    tdM(formatDuration(stats.avgRt ?: 0.0))
+    tdM(formatDuration(stats.sdevRt ?: 0.0))
+    tdM(formatDuration(stats.minRt ?: 0.0))
 
-    tdM(formatDuration(stats.percentilesRt[ReportConstants.P50.toString()] ?: 0.0))
-    tdM(formatDuration(stats.percentilesRt[ReportConstants.P90.toString()] ?: 0.0))
-    tdM(formatDuration(stats.percentilesRt[ReportConstants.P95.toString()] ?: 0.0))
-    tdM(formatDuration(stats.percentilesRt[ReportConstants.P99.toString()] ?: 0.0))
+    tdM(formatDuration(stats.percentilesRt?.get(ReportConstants.P50.toString()) ?: 0.0))
+    tdM(formatDuration(stats.percentilesRt?.get(ReportConstants.P90.toString()) ?: 0.0))
+    tdM(formatDuration(stats.percentilesRt?.get(ReportConstants.P95.toString()) ?: 0.0))
+    tdM(formatDuration(stats.percentilesRt?.get(ReportConstants.P99.toString()) ?: 0.0))
 
-    tdM(formatDuration(stats.maxRt))
+    tdM(formatDuration(stats.maxRt ?: 0.0))
 }
 
 /**
@@ -222,13 +222,13 @@ fun FlowContent.llqPercentileTable(
             }
         }
         tbody {
-            val totalCount = lastRes.numActions.toLong()
+            val totalCount = lastRes.numActions?.toLong() ?: 0L
             ReportConstants.LLQ_POINTS.forEach { p ->
                 val valNanos =
                     if (p == ReportConstants.P100) {
-                        lastRes.maxRt
+                        lastRes.maxRt ?: 0.0
                     } else {
-                        lastRes.percentilesRt[p.toString()] ?: 0.0
+                        lastRes.percentilesRt?.get(p.toString()) ?: 0.0
                     }
                 val countAtP = (totalCount * (p / ReportConstants.P100)).toLong()
                 tr {

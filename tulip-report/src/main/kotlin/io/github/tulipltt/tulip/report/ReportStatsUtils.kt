@@ -3,8 +3,11 @@ package io.github.tulipltt.tulip.report
 import kotlinx.html.FlowContent
 import kotlinx.html.span
 import org.HdrHistogram.Histogram
+import org.slf4j.LoggerFactory
 import java.nio.ByteBuffer
 import java.util.Base64
+
+private val logger = LoggerFactory.getLogger("ReportStatsUtils")
 
 /**
  * Aggregates results across multiple iterations of a benchmark.
@@ -12,22 +15,23 @@ import java.util.Base64
 fun aggregateResults(results: List<BenchmarkResult>): AggregatedStats {
     if (results.isEmpty()) return emptyStats()
 
-    val totalActions = results.sumOf { it.numActions.toLong() }
-    val totalFailed = results.sumOf { it.numFailed.toLong() }
-    val totalDuration = results.sumOf { it.duration }
+    val totalActions = results.sumOf { it.numActions?.toLong() ?: 0L }
+    val totalFailed = results.sumOf { it.numFailed?.toLong() ?: 0L }
+    val totalDuration = results.sumOf { it.duration ?: 0.0 }
 
     val aggregateHistogram = Histogram(ReportConstants.HISTOGRAM_PRECISION)
     results.forEach { res ->
         decodeHistogram(res.hdrHistogramRt)?.let { iterationHistogram ->
             try {
                 aggregateHistogram.add(iterationHistogram)
-            } catch (ignore: Exception) {
+            } catch (e: Exception) {
+                logger.error("Failed to add histogram for iteration: ${e.message}", e)
             }
         }
     }
 
     return statsFromHistogram(
-        results.maxOf { it.numUsers },
+        results.maxOf { it.numUsers ?: 0 },
         totalActions,
         totalFailed,
         totalDuration,
@@ -44,15 +48,16 @@ fun aggregateActionResults(
 ): AggregatedStats {
     if (actionStatsList.isEmpty()) return emptyStats()
 
-    val totalActions = actionStatsList.sumOf { it.numActions.toLong() }
-    val totalFailed = actionStatsList.sumOf { it.numFailed.toLong() }
+    val totalActions = actionStatsList.sumOf { it.numActions?.toLong() ?: 0L }
+    val totalFailed = actionStatsList.sumOf { it.numFailed?.toLong() ?: 0L }
 
     val aggregateHistogram = Histogram(ReportConstants.HISTOGRAM_PRECISION)
     actionStatsList.forEach { stat ->
         decodeHistogram(stat.hdrHistogramRt)?.let { iterationHistogram ->
             try {
                 aggregateHistogram.add(iterationHistogram)
-            } catch (ignore: Exception) {
+            } catch (e: Exception) {
+                logger.error("Failed to add action histogram: ${e.message}", e)
             }
         }
     }
@@ -66,11 +71,12 @@ private fun emptyStats() = AggregatedStats(0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
  * Decodes a base64 encoded HDR Histogram.
  */
 fun decodeHistogram(base64: String?): Histogram? {
-    if (base64 == null) return null
+    if (base64.isNullOrBlank()) return null
     return try {
         val bytes = Base64.getDecoder().decode(base64)
         Histogram.decodeFromCompressedByteBuffer(ByteBuffer.wrap(bytes), 0)
-    } catch (ignore: Exception) {
+    } catch (e: Exception) {
+        logger.error("Failed to decode histogram: ${e.message}")
         null
     }
 }

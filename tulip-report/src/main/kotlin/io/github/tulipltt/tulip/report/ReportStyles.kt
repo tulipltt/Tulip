@@ -5,11 +5,18 @@ package io.github.tulipltt.tulip.report
  * This includes layout, typography, and theme-specific adjustments.
  */
 object ReportStyles {
+    private fun loadResource(name: String): String {
+        return ReportStyles::class.java.getResource(name)?.readText()
+            ?: throw IllegalStateException("Resource $name not found")
+    }
+
+    /**
+     * The Pico CSS library.
+     */
+    val picoCss: String = loadResource("pico.min.css")
+
     /**
      * The complete CSS bundle for the report.
      */
-    val styles: String by lazy {
-        ReportStyles::class.java.getResource("styles.css")?.readText()
-            ?: error("Resource styles.css not found")
-    }
+    val styles: String = loadResource("styles.css")
 }
