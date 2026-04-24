@@ -104,7 +104,7 @@ function toggleTheme() {
     
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('tulip-theme', next);
-    location.reload(); 
+    updateEchartsTheme();
 }
 
 /**
@@ -432,6 +432,15 @@ window.addEventListener('hashchange', updateActiveLink);
 window.addEventListener('DOMContentLoaded', () => {
     updateEchartsTheme();
     updateActiveLink();
+
+    // Add theme toggle listener
+    const themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleTheme();
+        });
+    }
 
     // Setup IntersectionObserver for active link highlighting
     const targetSections = document.querySelectorAll('div[id], article[id], section[id]');
