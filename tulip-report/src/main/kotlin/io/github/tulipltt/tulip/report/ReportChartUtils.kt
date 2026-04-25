@@ -340,11 +340,8 @@ private fun SCRIPT.renderChartScript(
 ) {
     val labelsJson = Json.encodeToString(labels)
     val dataJson = Json.encodeToString(data)
-    val titleEsc = XssSanitizer.escapeJs(title)
-    val unitEsc = XssSanitizer.escapeJs(unit)
-    val idEsc = XssSanitizer.escapeJs(id)
 
     unsafe {
-        +"create${type}Chart('$idEsc', $labelsJson, $dataJson, '$titleEsc', '$unitEsc');"
+        +"create${type}Chart('$id', $labelsJson, $dataJson, '$title', '$unit');"
     }
 }
