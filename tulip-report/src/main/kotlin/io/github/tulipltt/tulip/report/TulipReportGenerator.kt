@@ -73,6 +73,10 @@ object TulipReportGenerator {
                 unsafe { +ReportLogos.SMALL }
                 h5 { +"Tulip" }
             }
+            div("search-container") {
+                input(type = InputType.search, placeholder = "Search benchmarks...", classes = "form-control")
+                attributes["aria-label"] = "Search benchmarks"
+            }
             nav {
                 ul {
                     li { div(classes = "nav-section") { +"Overview" } }

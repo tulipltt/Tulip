@@ -422,6 +422,25 @@ function downloadTableAsJSON(tableId, fileName) {
     downloadFile(json, fileName, 'application/json;charset=utf-8;');
 }
 
+let searchFilter = '';
+
+function filterBenchmarks(searchTerm) {
+    searchFilter = searchTerm.toLowerCase();
+    updateSidebarNavigation();
+}
+
+function updateSidebarNavigation() {
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        const text = link.textContent.toLowerCase();
+        if (searchFilter && !text.includes(searchFilter)) {
+            link.style.display = 'none';
+        } else {
+            link.style.display = 'block';
+        }
+    });
+}
+
 // Global listeners
 window.addEventListener('resize', () => {
     charts.forEach(chart => chart.resize());
