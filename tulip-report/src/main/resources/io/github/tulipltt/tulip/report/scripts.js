@@ -1,6 +1,68 @@
 let echartsTheme = {};
 const charts = new Map();
 
+let currentSort = {
+    column: null,
+    direction: 'asc'
+};
+
+function sortTable(tableId, columnIdx) {
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const headers = table.querySelectorAll('thead th');
+    
+    if (currentSort.column === columnIdx) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        currentSort.column = columnIdx;
+        currentSort.direction = 'asc';
+    }
+    
+    const sortedRows = rows.sort((a, b) => {
+        const aText = a.cells[columnIdx].textContent.trim();
+        const bText = b.cells[columnIdx].textContent.trim();
+        
+        let comparison;
+        if (!isNaN(parseFloat(aText)) && !isNaN(parseFloat(bText))) {
+            comparison = parseFloat(aText) - parseFloat(bText);
+        } else {
+            comparison = aText.localeCompare(bText);
+        }
+        
+        return currentSort.direction === 'asc' ? comparison : -comparison;
+    });
+    
+    sortedRows.forEach(row => tbody.appendChild(row));
+    
+    headers.forEach((th, idx) => {
+        th.classList.remove('sort-asc', 'sort-desc');
+        if (idx === columnIdx) {
+            th.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const tables = document.querySelectorAll('table');
+    tables.forEach(table => {
+        const headers = table.querySelectorAll('thead th');
+        headers.forEach((header, idx) => {
+            if (!header.classList.contains('no-sort')) {
+                header.style.cursor = 'pointer';
+                header.setAttribute('role', 'button');
+                header.setAttribute('aria-label', `Sort by column ${idx + 1}`);
+                
+                header.addEventListener('click', () => {
+                    sortTable(table.id, idx);
+                });
+            }
+        });
+    });
+});
+
 // Apply saved theme immediately from localStorage to prevent flash of unstyled content
 const savedTheme = localStorage.getItem('tulip-theme');
 if (savedTheme) {
@@ -126,43 +188,72 @@ window.addEventListener('DOMContentLoaded', updateActiveLink);
  * Initializes an EChart with the given ID and options.
  */
 function initChart(chartId, option) {
-    const chartDom = document.getElementById(chartId);
-    if (!chartDom) return;
-    
-    if (!Object.keys(echartsTheme).length) {
-        updateEchartsTheme();
-    }
+    try {
+        const chartDom = document.getElementById(chartId);
+        if (!chartDom) {
+            console.error(`[initChart] Chart element not found: ${chartId}`);
+            return null;
+        }
+        
+        if (!Object.keys(echartsTheme).length) {
+            updateEchartsTheme();
+        }
 
-    const mergedOption = { ...echartsTheme, ...option };
-    
-    // Explicitly merge sub-objects to prevent theme styles from being overwritten by partial options
-    if (echartsTheme.title && option.title) {
-        mergedOption.title = { ...echartsTheme.title, ...option.title };
-    }
-    if (echartsTheme.legend && option.legend) {
-        mergedOption.legend = { ...echartsTheme.legend, ...option.legend };
-    }
-    if (echartsTheme.tooltip && option.tooltip) {
-        mergedOption.tooltip = { ...echartsTheme.tooltip, ...option.tooltip };
-    }
-    
-    // Handle axis merging
-    if (option.xAxis) {
-        const axisStyle = option.xAxis.type === 'category' ? 
-                          echartsTheme.categoryAxis : echartsTheme.valueAxis;
-        mergedOption.xAxis = { ...axisStyle, ...option.xAxis };
-    }
-    if (option.yAxis) {
-        const axisStyle = option.yAxis.type === 'category' ? 
-                          echartsTheme.categoryAxis : echartsTheme.valueAxis;
-        mergedOption.yAxis = { ...axisStyle, ...option.yAxis };
-    }
+        const mergedOption = { ...echartsTheme, ...option };
+        
+        // Explicitly merge sub-objects to prevent theme styles from being overwritten by partial options
+        if (echartsTheme.title && option.title) {
+            mergedOption.title = { ...echartsTheme.title, ...option.title };
+        }
+        if (echartsTheme.legend && option.legend) {
+            mergedOption.legend = { ...echartsTheme.legend, ...option.legend };
+        }
+        if (echartsTheme.tooltip && option.tooltip) {
+            mergedOption.tooltip = { ...echartsTheme.tooltip, ...option.tooltip };
+        }
+        
+        // Handle axis merging
+        if (option.xAxis) {
+            const axisStyle = option.xAxis.type === 'category' ? 
+                              echartsTheme.categoryAxis : echartsTheme.valueAxis;
+            mergedOption.xAxis = { ...axisStyle, ...option.xAxis };
+        }
+        if (option.yAxis) {
+            const axisStyle = option.yAxis.type === 'category' ? 
+                              echartsTheme.categoryAxis : echartsTheme.valueAxis;
+            mergedOption.yAxis = { ...axisStyle, ...option.yAxis };
+        }
 
-    const myChart = echarts.init(chartDom);
-    myChart._chartId = chartId;
-    myChart.setOption(mergedOption, true);
-    charts.set(chartId, myChart);
-    return myChart;
+        const myChart = echarts.init(chartDom);
+        myChart._chartId = chartId;
+        myChart.setOption(mergedOption, true);
+        charts.set(chartId, myChart);
+        return myChart;
+    } catch (error) {
+        console.error(`[initChart] Failed to initialize chart "${chartId}":`, error);
+        return null;
+    }
+}
+
+function initChartWithFallback(elementId, chartData, chartTitle) {
+    const chart = initChart(elementId, chartData);
+    
+    if (!chart) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.innerHTML = `
+                <div style="padding: 2rem; text-align: center; color: var(--pico-color);">
+                    <p><strong style="color: var(--pico-danger-text);">⚠ Chart Failed to Load</strong></p>
+                    <p>Could not render chart: ${chartTitle}</p>
+                    <p><small>Please check the console for details.</small></p>
+                </div>
+            `;
+        }
+        return null;
+    }
+    
+    return chart;
+}
 }
 
 /**
@@ -249,7 +340,7 @@ function createPercentileChart(chartId, labels, dataRows, title, unit) {
         series: series
     };
 
-    initChart(chartId, option);
+    initChartWithFallback(chartId, option, title);
 }
 
 /**
@@ -293,7 +384,7 @@ function createTimeSeriesChart(chartId, labels, dataRows, title, yLabel) {
         series: series
     };
 
-    initChart(chartId, option);
+    initChartWithFallback(chartId, option, title);
 }
 
 /**
@@ -321,8 +412,12 @@ function toggleFullscreen(chartId) {
 function toggleSidebar() {
     const sidebar = document.getElementById('mySidebar');
     const content = document.querySelector('.main-content');
-    sidebar.classList.toggle('w3-hide-small');
-    sidebar.classList.toggle('w3-hide-medium');
+    if (window.innerWidth < 768) {
+        sidebar.style.display = 'none';
+    } else {
+        const isOpen = sidebar.style.display !== 'none';
+        sidebar.style.display = isOpen ? 'none' : 'block';
+    }
     content.classList.toggle('sidebar-hidden');
     setTimeout(() => {
         charts.forEach(chart => chart.resize());
@@ -473,3 +568,12 @@ window.addEventListener('DOMContentLoaded', () => {
         observer.observe(section);
     });
 });
+
+window.onload = function() {
+    setTimeout(function() {
+        const overlay = document.querySelector('.loading-overlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+        }
+    }, 500);
+};

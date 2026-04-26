@@ -15,3 +15,8 @@ docs/superpowers
 # Worktrees
 .worktrees/
 worktrees/
+
+# Tools and Dependencies
+.opencode/
+node_modules/
+.vscode/
