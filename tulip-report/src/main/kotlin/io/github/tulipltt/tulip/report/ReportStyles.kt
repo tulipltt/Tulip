@@ -19,4 +19,32 @@ object ReportStyles {
      * The complete CSS bundle for the report.
      */
     val styles: String = loadResource("styles.css")
+
+    /**
+     * Sort indicator styles for sortable tables.
+     * These are injected separately to allow dynamic loading.
+     */
+    fun tableSortStyles(): String {
+        return """
+            .sortable th {
+                cursor: pointer;
+                user-select: none;
+                position: relative;
+            }
+            
+            .sortable th:hover {
+                background-color: var(--pico-table-stripe-background-color);
+            }
+            
+            .sortable th.sort-asc::after {
+                content: ' ↑';
+                font-size: 0.8rem;
+            }
+            
+            .sortable th.sort-desc::after {
+                content: ' ↓';
+                font-size: 0.8rem;
+            }
+        """.trimIndent()
+    }
 }

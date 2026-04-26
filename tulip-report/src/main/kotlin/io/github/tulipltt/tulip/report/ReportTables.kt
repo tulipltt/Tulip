@@ -12,7 +12,7 @@ fun FlowContent.summaryTable(
     tableId: String = "summaryTable",
 ) {
     div(classes = "overflow-auto") {
-        table(classes = "striped") {
+        table(classes = "striped sortable") {
             id = tableId
             renderTableHead("Benchmark")
             tbody {
@@ -125,7 +125,7 @@ fun FlowContent.detailedBenchmarkTable(
     val actions = results.flatMap { it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList() }.distinct().sorted()
 
     div(classes = "overflow-auto") {
-        table(classes = "striped") {
+        table(classes = "striped sortable") {
             id = tableId
             renderTableHead("Action / Iteration")
             tbody {
@@ -209,7 +209,7 @@ fun FlowContent.llqPercentileTable(
     tableId: String,
 ) {
     val lastRes = results.last()
-    table(classes = "striped") {
+    table(classes = "striped sortable") {
         id = tableId
         thead {
             tr {
@@ -254,7 +254,7 @@ fun FlowContent.hdrPercentileTable(
     val lastRes = results.last()
     val h = decodeHistogram(lastRes.hdrHistogramRt) ?: return
 
-    table(classes = "striped") {
+    table(classes = "striped sortable") {
         id = tableId
         thead {
             tr {

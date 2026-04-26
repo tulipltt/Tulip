@@ -38,6 +38,10 @@ object TulipReportGenerator {
                 script { unsafe { +ReportScripts.scripts } }
             }
             body {
+                div(classes = "loading-overlay") {
+                    div(classes = "loading-spinner") {}
+                    div(classes = "loading-text") { +"Loading..." }
+                }
                 val warnings = ReportDataValidator.validate(reportData)
                 @Suppress("UNCHECKED_CAST")
                 val groupedResults =
