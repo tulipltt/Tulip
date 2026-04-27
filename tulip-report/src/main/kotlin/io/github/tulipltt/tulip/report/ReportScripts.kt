@@ -8,8 +8,9 @@ package io.github.tulipltt.tulip.report
 object ReportScripts {
     private fun loadResource(name: String): String {
         return ReportScripts::class.java.getResource(name)?.readText()
-            ?: throw IllegalStateException("Resource $name not found")
+            ?: error("Resource $name not found")
     }
+
 
     /**
      * The ECharts library.

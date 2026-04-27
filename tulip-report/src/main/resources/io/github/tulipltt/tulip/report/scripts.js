@@ -251,10 +251,9 @@ function initChartWithFallback(elementId, chartData, chartTitle) {
         }
         return null;
     }
-    
     return chart;
 }
-}
+
 
 /**
  * Creates a percentile distribution chart.

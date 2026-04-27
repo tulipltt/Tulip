@@ -9,23 +9,23 @@ import kotlinx.html.*
  * A standard card component for displaying statistics, charts, or tables.
  */
 fun FlowContent.statsCard(
-    titleText: String,
-    classes: String? = null,
-    isChart: Boolean = false,
-    tableId: String? = null,
+    config: StatsCardConfig,
     block: DIV.() -> Unit,
 ) {
-    article(classes = classes) {
+    article(classes = config.classes) {
         header {
             div(classes = "grid") {
-                div { h5 { +titleText } }
-                if (isChart) {
+                div { h5 { +config.titleText } }
+                if (config.isChart) {
                     div(classes = "text-right") {
                         small { +"Use toolbox buttons: Pan/Zoom, Reset, Save" }
                     }
                 }
-                if (tableId != null) {
-                    tableControls(titleText, tableId)
+                if (config.tableId != null) {
+                    div(classes = "text-right align-center flex-end flex-gap-8") {
+                        style = "display: flex;"
+                        tableControls(config.titleText, config.tableId)
+                    }
                 }
             }
         }
@@ -75,7 +75,7 @@ fun formatTime(seconds: Double): String = "%.1f s".format(seconds)
  * Renders the configuration section of the report.
  */
 fun FlowContent.configSection(config: TulipConfig) {
-    statsCard(titleText = "General Config", classes = "full-width") {
+    statsCard(StatsCardConfig(titleText = "General Config", classes = "full-width")) {
         val actions = config.actions
         div(classes = "overflow-auto") {
             table {
@@ -113,7 +113,7 @@ fun FlowContent.configSection(config: TulipConfig) {
 }
 
 private fun FlowContent.renderContexts(config: TulipConfig) {
-    statsCard(titleText = "Contexts", classes = "full-width") {
+    statsCard(StatsCardConfig(titleText = "Contexts", classes = "full-width")) {
         config.contexts.forEach { (name, ctx) ->
             h5 { b { +name } }
             div(classes = "overflow-auto") {
@@ -135,7 +135,7 @@ private fun FlowContent.renderContexts(config: TulipConfig) {
 }
 
 private fun FlowContent.renderBenchmarkConfigs(config: TulipConfig) {
-    statsCard(titleText = "Benchmark Configurations", classes = "full-width") {
+    statsCard(StatsCardConfig(titleText = "Benchmark Configurations", classes = "full-width")) {
         config.benchmarks.forEach { (name, cfg) ->
             h5 { b { +name } }
             div(classes = "overflow-auto") {
@@ -187,7 +187,7 @@ private fun FlowContent.renderBenchmarkConfigs(config: TulipConfig) {
 }
 
 private fun FlowContent.renderWorkflows(config: TulipConfig) {
-    statsCard(titleText = "Workflows", classes = "full-width") {
+    statsCard(StatsCardConfig(titleText = "Workflows", classes = "full-width")) {
         config.workflows.forEach { (name, flow) ->
             h5 { b { +name } }
             div(classes = "overflow-auto") {
@@ -248,7 +248,7 @@ private fun FlowContent.renderMapTable(map: Map<out Any, Any>?) {
  * Renders the runtime information section.
  */
 fun FlowContent.runtimeSection(reportData: ReportData) {
-    statsCard(titleText = "Tulip Runtime Information", classes = "full-width") {
+    statsCard(StatsCardConfig(titleText = "Tulip Runtime Information", classes = "full-width")) {
         val java = reportData.java
 
         h5 { b { +"Java System Properties" } }

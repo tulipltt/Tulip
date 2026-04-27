@@ -122,7 +122,10 @@ fun FlowContent.detailedBenchmarkTable(
     results: List<BenchmarkResult>,
     tableId: String = "detailedTable",
 ) {
-    val actions = results.flatMap { it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList() }.distinct().sorted()
+    val actions =
+        results.flatMap {
+            it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
+        }.distinct().sorted()
 
     div(classes = "overflow-auto") {
         table(classes = "striped sortable") {
@@ -130,7 +133,10 @@ fun FlowContent.detailedBenchmarkTable(
             renderTableHead("Action / Iteration")
             tbody {
                 actions.forEach { actionName ->
-                    val actionResults = results.mapNotNull { it.userActions?.values?.find { a -> a.name == actionName } }
+                    val actionResults =
+                        results.mapNotNull {
+                            it.userActions?.values?.find { a -> a.name == actionName }
+                        }
                     val totalDuration = results.sumOf { it.duration ?: 0.0 }
                     val actionSummary = aggregateActionResults(actionResults, totalDuration)
 
@@ -172,6 +178,7 @@ private fun TBODY.renderIterationRow(
     }
 }
 
+@Suppress("CyclomaticComplexMethod")
 private fun TR.renderIterationStats(
     res: BenchmarkResult,
     stats: ActionStatResult,

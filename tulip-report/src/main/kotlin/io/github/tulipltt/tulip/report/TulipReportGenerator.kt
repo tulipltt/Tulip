@@ -45,7 +45,9 @@ object TulipReportGenerator {
                 val warnings = ReportDataValidator.validate(reportData)
                 @Suppress("UNCHECKED_CAST")
                 val groupedResults =
-                    reportData.results.groupBy { it.bmName ?: "Unknown Benchmark" } as Map<String, List<BenchmarkResult>>
+                    reportData.results.groupBy {
+                        it.bmName ?: "Unknown Benchmark"
+                    } as Map<String, List<BenchmarkResult>>
                 renderSidebar(groupedResults.keys)
                 main {
                     if (warnings.isNotEmpty()) {
@@ -144,7 +146,13 @@ object TulipReportGenerator {
     private fun FlowContent.renderOverviewSection(groupedResults: Map<String, List<BenchmarkResult>>) {
         div {
             id = "overview"
-            statsCard("All Benchmarks Summary", classes = "full-width", tableId = "summary_table") {
+            statsCard(
+                StatsCardConfig(
+                    titleText = "All Benchmarks Summary",
+                    classes = "full-width",
+                    tableId = "summary_table",
+                ),
+            ) {
                 summaryTable(groupedResults, "summary_table")
             }
             renderCombinedCharts(groupedResults)
@@ -158,7 +166,13 @@ object TulipReportGenerator {
                 id = "benchmark_$bmId"
                 h3(classes = "section-header") { +"Benchmark: $bmName" }
                 renderBenchmarkCharts(bmId, results)
-                statsCard("Benchmark Iterations: $bmName", classes = "full-width", tableId = "table_$bmId") {
+                statsCard(
+                    StatsCardConfig(
+                        titleText = "Benchmark Iterations: $bmName",
+                        classes = "full-width",
+                        tableId = "table_$bmId",
+                    ),
+                ) {
                     detailedBenchmarkTable(results, "table_$bmId")
                 }
             }

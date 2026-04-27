@@ -27,7 +27,8 @@ object ReportDataValidator {
                 warnings.add(msg)
             }
             if (result.duration == null || result.duration <= 0.0) {
-                val msg = "Benchmark '${result.bmName ?: "Unknown"}' at index $index has invalid duration: ${result.duration}"
+                val msg =
+                    "Benchmark '${result.bmName ?: "Unknown"}' at index $index has invalid duration: ${result.duration}"
                 logger.warn(msg)
                 warnings.add(msg)
             }
