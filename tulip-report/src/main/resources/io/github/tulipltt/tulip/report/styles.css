@@ -275,17 +275,6 @@ details[open] summary::before {
 .font-08em { font-size: 0.8em; }
 .font-12rem { font-size: 1.2rem; }
 
-/* Search Functionality */
-.search-container {
-    padding: 1rem;
-    border-bottom: 1px solid var(--pico-muted-border-color);
-}
-
-.search-container input {
-    width: 100%;
-    box-sizing: border-box;
-}
-
 /* Loading Overlay */
 .loading-overlay {
     position: fixed;

@@ -12,7 +12,7 @@ class ReportComponentsTest {
         val out = StringBuilder()
         out.appendHTML().html {
             body {
-                statsCard("Test Title") {
+                statsCard(StatsCardConfig("Test Title")) {
                     +"Card Content"
                 }
             }

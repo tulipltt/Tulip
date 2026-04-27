@@ -254,7 +254,6 @@ function initChartWithFallback(elementId, chartData, chartTitle) {
     
     return chart;
 }
-}
 
 /**
  * Creates a percentile distribution chart.
@@ -515,25 +514,6 @@ function downloadTableAsJSON(tableId, fileName) {
     const data = tableToArray(tableId);
     const json = JSON.stringify(data, null, 2);
     downloadFile(json, fileName, 'application/json;charset=utf-8;');
-}
-
-let searchFilter = '';
-
-function filterBenchmarks(searchTerm) {
-    searchFilter = searchTerm.toLowerCase();
-    updateSidebarNavigation();
-}
-
-function updateSidebarNavigation() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        const text = link.textContent.toLowerCase();
-        if (searchFilter && !text.includes(searchFilter)) {
-            link.style.display = 'none';
-        } else {
-            link.style.display = 'block';
-        }
-    });
 }
 
 // Global listeners

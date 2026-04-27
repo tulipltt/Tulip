@@ -22,6 +22,7 @@ fun aggregateResults(results: List<BenchmarkResult>): AggregatedStats {
     val aggregateHistogram = Histogram(ReportConstants.HISTOGRAM_PRECISION)
     results.forEach { res ->
         decodeHistogram(res.hdrHistogramRt)?.let { iterationHistogram ->
+            @Suppress("TooGenericExceptionCaught")
             try {
                 aggregateHistogram.add(iterationHistogram)
             } catch (e: Exception) {
@@ -54,6 +55,7 @@ fun aggregateActionResults(
     val aggregateHistogram = Histogram(ReportConstants.HISTOGRAM_PRECISION)
     actionStatsList.forEach { stat ->
         decodeHistogram(stat.hdrHistogramRt)?.let { iterationHistogram ->
+            @Suppress("TooGenericExceptionCaught")
             try {
                 aggregateHistogram.add(iterationHistogram)
             } catch (e: Exception) {
@@ -75,8 +77,12 @@ fun decodeHistogram(base64: String?): Histogram? {
     return try {
         val bytes = Base64.getDecoder().decode(base64)
         Histogram.decodeFromCompressedByteBuffer(ByteBuffer.wrap(bytes), 0)
-    } catch (e: Exception) {
-        logger.error("Failed to decode histogram: ${e.message}")
+    } catch (e: IllegalArgumentException) {
+        logger.error("Failed to decode histogram (invalid base64 or format): ${e.message}")
+        null
+    } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
+        // Fallback for other decoding issues that aren't IllegalArgumentException
+        logger.error("Unexpected error decoding histogram: ${e.message}")
         null
     }
 }

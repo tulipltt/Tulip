@@ -7,7 +7,7 @@ package io.github.tulipltt.tulip.report
 object ReportStyles {
     private fun loadResource(name: String): String {
         return ReportStyles::class.java.getResource(name)?.readText()
-            ?: throw IllegalStateException("Resource $name not found")
+            ?: error("Resource $name not found")
     }
 
     /**

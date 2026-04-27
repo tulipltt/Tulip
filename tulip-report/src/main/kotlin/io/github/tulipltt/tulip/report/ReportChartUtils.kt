@@ -1,4 +1,4 @@
-@file:Suppress("ktlint:standard:no-wildcard-imports", "WildcardImport")
+@file:Suppress("ktlint:standard:no-wildcard-imports", "WildcardImport", "TooManyFunctions")
 
 package io.github.tulipltt.tulip.report
 
@@ -18,157 +18,213 @@ fun FlowContent.renderCombinedCharts(groupedResults: Map<String, List<BenchmarkR
 
 private fun FlowContent.renderCombinedApsChart(groupedResults: Map<String, List<BenchmarkResult>>) {
     val maxRows = groupedResults.values.maxOfOrNull { it.size } ?: 0
-    statsCard("Throughput Comparison", classes = "full-width", isChart = true) {
+    statsCard(
+        StatsCardConfig(
+            titleText = "Throughput Comparison",
+            classes = "full-width",
+            isChart = true,
+        ),
+    ) {
         div("chart-container") { id = "chart_combined_aps" }
         script {
-            val seriesLabels = mutableListOf<String>()
-            groupedResults.forEach { (bmName, results) ->
-                val actions =
-                    results.flatMap {
-                        it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
-                    }.distinct().sorted()
-                actions.forEach { actionName ->
-                    seriesLabels.add("$bmName - $actionName")
-                    seriesLabels.add("$bmName - $actionName (Errors)")
-                }
-            }
-            val dataRows =
-                (0 until maxRows).map { rowIdx ->
-                    val rowData = mutableListOf<Double>()
-                    groupedResults.forEach { (_, results) ->
-                        val res = results.getOrNull(rowIdx)
-                        val actions =
-                            results.flatMap {
-                                it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
-                            }.distinct().sorted()
-                        actions.forEach { actionName ->
-                            val stats = res?.userActions?.values?.find { it.name == actionName }
-                            val aps = stats?.avgAps ?: 0.0
-                            val errAps =
-                                if (stats != null && (res?.duration ?: 0.0) > 0.0) {
-                                    (stats.numFailed ?: 0).toDouble() / (res?.duration ?: 1.0)
-                                } else {
-                                    0.0
-                                }
-                            rowData.add(aps)
-                            rowData.add(errAps)
-                        }
-                    }
-                    listOf(rowIdx.toDouble()) + rowData
-                }
+            val seriesLabels = getCombinedApsLabels(groupedResults)
+            val dataRows = getCombinedApsDataRows(maxRows, groupedResults)
 
             renderChartScript(
-                "TimeSeries",
-                "chart_combined_aps",
-                seriesLabels,
-                dataRows,
-                "Throughput per Action (All Benchmarks)",
-                "APS",
+                ChartConfig(
+                    type = "TimeSeries",
+                    id = "chart_combined_aps",
+                    labels = seriesLabels,
+                    data = dataRows,
+                    title = "Throughput per Action (All Benchmarks)",
+                    unit = "APS",
+                ),
             )
         }
+    }
+}
+
+private fun getCombinedApsLabels(groupedResults: Map<String, List<BenchmarkResult>>): List<String> {
+    val seriesLabels = mutableListOf<String>()
+    groupedResults.forEach { (bmName, results) ->
+        val actions =
+            results.flatMap {
+                it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
+            }.distinct().sorted()
+        actions.forEach { actionName ->
+            seriesLabels.add("$bmName - $actionName")
+            seriesLabels.add("$bmName - $actionName (Errors)")
+        }
+    }
+    return seriesLabels
+}
+
+private fun getCombinedApsDataRows(
+    maxRows: Int,
+    groupedResults: Map<String, List<BenchmarkResult>>,
+): List<List<Double>> {
+    return (0 until maxRows).map { rowIdx ->
+        val rowData = mutableListOf<Double>()
+        groupedResults.forEach { (_, results) ->
+            val res = results.getOrNull(rowIdx)
+            val actions =
+                results.flatMap {
+                    it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
+                }.distinct().sorted()
+            actions.forEach { actionName ->
+                val stats = res?.userActions?.values?.find { it.name == actionName }
+                val aps = stats?.avgAps ?: 0.0
+                val errAps =
+                    if (stats != null && (res?.duration ?: 0.0) > 0.0) {
+                        (stats.numFailed ?: 0).toDouble() / (res?.duration ?: 1.0)
+                    } else {
+                        0.0
+                    }
+                rowData.add(aps)
+                rowData.add(errAps)
+            }
+        }
+        listOf(rowIdx.toDouble()) + rowData
     }
 }
 
 private fun FlowContent.renderCombinedRtChart(groupedResults: Map<String, List<BenchmarkResult>>) {
     val maxRows = groupedResults.values.maxOfOrNull { it.size } ?: 0
-    statsCard("Latency Comparison", classes = "full-width", isChart = true) {
+    statsCard(
+        StatsCardConfig(
+            titleText = "Latency Comparison",
+            classes = "full-width",
+            isChart = true,
+        ),
+    ) {
         div("chart-container") { id = "chart_combined_rt" }
         script {
-            val seriesLabels = mutableListOf<String>()
-            groupedResults.forEach { (bmName, results) ->
-                val actions =
-                    results.flatMap {
-                        it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
-                    }.distinct().sorted()
-                actions.forEach { actionName -> seriesLabels.add("$bmName - $actionName") }
-            }
-            val dataRows =
-                (0 until maxRows).map { rowIdx ->
-                    val rowData = mutableListOf<Double?>()
-                    groupedResults.forEach { (_, results) ->
-                        val res = results.getOrNull(rowIdx)
-                        val actions =
-                            results.flatMap {
-                                it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
-                            }.distinct().sorted()
-                        actions.forEach { actionName ->
-                            val stats = res?.userActions?.values?.find { it.name == actionName }
-                            val rt =
-                                if (stats != null) {
-                                    (stats.avgRt ?: 0.0) / ReportConstants.NANOS_PER_MILLI
-                                } else {
-                                    null
-                                }
-                            rowData.add(rt)
-                        }
-                    }
-                    listOf(rowIdx.toDouble()) + rowData
-                }
+            val seriesLabels = getCombinedRtLabels(groupedResults)
+            val dataRows = getCombinedRtDataRows(maxRows, groupedResults)
 
             renderChartScript(
-                "TimeSeries",
-                "chart_combined_rt",
-                seriesLabels,
-                dataRows,
-                "Average Latency per Action (All Benchmarks)",
-                "ms",
+                ChartConfig(
+                    type = "TimeSeries",
+                    id = "chart_combined_rt",
+                    labels = seriesLabels,
+                    data = dataRows,
+                    title = "Average Latency per Action (All Benchmarks)",
+                    unit = "ms",
+                ),
             )
         }
     }
 }
 
+private fun getCombinedRtLabels(groupedResults: Map<String, List<BenchmarkResult>>): List<String> {
+    val seriesLabels = mutableListOf<String>()
+    groupedResults.forEach { (bmName, results) ->
+        val actions =
+            results.flatMap {
+                it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
+            }.distinct().sorted()
+        actions.forEach { actionName -> seriesLabels.add("$bmName - $actionName") }
+    }
+    return seriesLabels
+}
+
+private fun getCombinedRtDataRows(
+    maxRows: Int,
+    groupedResults: Map<String, List<BenchmarkResult>>,
+): List<List<Double?>> {
+    return (0 until maxRows).map { rowIdx ->
+        val rowData = mutableListOf<Double?>()
+        groupedResults.forEach { (_, results) ->
+            val res = results.getOrNull(rowIdx)
+            val actions =
+                results.flatMap {
+                    it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
+                }.distinct().sorted()
+            actions.forEach { actionName ->
+                val stats = res?.userActions?.values?.find { it.name == actionName }
+                val rt =
+                    if (stats != null) {
+                        (stats.avgRt ?: 0.0) / ReportConstants.NANOS_PER_MILLI
+                    } else {
+                        null
+                    }
+                rowData.add(rt)
+            }
+        }
+        listOf(rowIdx.toDouble() + 1) + rowData
+    }
+}
+
 private fun FlowContent.renderCombinedDistChart(groupedResults: Map<String, List<BenchmarkResult>>) {
-    statsCard("Latency Percentile Distribution Comparison", classes = "full-width", isChart = true) {
+    statsCard(
+        StatsCardConfig(
+            titleText = "Latency Percentile Distribution Comparison",
+            classes = "full-width",
+            isChart = true,
+        ),
+    ) {
         div("chart-container") { id = "chart_combined_dist" }
         script {
-            val actionNamesList = mutableListOf<String>()
-            val actionHistos = mutableListOf<Histogram>()
-            groupedResults.forEach { (bmName, results) ->
-                val lastRes = results.last()
-                val names =
-                    results.flatMap {
-                        it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
-                    }.distinct().sorted()
-                names.forEach { actionName ->
-                    actionNamesList.add("$bmName - $actionName")
-                    val stats = lastRes.userActions?.values?.find { it.name == actionName }
-                    actionHistos.add(
-                        decodeHistogram(stats?.hdrHistogramRt)
-                            ?: Histogram(ReportConstants.HISTOGRAM_PRECISION),
-                    )
-                }
-            }
-            val commonPoints = mutableSetOf<Double>()
-            actionHistos.forEach { h ->
-                h.percentiles(ReportConstants.HISTOGRAM_PRECISION).forEach {
-                    commonPoints.add(it.percentileLevelIteratedTo)
-                }
-            }
-            val sortedPoints = commonPoints.toList().sorted()
-            val dataRows =
-                sortedPoints.map { p ->
-                    val x =
-                        if (p < ReportConstants.P100) {
-                            ReportConstants.P100 / (ReportConstants.P100 - p)
-                        } else {
-                            ReportConstants.PERCENTILE_CHART_MAX_X
-                        }
-                    val rowData =
-                        actionHistos.map { h ->
-                            (h.getValueAtPercentile(p) / ReportConstants.NANOS_PER_MILLI)
-                        }
-                    listOf(x) + rowData
-                }
+            val (actionNamesList, actionHistos) = getCombinedDistHistograms(groupedResults)
+            val dataRows = getCombinedDistDataRows(actionHistos)
 
             renderChartScript(
-                "Percentile",
-                "chart_combined_dist",
-                actionNamesList,
-                dataRows,
-                "Latency Percentile Distribution (All Actions)",
-                "ms",
+                ChartConfig(
+                    type = "Percentile",
+                    id = "chart_combined_dist",
+                    labels = actionNamesList,
+                    data = dataRows,
+                    title = "Latency Percentile Distribution (All Actions)",
+                    unit = "ms",
+                ),
             )
         }
+    }
+}
+
+private fun getCombinedDistHistograms(
+    groupedResults: Map<String, List<BenchmarkResult>>,
+): Pair<List<String>, List<Histogram>> {
+    val actionNamesList = mutableListOf<String>()
+    val actionHistos = mutableListOf<Histogram>()
+    groupedResults.forEach { (bmName, results) ->
+        val lastRes = results.last()
+        val names =
+            results.flatMap {
+                it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
+            }.distinct().sorted()
+        names.forEach { actionName ->
+            actionNamesList.add("$bmName - $actionName")
+            val stats = lastRes.userActions?.values?.find { it.name == actionName }
+            actionHistos.add(
+                decodeHistogram(stats?.hdrHistogramRt)
+                    ?: Histogram(ReportConstants.HISTOGRAM_PRECISION),
+            )
+        }
+    }
+    return actionNamesList to actionHistos
+}
+
+private fun getCombinedDistDataRows(actionHistos: List<Histogram>): List<List<Double>> {
+    val commonPoints = mutableSetOf<Double>()
+    actionHistos.forEach { h ->
+        h.percentiles(ReportConstants.HISTOGRAM_PRECISION).forEach {
+            commonPoints.add(it.percentileLevelIteratedTo)
+        }
+    }
+    val sortedPoints = commonPoints.toList().sorted()
+    return sortedPoints.map { p ->
+        val x =
+            if (p < ReportConstants.P100) {
+                ReportConstants.P100 / (ReportConstants.P100 - p)
+            } else {
+                ReportConstants.PERCENTILE_CHART_MAX_X
+            }
+        val rowData =
+            actionHistos.map { h ->
+                (h.getValueAtPercentile(p) / ReportConstants.NANOS_PER_MILLI)
+            }
+        listOf(x) + rowData
     }
 }
 
@@ -187,12 +243,22 @@ fun FlowContent.renderBenchmarkCharts(
         summary { +"Percentile Distribution Tables" }
         div(classes = "grid") {
             div {
-                statsCard("Log-Linear Quantization (LLQ)", tableId = "llq_table_$bmId") {
+                statsCard(
+                    StatsCardConfig(
+                        titleText = "Log-Linear Quantization (LLQ)",
+                        tableId = "llq_table_$bmId",
+                    ),
+                ) {
                     llqPercentileTable(results, "llq_table_$bmId")
                 }
             }
             div {
-                statsCard("HDR Histogram", tableId = "hdr_table_$bmId") {
+                statsCard(
+                    StatsCardConfig(
+                        titleText = "HDR Histogram",
+                        tableId = "hdr_table_$bmId",
+                    ),
+                ) {
                     hdrPercentileTable(results, "hdr_table_$bmId")
                 }
             }
@@ -204,7 +270,13 @@ private fun FlowContent.renderBenchmarkApsChart(
     bmId: String,
     results: List<BenchmarkResult>,
 ) {
-    statsCard("Throughput (APS) per Action", classes = "full-width", isChart = true) {
+    statsCard(
+        StatsCardConfig(
+            titleText = "Throughput (APS) per Action",
+            classes = "full-width",
+            isChart = true,
+        ),
+    ) {
         div("chart-container") { id = "chart_aps_$bmId" }
         script {
             val actions =
@@ -230,12 +302,14 @@ private fun FlowContent.renderBenchmarkApsChart(
                 }
 
             renderChartScript(
-                "TimeSeries",
-                "chart_aps_$bmId",
-                seriesLabels,
-                dataRows,
-                "Throughput per Action",
-                "APS",
+                ChartConfig(
+                    type = "TimeSeries",
+                    id = "chart_aps_$bmId",
+                    labels = seriesLabels,
+                    data = dataRows,
+                    title = "Throughput per Action",
+                    unit = "APS",
+                ),
             )
         }
     }
@@ -245,7 +319,13 @@ private fun FlowContent.renderBenchmarkRtChart(
     bmId: String,
     results: List<BenchmarkResult>,
 ) {
-    statsCard("Average Latency per Action", classes = "full-width", isChart = true) {
+    statsCard(
+        StatsCardConfig(
+            titleText = "Average Latency per Action",
+            classes = "full-width",
+            isChart = true,
+        ),
+    ) {
         div("chart-container") { id = "chart_rt_$bmId" }
         script {
             val actions =
@@ -267,12 +347,14 @@ private fun FlowContent.renderBenchmarkRtChart(
                 }
 
             renderChartScript(
-                "TimeSeries",
-                "chart_rt_$bmId",
-                actions,
-                dataRows,
-                "Avg Latency per Action (ms)",
-                "ms",
+                ChartConfig(
+                    type = "TimeSeries",
+                    id = "chart_rt_$bmId",
+                    labels = actions,
+                    data = dataRows,
+                    title = "Avg Latency per Action (ms)",
+                    unit = "ms",
+                ),
             )
         }
     }
@@ -282,7 +364,13 @@ private fun FlowContent.renderBenchmarkDistChart(
     bmId: String,
     results: List<BenchmarkResult>,
 ) {
-    statsCard("Latency Percentile Distribution per Action", classes = "full-width", isChart = true) {
+    statsCard(
+        StatsCardConfig(
+            titleText = "Latency Percentile Distribution per Action",
+            classes = "full-width",
+            isChart = true,
+        ),
+    ) {
         div("chart-container") { id = "chart_dist_$bmId" }
         script {
             val lastRes = results.last()
@@ -319,29 +407,25 @@ private fun FlowContent.renderBenchmarkDistChart(
                 }
 
             renderChartScript(
-                "Percentile",
-                "chart_dist_$bmId",
-                actions,
-                dataRows,
-                "Latency Percentile Distribution (ms)",
-                "ms",
+                ChartConfig(
+                    type = "Percentile",
+                    id = "chart_dist_$bmId",
+                    labels = actions,
+                    data = dataRows,
+                    title = "Latency Percentile Distribution (ms)",
+                    unit = "ms",
+                ),
             )
         }
     }
 }
 
-private fun SCRIPT.renderChartScript(
-    type: String,
-    id: String,
-    labels: List<String>,
-    data: List<List<Double?>>,
-    title: String,
-    unit: String,
-) {
-    val labelsJson = Json.encodeToString(labels)
-    val dataJson = Json.encodeToString(data)
+private fun SCRIPT.renderChartScript(config: ChartConfig) {
+    val labelsJson = Json.encodeToString(config.labels)
+    val dataJson = Json.encodeToString(config.data)
 
     unsafe {
-        +"create${type}Chart('$id', $labelsJson, $dataJson, '$title', '$unit');"
+        +"create${config.type}Chart('${config.id}', $labelsJson, $dataJson, '${config.title}', '${config.unit}');"
     }
 }
+
