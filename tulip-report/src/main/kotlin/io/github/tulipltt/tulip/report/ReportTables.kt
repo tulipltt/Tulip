@@ -32,7 +32,7 @@ fun FlowContent.summaryTable(
                                 it.userActions?.values?.find { a -> a.name == actionName }
                             }
                         val actionSummary = aggregateActionResults(actionResults, summary.duration)
-                        renderActionRow(actionName, actionSummary)
+                        renderActionRow(actionName, actionSummary, name)
                     }
                 }
             }
@@ -66,7 +66,8 @@ private fun TBODY.renderSummaryRow(
     bmId: String,
     summary: AggregatedStats,
 ) {
-    tr {
+    tr(classes = "row-summary") {
+        attributes["data-benchmark"] = name
         td { a(href = "#benchmark_$bmId") { b { +name } } }
         renderStatsTDs(summary)
     }
@@ -75,8 +76,10 @@ private fun TBODY.renderSummaryRow(
 private fun TBODY.renderActionRow(
     actionName: String,
     summary: AggregatedStats,
+    benchmarkName: String,
 ) {
-    tr {
+    tr(classes = "row-action") {
+        attributes["data-benchmark"] = benchmarkName
         td {
             div {
                 style = "padding-left: ${ReportConstants.ACTION_INDENT_PX}px;"
@@ -140,7 +143,8 @@ fun FlowContent.detailedBenchmarkTable(
                     val totalDuration = results.sumOf { it.duration ?: 0.0 }
                     val actionSummary = aggregateActionResults(actionResults, totalDuration)
 
-                    tr {
+                    tr(classes = "row-summary-action") {
+                        attributes["data-action"] = actionName
                         td { b { +"Summary: $actionName" } }
                         renderStatsTDs(actionSummary)
                     }
@@ -148,13 +152,13 @@ fun FlowContent.detailedBenchmarkTable(
                     results.forEach { res ->
                         val stats = res.userActions?.values?.find { it.name == actionName }
                         if (stats != null) {
-                            renderIterationRow(res, stats)
+                            renderIterationRow(res, stats, actionName)
                         }
                     }
                 }
 
                 val summary = aggregateResults(results)
-                tr {
+                tr(classes = "row-overall") {
                     td { b { +"OVERALL BENCHMARK" } }
                     renderStatsTDs(summary)
                 }
@@ -166,8 +170,10 @@ fun FlowContent.detailedBenchmarkTable(
 private fun TBODY.renderIterationRow(
     res: BenchmarkResult,
     stats: ActionStatResult,
+    actionName: String,
 ) {
-    tr {
+    tr(classes = "row-iteration") {
+        attributes["data-action"] = actionName
         td {
             div {
                 style = "padding-left: ${ReportConstants.ACTION_INDENT_PX}px;"

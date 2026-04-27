@@ -9,34 +9,78 @@ let currentSort = {
 function sortTable(tableId, columnIdx) {
     const table = document.getElementById(tableId);
     if (!table) return;
-    
+
     const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const allRows = Array.from(tbody.querySelectorAll('tr'));
     const headers = table.querySelectorAll('thead th');
-    
+
+    // Update sort state
     if (currentSort.column === columnIdx) {
         currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
     } else {
         currentSort.column = columnIdx;
         currentSort.direction = 'asc';
     }
-    
-    const sortedRows = rows.sort((a, b) => {
+
+    // Identify row types
+    const summaryRows = allRows.filter(r => r.classList.contains('row-summary') || r.classList.contains('row-summary-action'));
+    const overallRows = allRows.filter(r => r.classList.contains('row-overall'));
+
+    // Helper to get group key (benchmark name or action name)
+    const getGroupKey = (row) => row.getAttribute('data-benchmark') || row.getAttribute('data-action');
+
+    // Sort summary rows (the parents)
+    summaryRows.sort((a, b) => {
         const aText = a.cells[columnIdx].textContent.trim();
         const bText = b.cells[columnIdx].textContent.trim();
-        
+
         let comparison;
         if (!isNaN(parseFloat(aText)) && !isNaN(parseFloat(bText))) {
             comparison = parseFloat(aText) - parseFloat(bText);
         } else {
             comparison = aText.localeCompare(bText);
         }
-        
+
         return currentSort.direction === 'asc' ? comparison : -comparison;
     });
-    
-    sortedRows.forEach(row => tbody.appendChild(row));
-    
+
+    // Reconstruct table body: Summary -> children -> next Summary... -> Overall (at bottom)
+    const newRows = [];
+    summaryRows.forEach(summaryRow => {
+        newRows.push(summaryRow);
+
+        const groupKey = getGroupKey(summaryRow);
+        const children = allRows.filter(r => (r.classList.contains('row-action') || r.classList.contains('row-iteration')) &&
+                                              getGroupKey(r) === groupKey);
+
+        // Sort children within group based on same criteria
+        children.sort((a, b) => {
+            const aText = a.cells[columnIdx].textContent.trim();
+            const bText = b.cells[columnIdx].textContent.trim();
+
+            let comparison;
+            if (!isNaN(parseFloat(aText)) && !isNaN(parseFloat(bText))) {
+                comparison = parseFloat(aText) - parseFloat(bText);
+            } else {
+                comparison = aText.localeCompare(bText);
+            }
+
+            return currentSort.direction === 'asc' ? comparison : -comparison;
+        });
+
+        children.forEach(child => newRows.push(child));
+    });
+
+    // Add overall benchmark rows at the very end
+    overallRows.forEach(overall => newRows.push(overall));
+
+    // Clear and re-append
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+    newRows.forEach(row => tbody.appendChild(row));
+
+    // Update header icons
     headers.forEach((th, idx) => {
         th.classList.remove('sort-asc', 'sort-desc');
         if (idx === columnIdx) {
