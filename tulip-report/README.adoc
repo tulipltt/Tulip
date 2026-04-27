@@ -4,10 +4,12 @@ The `tulip-report` module is a dedicated component of the Tulip performance tool
 
 == Overview
 
-Tulip reports provide a comprehensive view of performance metrics, including throughput (APS), latency percentiles, and resource utilization. Reports are generated in two primary formats:
+Tulip reports provide a comprehensive view of performance metrics, including throughput (APS), latency percentiles, and resource utilization. Key features include:
 
 * **Interactive HTML**: A modern, responsive dashboard with interactive charts and a dark/light theme.
-* **AsciiDoc**: A structured document suitable for technical documentation and further conversion (e.g., PDF).
+* **Sortable Performance Tables**: All data tables now support interactive sorting for both numeric and text columns, allowing for easier analysis of iteration results.
+* **Smooth Loading Experience**: A dedicated loading overlay ensures a polished transition while high-resolution charts and datasets are initialized in the browser.
+* **AsciiDoc Export**: A structured document suitable for technical documentation and further conversion (e.g., PDF).
 
 == Architecture
 
@@ -18,8 +20,9 @@ The module follows a "Data-to-Document" transformation architecture, converting 
 1.  **`TulipReportGenerator`**: The main orchestrator and entry point for HTML report generation. It uses a DSL-based approach to build the report structure.
 2.  **`ReportAdoc`**: Responsible for generating AsciiDoc content and optionally converting it to HTML using AsciidoctorJ.
 3.  **`ReportModels.kt`**: Defines the `ReportData` container and sub-models (`BenchmarkResult`, `ActionStatResult`) that mirror the JSON output from `tulip-runtime`.
-4.  **`ReportTables.kt` & `ReportChartUtils.kt`**: Specialized logic for rendering performance data into tabular and graphical formats.
-5.  **`ReportData.kt`**: The top-level data container deserialized from the benchmark output JSON.
+4.  **`StatsCardConfig.kt` & `ChartConfig.kt`**: Type-safe configuration objects used to manage component parameters and reduce function signature complexity.
+5.  **`ReportTables.kt` & `ReportChartUtils.kt`**: Specialized logic for rendering performance data into tabular and graphical formats.
+6.  **`ReportData.kt`**: The top-level data container deserialized from the benchmark output JSON.
 
 === Technology Stack
 
@@ -38,7 +41,9 @@ The module extensively uses the **DSL pattern** via `kotlinx-html`. This allows 
 The `TulipReportGenerator` is implemented as a Kotlin `object` (Singleton), providing a centralized, thread-safe point for report creation across the application.
 
 === Component-Based UI Rendering
-Instead of large, monolithic rendering functions, the UI logic is broken down into small, focused, and reusable **component functions** (e.g., `statsCard`, `metricCard`, `summaryTable`). This mirrors modern frontend component architectures and makes the codebase easier to maintain and extend.
+Instead of large, monolithic rendering functions, the UI logic is broken down into small, focused, and reusable **component functions** (e.g., `statsCard`, `metricCard`, `summaryTable`). 
+
+To maintain clean code and satisfy complexity constraints, these components utilize **Configuration Objects (Data Classes)**. Instead of passing many individual parameters (e.g., title, IDs, flags), related settings are grouped into structured objects like `StatsCardConfig` or `ChartConfig`. This mirrors modern frontend component architectures and makes the codebase easier to maintain and extend.
 
 == Usage
 
@@ -79,8 +84,9 @@ File("report.html").writeText(htmlReport)
 Tulip uses Apache ECharts for visualization. To add a new chart:
 
 1.  Define the data preparation logic in `ReportChartUtils.kt`.
-2.  Use the `createTimeSeriesChart` or `createPercentileChart` helper functions (defined in `ReportScripts.kt`) to initialize the chart in the HTML report.
-3.  Ensure the chart has a corresponding container `div` with a unique ID.
+2.  Use the `ChartConfig` data class to package your chart settings (type, labels, data, etc.).
+3.  Call `renderChartScript(config)` to inject the chart initialization logic into the HTML report.
+4.  Ensure the chart has a corresponding container `div` with a unique ID, typically wrapped in a `statsCard(StatsCardConfig(...))`.
 
 === Customizing Styles and Scripts
 * **Styles**: Global styles and theme customizations are located in `ReportStyles.kt`.
@@ -119,12 +125,14 @@ package "Data Models" {
     class ReportData << (D,#FF7700) >>
     class BenchmarkResult << (D,#FF7700) >>
     class ActionStatResult << (D,#FF7700) >>
+    class StatsCardConfig << (D,#FF7700) >>
+    class ChartConfig << (D,#FF7700) >>
 }
 
 package "Rendering Logic" {
     package "HTML DSL" {
         class ReportComponents << (F,#B19CD9) >> {
-            + statsCard()
+            + statsCard(config)
             + configSection()
             + runtimeSection()
         }
