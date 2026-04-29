@@ -92,7 +92,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.20.0")
 
     // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.3")
 
     // https://mvnrepository.com/artifact/info.picocli/picocli
     implementation("info.picocli:picocli:$picocliVersion")
