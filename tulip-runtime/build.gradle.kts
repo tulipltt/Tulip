@@ -37,7 +37,7 @@ java {
     withSourcesJar()
 }
 
-val gsonVersion = "2.13.2"
+val gsonVersion = "2.14.0"
 val slf4jVersion = "2.0.17"
 val logbackVersion = "1.5.32"
 val springBootVersion = "3.5.14"
