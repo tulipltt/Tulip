@@ -27,6 +27,16 @@ plugins {
 
     // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
     id("org.owasp.dependencycheck") version "12.2.0"
+
+    jacoco
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }
 
 java {

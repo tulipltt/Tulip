@@ -8,6 +8,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
     // id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
+    jacoco
 }
 
 dependencies {
@@ -18,6 +19,14 @@ dependencies {
     implementation("org.asciidoctor:asciidoctorj:3.0.1")
     implementation("org.asciidoctor:asciidoctorj-diagram:3.2.0")
     implementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2025.3")
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }
 
 application {
