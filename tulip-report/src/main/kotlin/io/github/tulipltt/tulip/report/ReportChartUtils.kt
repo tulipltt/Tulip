@@ -276,7 +276,7 @@ private fun FlowContent.renderActionLatencyCharts(
         val actionId = actionName.replace(" ", "_")
         statsCard(
             StatsCardConfig(
-                titleText = "Latency per Action: $actionName",
+                titleText = "Action: $actionName",
                 classes = "full-width",
                 isChart = true,
             ),
@@ -304,7 +304,7 @@ private fun FlowContent.renderActionLatencyCharts(
                         id = "chart_action_latency_${bmId}_$actionId",
                         labels = listOf("Min", "Avg", "P50", "P90", "P95", "P99", "Max"),
                         data = dataRows,
-                        title = "Latency Over Time: $actionName",
+                        title = "Latency (ms)",
                         unit = "ms",
                     ),
                 )
