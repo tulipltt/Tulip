@@ -50,7 +50,7 @@ private fun TABLE.renderTableHead(firstColLabel: String) {
             th { +"Time" }
             th { +"APS" }
             th { +"Avg RT" }
-            th { +"Standard Deviation RT" }
+            th { +"Std Dev RT" }
             th { +"Min RT" }
             th { +"P50 RT" }
             th { +"P90 RT" }
@@ -218,10 +218,11 @@ private fun TR.renderIterationStats(
  * Renders a percentile table using Log-Linear Quantization buckets.
  */
 fun FlowContent.llqPercentileTable(
-    results: List<BenchmarkResult>,
+    percentiles: Map<String, Double>?,
+    maxRt: Double?,
+    totalCount: Long,
     tableId: String,
 ) {
-    val lastRes = results.last()
     table(classes = "striped sortable") {
         id = tableId
         thead {
@@ -235,13 +236,12 @@ fun FlowContent.llqPercentileTable(
             }
         }
         tbody {
-            val totalCount = lastRes.numActions?.toLong() ?: 0L
             ReportConstants.LLQ_POINTS.forEach { p ->
                 val valNanos =
                     if (p == ReportConstants.P100) {
-                        lastRes.maxRt ?: 0.0
+                        maxRt ?: 0.0
                     } else {
-                        lastRes.percentilesRt?.get(p.toString()) ?: 0.0
+                        percentiles?.get(p.toString()) ?: 0.0
                     }
                 val countAtP = (totalCount * (p / ReportConstants.P100)).toLong()
                 tr {
@@ -261,11 +261,10 @@ fun FlowContent.llqPercentileTable(
  * Renders a percentile table using HDR Histogram data.
  */
 fun FlowContent.hdrPercentileTable(
-    results: List<BenchmarkResult>,
+    hdrHistogramRt: String?,
     tableId: String,
 ) {
-    val lastRes = results.last()
-    val h = decodeHistogram(lastRes.hdrHistogramRt) ?: return
+    val h = decodeHistogram(hdrHistogramRt) ?: return
 
     table(classes = "striped sortable") {
         id = tableId

@@ -78,6 +78,15 @@ main {
     text-align: right;
     font-variant-numeric: tabular-nums;
     font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+}
+
+table {
+    font-size: 0.85rem;
+}
+
+table th, table td {
+    padding: 0.25rem 0.5rem !important;
 }
 
 /* Pill styling */
@@ -87,8 +96,8 @@ main {
     font-size: 0.8em;
     font-weight: bold;
 }
-.pill-fail { background-color: var(--pico-ins-color); color: white; } 
-.pill-pass { background-color: var(--pico-primary-background); color: white; }
+.pill-fail { background-color: #d32f2f; color: white; } 
+.pill-pass { background-color: #388e3c; color: white; }
 
 @media (max-width: 992px) {
     aside { transform: translateX(-100%); }

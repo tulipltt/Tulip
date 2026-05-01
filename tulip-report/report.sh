@@ -27,7 +27,8 @@ if [ ! -f "$REPORT_FILE" ]; then
     exit 1
 fi
 
-# Run the task using gradlew
+# Run the task using gradlew from project root
+cd "$(dirname "$0")/.."
 ./gradlew -q :tulip-report:run --args="$REPORT_FILE"
 EXIT_CODE=$?
 

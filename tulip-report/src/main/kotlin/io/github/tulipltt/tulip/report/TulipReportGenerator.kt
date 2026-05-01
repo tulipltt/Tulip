@@ -155,7 +155,6 @@ object TulipReportGenerator {
             ) {
                 summaryTable(groupedResults, "summary_table")
             }
-            renderCombinedCharts(groupedResults)
         }
     }
 
@@ -164,8 +163,14 @@ object TulipReportGenerator {
             val bmId = bmName.replace(" ", "_")
             section {
                 id = "benchmark_$bmId"
-                h3(classes = "section-header") { +"Benchmark: $bmName" }
-                renderBenchmarkCharts(bmId, results)
+                div(classes = "align-center flex-gap-1rem") {
+                    style = "display: flex;"
+                    h3(classes = "section-header m-0") { +"Benchmark: $bmName" }
+                    a(href = "#config_$bmId", classes = "outline secondary p-0 m-0 font-08em") {
+                        style = "padding: 2px 8px !important; border-radius: 4px;"
+                        +"View Config"
+                    }
+                }
                 statsCard(
                     StatsCardConfig(
                         titleText = "Benchmark Iterations: $bmName",
@@ -175,6 +180,7 @@ object TulipReportGenerator {
                 ) {
                     detailedBenchmarkTable(results, "table_$bmId")
                 }
+                renderBenchmarkCharts(bmId, results)
             }
         }
     }

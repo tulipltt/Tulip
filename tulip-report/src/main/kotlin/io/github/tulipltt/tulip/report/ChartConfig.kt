@@ -7,7 +7,7 @@ data class ChartConfig(
     val type: String,
     val id: String,
     val labels: List<String>,
-    val data: List<List<Double?>>,
+    val data: List<List<Any?>>,
     val title: String,
     val unit: String,
 )

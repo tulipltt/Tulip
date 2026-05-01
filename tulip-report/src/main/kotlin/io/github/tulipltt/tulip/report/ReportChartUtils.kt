@@ -4,7 +4,7 @@ package io.github.tulipltt.tulip.report
 
 import kotlinx.html.*
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.*
 import org.HdrHistogram.Histogram
 
 /**
@@ -62,11 +62,15 @@ private fun getCombinedApsLabels(groupedResults: Map<String, List<BenchmarkResul
 private fun getCombinedApsDataRows(
     maxRows: Int,
     groupedResults: Map<String, List<BenchmarkResult>>,
-): List<List<Double>> {
+): List<List<Any?>> {
     return (0 until maxRows).map { rowIdx ->
-        val rowData = mutableListOf<Double>()
+        val rowData = mutableListOf<Any?>()
+        var timestamp: String? = null
         groupedResults.forEach { (_, results) ->
             val res = results.getOrNull(rowIdx)
+            if (timestamp == null && res?.testBegin != null) {
+                timestamp = res.testBegin
+            }
             val actions =
                 results.flatMap {
                     it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
@@ -75,8 +79,8 @@ private fun getCombinedApsDataRows(
                 val stats = res?.userActions?.values?.find { it.name == actionName }
                 val aps = stats?.avgAps ?: 0.0
                 val errAps =
-                    if (stats != null && (res?.duration ?: 0.0) > 0.0) {
-                        (stats.numFailed ?: 0).toDouble() / (res?.duration ?: 1.0)
+                    if (stats != null && (res.duration ?: 0.0) > 0.0) {
+                        (stats.numFailed ?: 0).toDouble() / (res.duration ?: 1.0)
                     } else {
                         0.0
                     }
@@ -84,7 +88,7 @@ private fun getCombinedApsDataRows(
                 rowData.add(errAps)
             }
         }
-        listOf(rowIdx.toDouble()) + rowData
+        listOf(timestamp ?: (rowIdx + 1).toString()) + rowData
     }
 }
 
@@ -131,11 +135,15 @@ private fun getCombinedRtLabels(groupedResults: Map<String, List<BenchmarkResult
 private fun getCombinedRtDataRows(
     maxRows: Int,
     groupedResults: Map<String, List<BenchmarkResult>>,
-): List<List<Double?>> {
+): List<List<Any?>> {
     return (0 until maxRows).map { rowIdx ->
-        val rowData = mutableListOf<Double?>()
+        val rowData = mutableListOf<Any?>()
+        var timestamp: String? = null
         groupedResults.forEach { (_, results) ->
             val res = results.getOrNull(rowIdx)
+            if (timestamp == null && res?.testBegin != null) {
+                timestamp = res.testBegin
+            }
             val actions =
                 results.flatMap {
                     it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
@@ -151,7 +159,7 @@ private fun getCombinedRtDataRows(
                 rowData.add(rt)
             }
         }
-        listOf(rowIdx.toDouble() + 1) + rowData
+        listOf(timestamp ?: (rowIdx + 1).toString()) + rowData
     }
 }
 
@@ -212,7 +220,10 @@ private fun getCombinedDistDataRows(actionHistos: List<Histogram>): List<List<Do
             commonPoints.add(it.percentileLevelIteratedTo)
         }
     }
-    val sortedPoints = commonPoints.toList().sorted()
+    val sortedPoints =
+        commonPoints.toList()
+            .filter { it <= ReportConstants.P99_9999 }
+            .sorted()
     return sortedPoints.map { p ->
         val x =
             if (p < ReportConstants.P100) {
@@ -241,25 +252,81 @@ fun FlowContent.renderBenchmarkCharts(
 
     details {
         summary { +"Percentile Distribution Tables" }
-        div(classes = "grid") {
-            div {
-                statsCard(
-                    StatsCardConfig(
-                        titleText = "Log-Linear Quantization (LLQ)",
-                        tableId = "llq_table_$bmId",
-                    ),
-                ) {
-                    llqPercentileTable(results, "llq_table_$bmId")
+
+        // Benchmark Summary Sub-section
+        details {
+            style = "margin-top: 1rem;"
+            summary { +"Benchmark Summary (Aggregated)" }
+            val lastRes = results.last()
+            div(classes = "grid") {
+                div {
+                    statsCard(
+                        StatsCardConfig(
+                            titleText = "Log-Linear Quantization (LLQ)",
+                            tableId = "llq_table_$bmId",
+                        ),
+                    ) {
+                        llqPercentileTable(
+                            lastRes.percentilesRt,
+                            lastRes.maxRt,
+                            lastRes.numActions?.toLong() ?: 0L,
+                            "llq_table_$bmId",
+                        )
+                    }
+                }
+                div {
+                    statsCard(
+                        StatsCardConfig(
+                            titleText = "HDR Histogram",
+                            tableId = "hdr_table_$bmId",
+                        ),
+                    ) {
+                        hdrPercentileTable(lastRes.hdrHistogramRt, "hdr_table_$bmId")
+                    }
                 }
             }
-            div {
-                statsCard(
-                    StatsCardConfig(
-                        titleText = "HDR Histogram",
-                        tableId = "hdr_table_$bmId",
-                    ),
-                ) {
-                    hdrPercentileTable(results, "hdr_table_$bmId")
+        }
+
+        // Per-Action Sub-sections
+        val actions =
+            results.flatMap {
+                it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
+            }.distinct().sorted()
+
+        actions.forEach { actionName ->
+            val actionId = actionName.replace(" ", "_")
+            details {
+                style = "margin-top: 0.5rem;"
+                summary { +"Action: $actionName" }
+                val lastRes = results.last()
+                val stats = lastRes.userActions?.values?.find { it.name == actionName }
+
+                div(classes = "grid") {
+                    div {
+                        statsCard(
+                            StatsCardConfig(
+                                titleText = "LLQ: $actionName",
+                                tableId = "llq_table_${bmId}_$actionId",
+                            ),
+                        ) {
+                            llqPercentileTable(
+                                stats?.percentilesRt,
+                                stats?.maxRt,
+                                stats?.numActions?.toLong() ?: 0L,
+                                "llq_table_${bmId}_$actionId",
+                            )
+                        }
+                    }
+                    div {
+                        statsCard(
+                            StatsCardConfig(
+                                titleText = "HDR: $actionName",
+                                tableId = "hdr_table_${bmId}_$actionId",
+                            ),
+                        ) {
+                            hdrPercentileTable(stats?.hdrHistogramRt, "hdr_table_${bmId}_$actionId")
+                        }
+                    }
                 }
             }
         }
@@ -298,7 +365,7 @@ private fun FlowContent.renderBenchmarkApsChart(
                                 }
                             listOf(aps, errAps)
                         }
-                    listOf((res.rowId ?: 0).toDouble()) + rowData
+                    listOf<Any?>(res.testBegin ?: ((res.rowId ?: 0) + 1).toString()) + rowData
                 }
 
             renderChartScript(
@@ -343,7 +410,7 @@ private fun FlowContent.renderBenchmarkRtChart(
                                 null
                             }
                         }
-                    listOf((res.rowId ?: 0).toDouble()) + rowData
+                    listOf<Any?>(res.testBegin ?: ((res.rowId ?: 0) + 1).toString()) + rowData
                 }
 
             renderChartScript(
@@ -390,7 +457,10 @@ private fun FlowContent.renderBenchmarkDistChart(
                     commonPoints.add(it.percentileLevelIteratedTo)
                 }
             }
-            val sortedPoints = commonPoints.toList().sorted()
+            val sortedPoints =
+        commonPoints.toList()
+            .filter { it <= ReportConstants.P99_9999 }
+            .sorted()
             val dataRows =
                 sortedPoints.map { p ->
                     val x =
@@ -422,7 +492,22 @@ private fun FlowContent.renderBenchmarkDistChart(
 
 private fun SCRIPT.renderChartScript(config: ChartConfig) {
     val labelsJson = Json.encodeToString(config.labels)
-    val dataJson = Json.encodeToString(config.data)
+    
+    // Manually build JsonArray to handle heterogeneous types (String, Double, null)
+    val dataJson = buildJsonArray {
+        config.data.forEach { row ->
+            add(buildJsonArray {
+                row.forEach { cell ->
+                    when (cell) {
+                        is String -> add(cell)
+                        is Number -> add(cell)
+                        null -> add(JsonNull)
+                        else -> add(cell.toString())
+                    }
+                }
+            })
+        }
+    }.toString()
 
     unsafe {
         +"create${config.type}Chart('${config.id}', $labelsJson, $dataJson, '${config.title}', '${config.unit}');"

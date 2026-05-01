@@ -137,7 +137,11 @@ private fun FlowContent.renderContexts(config: TulipConfig) {
 private fun FlowContent.renderBenchmarkConfigs(config: TulipConfig) {
     statsCard(StatsCardConfig(titleText = "Benchmark Configurations", classes = "full-width")) {
         config.benchmarks.forEach { (name, cfg) ->
-            h5 { b { +name } }
+            val configId = "config_${name.replace(" ", "_")}"
+            h5 { 
+                id = configId
+                b { +name } 
+            }
             div(classes = "overflow-auto") {
                 table {
                     tbody {

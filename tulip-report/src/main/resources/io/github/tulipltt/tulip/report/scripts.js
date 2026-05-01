@@ -158,21 +158,22 @@ function updateEchartsTheme() {
         backgroundColor: 'transparent',
         textStyle: { color: colors.text, fontFamily: 'system-ui, sans-serif' },
         title: { textStyle: { color: colors.text, fontSize: 14, fontWeight: 'bold' } },
-        legend: { 
+        legend: {
             textStyle: { color: colors.text, fontSize: 11 },
             pageTextStyle: { color: colors.text },
-            orient: 'vertical',
-            right: 10,
-            top: 'middle',
+            orient: 'horizontal',
+            bottom: 0,
+            left: 'center',
             type: 'scroll'
         },
-        tooltip: { 
+        tooltip: {
             backgroundColor: colors.bg,
             borderColor: colors.accent,
             textStyle: { color: colors.text, fontSize: 12 },
             confine: true
         },
-        grid: { left: '8%', right: '22%', bottom: '15%', top: '15%', containLabel: true },
+        grid: { left: '3%', right: '3%', bottom: '80px', top: '15%', containLabel: true },
+
         categoryAxis: {
             axisLine: { lineStyle: { color: colors.text, opacity: 0.3 } },
             axisLabel: { color: colors.text, fontSize: 10, opacity: 0.7 },
@@ -317,13 +318,8 @@ function createPercentileChart(chartId, labels, dataRows, title, unit) {
             trigger: 'axis',
             formatter: (params) => {
                 const x = params[0].value[0];
-                let pText = "";
-                if (x >= 1000000000) {
-                    pText = "100% (Max)";
-                } else {
-                    const p = 100.0 - (100.0 / x);
-                    pText = `${p.toFixed(6)}%`;
-                }
+                const p = 100.0 - (100.0 / x);
+                const pText = `${p.toFixed(6)}%`;
                 let res = `Percentile: ${pText} (1/(1-P): ${x.toFixed(2)})<br/>`;
                 params.forEach(param => {
                     const val = param.value[param.encode.y[0]];
@@ -338,7 +334,7 @@ function createPercentileChart(chartId, labels, dataRows, title, unit) {
             name: '1/(1-Percentile)', 
             type: 'log',
             min: 1,
-            max: 1000000000,
+            max: 1000000,
             axisLabel: {
                 formatter: (value) => {
                     const log10 = Math.round(Math.log10(value));
@@ -351,9 +347,6 @@ function createPercentileChart(chartId, labels, dataRows, title, unit) {
                     if (log10 === 4) return '99.99%';
                     if (log10 === 5) return '99.999%';
                     if (log10 === 6) return '99.9999%';
-                    if (log10 === 7) return '99.99999%';
-                    if (log10 === 8) return '99.999999%';
-                    if (log10 === 9) return 'Max';
                     return '';
                 }
             }
@@ -377,7 +370,7 @@ function createPercentileChart(chartId, labels, dataRows, title, unit) {
         },
         dataZoom: [
             { type: 'inside', zoomOnMouseWheel: false, start: 0, end: 100 },
-            { type: 'slider', start: 0, end: 100 }
+            { type: 'slider', start: 0, end: 100, bottom: 40 }
         ],
         dataset: { source: dataRows },
         series: series
@@ -394,14 +387,15 @@ function createTimeSeriesChart(chartId, labels, dataRows, title, yLabel) {
         name: label,
         type: 'line',
         smooth: true,
-        showSymbol: false,
+        showSymbol: true,
+        symbolSize: 6,
         encode: { x: 0, y: index + 1 }
     }));
 
     const option = {
         title: { text: title },
         tooltip: { trigger: 'axis' },
-        xAxis: { name: 'Iteration', type: 'value' },
+        xAxis: { name: 'Time', type: 'category' },
         yAxis: { name: yLabel, type: 'value' },
         toolbox: {
             show: true,
@@ -421,7 +415,7 @@ function createTimeSeriesChart(chartId, labels, dataRows, title, yLabel) {
         },
         dataZoom: [
             { type: 'inside', zoomOnMouseWheel: false },
-            { type: 'slider' }
+            { type: 'slider', bottom: 40 }
         ],
         dataset: { source: dataRows },
         series: series
