@@ -11,29 +11,27 @@ fun FlowContent.summaryTable(
     groupedResults: Map<String, List<BenchmarkResult>>,
     tableId: String = "summaryTable",
 ) {
-    div(classes = "overflow-auto") {
-        table(classes = "striped sortable") {
-            id = tableId
-            renderTableHead("Benchmark")
-            tbody {
-                groupedResults.forEach { (name, results) ->
-                    val bmId = name.replace(" ", "_")
-                    val summary = aggregateResults(results)
-                    renderSummaryRow(name, bmId, summary)
+    table(classes = "striped sortable") {
+        id = tableId
+        renderTableHead("Benchmark")
+        tbody {
+            groupedResults.forEach { (name, results) ->
+                val bmId = name.replace(" ", "_")
+                val summary = aggregateResults(results)
+                renderSummaryRow(name, bmId, summary)
 
-                    val actions =
-                        results.flatMap {
-                            it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
-                        }.distinct().sorted()
+                val actions =
+                    results.flatMap {
+                        it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
+                    }.distinct().sorted()
 
-                    actions.forEach { actionName ->
-                        val actionResults =
-                            results.mapNotNull {
-                                it.userActions?.values?.find { a -> a.name == actionName }
-                            }
-                        val actionSummary = aggregateActionResults(actionResults, summary.duration)
-                        renderActionRow(actionName, actionSummary, name)
-                    }
+                actions.forEach { actionName ->
+                    val actionResults =
+                        results.mapNotNull {
+                            it.userActions?.values?.find { a -> a.name == actionName }
+                        }
+                    val actionSummary = aggregateActionResults(actionResults, summary.duration)
+                    renderActionRow(actionName, actionSummary, name)
                 }
             }
         }
@@ -130,38 +128,36 @@ fun FlowContent.detailedBenchmarkTable(
             it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
         }.distinct().sorted()
 
-    div(classes = "overflow-auto") {
-        table(classes = "striped sortable") {
-            id = tableId
-            renderTableHead("Action / Iteration")
-            tbody {
-                actions.forEach { actionName ->
-                    val actionResults =
-                        results.mapNotNull {
-                            it.userActions?.values?.find { a -> a.name == actionName }
-                        }
-                    val totalDuration = results.sumOf { it.duration ?: 0.0 }
-                    val actionSummary = aggregateActionResults(actionResults, totalDuration)
-
-                    tr(classes = "row-summary-action") {
-                        attributes["data-action"] = actionName
-                        td { b { +"Summary: $actionName" } }
-                        renderStatsTDs(actionSummary)
+    table(classes = "striped sortable") {
+        id = tableId
+        renderTableHead("Action / Iteration")
+        tbody {
+            actions.forEach { actionName ->
+                val actionResults =
+                    results.mapNotNull {
+                        it.userActions?.values?.find { a -> a.name == actionName }
                     }
+                val totalDuration = results.sumOf { it.duration ?: 0.0 }
+                val actionSummary = aggregateActionResults(actionResults, totalDuration)
 
-                    results.forEach { res ->
-                        val stats = res.userActions?.values?.find { it.name == actionName }
-                        if (stats != null) {
-                            renderIterationRow(res, stats, actionName)
-                        }
-                    }
+                tr(classes = "row-summary-action") {
+                    attributes["data-action"] = actionName
+                    td { b { +"Summary: $actionName" } }
+                    renderStatsTDs(actionSummary)
                 }
 
-                val summary = aggregateResults(results)
-                tr(classes = "row-overall") {
-                    td { b { +"OVERALL BENCHMARK" } }
-                    renderStatsTDs(summary)
+                results.forEach { res ->
+                    val stats = res.userActions?.values?.find { it.name == actionName }
+                    if (stats != null) {
+                        renderIterationRow(res, stats, actionName)
+                    }
                 }
+            }
+
+            val summary = aggregateResults(results)
+            tr(classes = "row-overall") {
+                td { b { +"OVERALL BENCHMARK" } }
+                renderStatsTDs(summary)
             }
         }
     }
