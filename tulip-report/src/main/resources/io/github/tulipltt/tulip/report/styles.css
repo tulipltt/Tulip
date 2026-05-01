@@ -166,7 +166,7 @@ article.fullscreen .overflow-auto {
 }
 
 /* Sticky Table Headers */
-thead th {
+thead {
     position: sticky;
     top: 0;
     background-color: var(--pico-background-color) !important;
