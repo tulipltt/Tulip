@@ -178,7 +178,11 @@ object TulipReportGenerator {
                         tableId = "table_$bmId",
                     ),
                 ) {
-                    detailedBenchmarkTable(results, "table_$bmId")
+                    details {
+                        style = "margin-top: 1rem;"
+                        summary { +"Benchmark Iteration Details" }
+                        detailedBenchmarkTable(results, "table_$bmId")
+                    }
                 }
                 renderBenchmarkCharts(bmId, results)
             }
