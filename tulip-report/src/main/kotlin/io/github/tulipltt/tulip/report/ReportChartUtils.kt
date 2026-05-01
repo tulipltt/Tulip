@@ -248,14 +248,68 @@ fun FlowContent.renderBenchmarkCharts(
 ) {
     renderBenchmarkApsChart(bmId, results)
     renderBenchmarkRtChart(bmId, results)
+
+    details {
+        summary { +"Latency per Action" }
+        renderActionLatencyCharts(bmId, results)
+    }
+
     renderBenchmarkDistChart(bmId, results)
 
     details {
         summary { +"Percentile Distribution Tables" }
-
         renderAggregatedSummary(bmId, results.last())
-
         renderPerActionSummaries(bmId, results)
+    }
+}
+
+private fun FlowContent.renderActionLatencyCharts(
+    bmId: String,
+    results: List<BenchmarkResult>,
+) {
+    val actions =
+        results.flatMap {
+            it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
+        }.distinct().sorted()
+
+    actions.forEach { actionName ->
+        val actionId = actionName.replace(" ", "_")
+        statsCard(
+            StatsCardConfig(
+                titleText = "Latency per Action: $actionName",
+                classes = "full-width",
+                isChart = true,
+            ),
+        ) {
+            div("chart-container") { id = "chart_action_latency_${bmId}_$actionId" }
+            script {
+                val dataRows =
+                    results.map { res ->
+                        val stats = res.userActions?.values?.find { it.name == actionName }
+                        val p = stats?.percentilesRt ?: emptyMap()
+                        listOf(
+                            res.testBegin ?: ((res.rowId ?: 0) + 1).toString(),
+                            (stats?.minRt ?: 0.0) / ReportConstants.NANOS_PER_MILLI,
+                            (stats?.avgRt ?: 0.0) / ReportConstants.NANOS_PER_MILLI,
+                            (p["50.0"] ?: 0.0) / ReportConstants.NANOS_PER_MILLI,
+                            (p["90.0"] ?: 0.0) / ReportConstants.NANOS_PER_MILLI,
+                            (p["95.0"] ?: 0.0) / ReportConstants.NANOS_PER_MILLI,
+                            (p["99.0"] ?: 0.0) / ReportConstants.NANOS_PER_MILLI,
+                            (stats?.maxRt ?: 0.0) / ReportConstants.NANOS_PER_MILLI,
+                        )
+                    }
+                renderChartScript(
+                    ChartConfig(
+                        type = "TimeSeries",
+                        id = "chart_action_latency_${bmId}_$actionId",
+                        labels = listOf("Min", "Avg", "P50", "P90", "P95", "P99", "Max"),
+                        data = dataRows,
+                        title = "Latency Over Time: $actionName",
+                        unit = "ms",
+                    ),
+                )
+            }
+        }
     }
 }
 
