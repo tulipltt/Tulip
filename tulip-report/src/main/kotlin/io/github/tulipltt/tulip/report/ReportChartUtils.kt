@@ -222,7 +222,7 @@ private fun getCombinedDistDataRows(actionHistos: List<Histogram>): List<List<Do
     }
     val sortedPoints =
         commonPoints.toList()
-            .filter { it <= ReportConstants.P99_9999 }
+            .filter { it <= ReportConstants.P100 }
             .sorted()
     return sortedPoints.map { p ->
         val x =
@@ -464,7 +464,7 @@ private fun FlowContent.renderBenchmarkDistChart(
             }
             val sortedPoints =
         commonPoints.toList()
-            .filter { it <= ReportConstants.P99_9999 }
+            .filter { it <= ReportConstants.P100 }
             .sorted()
             val dataRows =
                 sortedPoints.map { p ->

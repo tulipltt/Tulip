@@ -347,7 +347,7 @@ function createPercentileChart(chartId, labels, dataRows, title, unit) {
                     if (log10 === 4) return '99.99%';
                     if (log10 === 5) return '99.999%';
                     if (log10 === 6) return '99.9999%';
-                    return '';
+                    return value >= 1000000 ? '100%' : '';
                 }
             }
         },
