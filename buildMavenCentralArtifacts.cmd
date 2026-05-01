@@ -14,6 +14,7 @@ pushd .\tulip-runtime\build\staging-deploy\io\github\tulipltt\tulip-runtime\%ver
 gpg -ab tulip-runtime-%version%-javadoc.jar
 gpg -ab tulip-runtime-%version%-sources.jar
 gpg -ab tulip-runtime-%version%.jar
+gpg -ab tulip-runtime-%version%-all.jar
 gpg -ab tulip-runtime-%version%.module
 gpg -ab tulip-runtime-%version%.pom
 popd
