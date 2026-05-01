@@ -253,79 +253,84 @@ fun FlowContent.renderBenchmarkCharts(
     details {
         summary { +"Percentile Distribution Tables" }
 
-        // Benchmark Summary Sub-section
+        renderAggregatedSummary(bmId, results.last())
+
+        renderPerActionSummaries(bmId, results)
+    }
+}
+
+private fun FlowContent.renderAggregatedSummary(bmId: String, lastRes: BenchmarkResult) {
+    details {
+        style = "margin-top: 1rem;"
+        summary { +"Benchmark Summary (Aggregated)" }
+        div(classes = "grid") {
+            div {
+                statsCard(
+                    StatsCardConfig(
+                        titleText = "Log-Linear Quantization (LLQ)",
+                        tableId = "llq_table_$bmId",
+                    ),
+                ) {
+                    llqPercentileTable(
+                        lastRes.percentilesRt,
+                        lastRes.maxRt,
+                        lastRes.numActions?.toLong() ?: 0L,
+                        "llq_table_$bmId",
+                    )
+                }
+            }
+            div {
+                statsCard(
+                    StatsCardConfig(
+                        titleText = "HDR Histogram",
+                        tableId = "hdr_table_$bmId",
+                    ),
+                ) {
+                    hdrPercentileTable(lastRes.hdrHistogramRt, "hdr_table_$bmId")
+                }
+            }
+        }
+    }
+}
+
+private fun FlowContent.renderPerActionSummaries(bmId: String, results: List<BenchmarkResult>) {
+    val actions =
+        results.flatMap {
+            it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
+        }.distinct().sorted()
+
+    actions.forEach { actionName ->
+        val actionId = actionName.replace(" ", "_")
         details {
-            style = "margin-top: 1rem;"
-            summary { +"Benchmark Summary (Aggregated)" }
+            style = "margin-top: 0.5rem;"
+            summary { +"Action: $actionName" }
             val lastRes = results.last()
+            val stats = lastRes.userActions?.values?.find { it.name == actionName }
+
             div(classes = "grid") {
                 div {
                     statsCard(
                         StatsCardConfig(
-                            titleText = "Log-Linear Quantization (LLQ)",
-                            tableId = "llq_table_$bmId",
+                            titleText = "LLQ: $actionName",
+                            tableId = "llq_table_${bmId}_$actionId",
                         ),
                     ) {
                         llqPercentileTable(
-                            lastRes.percentilesRt,
-                            lastRes.maxRt,
-                            lastRes.numActions?.toLong() ?: 0L,
-                            "llq_table_$bmId",
+                            stats?.percentilesRt,
+                            stats?.maxRt,
+                            stats?.numActions?.toLong() ?: 0L,
+                            "llq_table_${bmId}_$actionId",
                         )
                     }
                 }
                 div {
                     statsCard(
                         StatsCardConfig(
-                            titleText = "HDR Histogram",
-                            tableId = "hdr_table_$bmId",
+                            titleText = "HDR: $actionName",
+                            tableId = "hdr_table_${bmId}_$actionId",
                         ),
                     ) {
-                        hdrPercentileTable(lastRes.hdrHistogramRt, "hdr_table_$bmId")
-                    }
-                }
-            }
-        }
-
-        // Per-Action Sub-sections
-        val actions =
-            results.flatMap {
-                it.userActions?.values?.map { a -> a.name ?: "" } ?: emptyList()
-            }.distinct().sorted()
-
-        actions.forEach { actionName ->
-            val actionId = actionName.replace(" ", "_")
-            details {
-                style = "margin-top: 0.5rem;"
-                summary { +"Action: $actionName" }
-                val lastRes = results.last()
-                val stats = lastRes.userActions?.values?.find { it.name == actionName }
-
-                div(classes = "grid") {
-                    div {
-                        statsCard(
-                            StatsCardConfig(
-                                titleText = "LLQ: $actionName",
-                                tableId = "llq_table_${bmId}_$actionId",
-                            ),
-                        ) {
-                            llqPercentileTable(
-                                stats?.percentilesRt,
-                                stats?.maxRt,
-                                stats?.numActions?.toLong() ?: 0L,
-                                "llq_table_${bmId}_$actionId",
-                            )
-                        }
-                    }
-                    div {
-                        statsCard(
-                            StatsCardConfig(
-                                titleText = "HDR: $actionName",
-                                tableId = "hdr_table_${bmId}_$actionId",
-                            ),
-                        ) {
-                            hdrPercentileTable(stats?.hdrHistogramRt, "hdr_table_${bmId}_$actionId")
-                        }
+                        hdrPercentileTable(stats?.hdrHistogramRt, "hdr_table_${bmId}_$actionId")
                     }
                 }
             }
