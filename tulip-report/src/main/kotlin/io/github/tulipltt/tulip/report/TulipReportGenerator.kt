@@ -76,7 +76,7 @@ object TulipReportGenerator {
         aside {
             id = "mySidebar"
             header {
-                unsafe { +ReportLogos.SMALL }
+                unsafe { +ReportLogos.LARGE }
                 h5 { +"Tulip" }
             }
             nav {
