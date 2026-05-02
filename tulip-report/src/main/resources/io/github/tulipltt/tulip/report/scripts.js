@@ -174,14 +174,14 @@ function updateEchartsTheme() {
         grid: { left: '3%', right: '3%', bottom: '80px', top: '15%', containLabel: true },
 
         categoryAxis: {
-            axisLine: { lineStyle: { color: colors.text, opacity: 0.3 } },
-            axisLabel: { color: colors.text, fontSize: 10, opacity: 0.7 },
+            axisLine: { lineStyle: { color: colors.text, opacity: 0.7 } },
+            axisLabel: { color: colors.text, fontSize: 10, opacity: 1.0 },
             splitLine: { show: false }
         },
         valueAxis: {
-            axisLine: { lineStyle: { color: colors.text, opacity: 0.3 } },
-            axisLabel: { color: colors.text, fontSize: 10, opacity: 0.7 },
-            splitLine: { lineStyle: { color: colors.text, type: 'dashed', opacity: 0.1 } }
+            axisLine: { lineStyle: { color: colors.text, opacity: 0.7 } },
+            axisLabel: { color: colors.text, fontSize: 10, opacity: 1.0 },
+            splitLine: { lineStyle: { color: colors.text, type: 'dashed', opacity: 0.5 } }
         },
         color: colors.palette
     };
