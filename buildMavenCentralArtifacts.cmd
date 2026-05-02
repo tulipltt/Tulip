@@ -1,7 +1,7 @@
 REM Use this script to create the ZIP file to be uploaded to Maven Central
 REM https://central.sonatype.com/
 REM
-set version=2.3.1-RC1
+set version=2.3.1
 
 REM Remove staging folder
 rd/q/s .\tulip-runtime\build\staging-deploy
@@ -14,6 +14,7 @@ pushd .\tulip-runtime\build\staging-deploy\io\github\tulipltt\tulip-runtime\%ver
 gpg -ab tulip-runtime-%version%-javadoc.jar
 gpg -ab tulip-runtime-%version%-sources.jar
 gpg -ab tulip-runtime-%version%.jar
+gpg -ab tulip-runtime-%version%-all.jar
 gpg -ab tulip-runtime-%version%.module
 gpg -ab tulip-runtime-%version%.pom
 popd

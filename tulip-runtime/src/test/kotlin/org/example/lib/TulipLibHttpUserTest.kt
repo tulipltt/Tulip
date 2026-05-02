@@ -87,6 +87,14 @@ class TulipLibHttpUserTest {
                                     ctx.result("{\"code\": \"OK\"}").contentType("application/json")
                                 },
                             )
+                            // action 7
+                            .head(
+                                "/postz",
+                                Handler { ctx: Context? ->
+                                    ctx!!.status(200)
+                                    ctx.header("Content-Length", "1024")
+                                },
+                            )
                     }
                 )
                 .start(7777)
@@ -187,6 +195,20 @@ class TulipLibHttpUserTest {
         }
         logger().info("QUERY /posts response: {}", rsp)
         assertEquals(0, 0)
+    }
+
+    // Action 7
+    @Test
+    fun action7() {
+        logger().info("action7: HEAD /postz")
+        val rsp: HttpUser.Response = user.httpHead("/postz")
+        if (!rsp.isSuccessful) {
+            logger().error("Failed to GET /postz")
+            assertEquals(0, 1)
+        }
+        logger().info("HEAD /postz response: {}", rsp)
+        val contentLength = rsp.headers.contentLength
+        assertEquals(contentLength, 1024)
     }
 
     fun logger(): Logger = logger

@@ -1,1 +1,1 @@
-./gradlew dependencyUpdates -Drevision=release --no-parallel
+./gradlew dependencyUpdates --no-configuration-cache -Drevision=release --no-parallel

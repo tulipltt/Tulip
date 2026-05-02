@@ -5,11 +5,11 @@ import com.diffplug.spotless.kotlin.KtfmtStep
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 group = "io.github.tulipltt.tulip"
-version = "2.3.1-RC1"
+version = "2.3.1"
 
 plugins {
     // https://plugins.gradle.org/plugin/com.github.ben-manes.versions
-    id("com.github.ben-manes.versions") version "0.53.0"
+    id("com.github.ben-manes.versions") version "0.54.0"
 
     // Gradle convention plugin for Kotlin libraries
     id("buildlogic.kotlin-library-conventions")
@@ -17,10 +17,7 @@ plugins {
     `maven-publish`
 
     // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.serialization
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
-
-    // https://plugins.gradle.org/plugin/org.jetbrains.dokka
-    // id("org.jetbrains.dokka") version "2.0.0"
+    alias(libs.plugins.kotlin.serialization.plugin)
 
     // https://plugins.gradle.org/plugin/com.diffplug.spotless
     id("com.diffplug.spotless") version "8.4.0"
@@ -37,6 +34,13 @@ tasks.jacocoTestReport {
         xml.required.set(true)
         html.required.set(true)
     }
+    id("org.owasp.dependencycheck") version "12.2.1"
+
+    // https://plugins.gradle.org/plugin/com.gradleup.shadow
+    id("com.gradleup.shadow") version "9.4.1"
+
+    // https://plugins.gradle.org/plugin/org.jetbrains.dokka
+    id("org.jetbrains.dokka") version "2.2.0"
 }
 
 java {
@@ -44,13 +48,13 @@ java {
     withSourcesJar()
 }
 
-val gsonVersion = "2.13.2"
+val gsonVersion = "2.14.0"
 val slf4jVersion = "2.0.17"
 val logbackVersion = "1.5.32"
-val springBootVersion = "3.5.13"
+val springBootVersion = "3.5.14"
 val picocliVersion = "4.7.7"
 val kxsJsonVersion = "1.10.0"
-val javalinVersion = "7.1.0"
+val javalinVersion = "7.2.0"
 
 dependencies {
     // https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-jmx
@@ -63,13 +67,13 @@ dependencies {
     implementation("org.python:jython-slim:2.7.4")
 
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kxsJsonVersion")
+    implementation(libs.kotlin.serialization.json)
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:$gsonVersion")
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
-    implementation("com.google.guava:guava:33.5.0-jre")
+    implementation("com.google.guava:guava:33.6.0-jre")
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     api("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
@@ -99,7 +103,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.20.0")
 
     // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.3")
 
     // https://mvnrepository.com/artifact/info.picocli/picocli
     implementation("info.picocli:picocli:$picocliVersion")

@@ -2,29 +2,28 @@
 # Add key=value pairs of SDKs to use below
 
 # Java
-java=21.0.10-tem
-#java=25.0.2-tem
+java=21.0.11-tem
 
 # Groovy
 groovy=5.0.5
 
 # Gradle
-gradle=9.4.1
+gradle=9.5.0
 
 # JBang
-jbang=0.137.0
+jbang=0.138.0
 
 # Kotlin
-kotlin=2.3.20
+kotlin=2.3.21
 
 # Scala
-scalacli=1.12.5
+scalacli=1.13.0
 
 # MCS
 mcs=0.9.7
 
 # Maven
-maven=3.9.14
+maven=3.9.15
 
 # VisualVM
 visualvm=2.2.1

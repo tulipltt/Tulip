@@ -27,9 +27,11 @@ public class HttpUser extends HttpUser_RestClient {
      * Response record
      *
      * @param statusCode - HTTP status code
+     * @param headers - HTTP response headers
      * @param body - response body
      */
-    public record Response(int statusCode, String body) {
+    public record Response(
+            int statusCode, org.springframework.http.HttpHeaders headers, String body) {
 
         /**
          * isSuccessful() method
@@ -58,7 +60,7 @@ public class HttpUser extends HttpUser_RestClient {
                         .header(http_header_key, http_header_val)
                         .retrieve()
                         .toEntity(String.class);
-        return new Response(entity.getStatusCode().value(), entity.getBody());
+        return new Response(entity.getStatusCode().value(), entity.getHeaders(), entity.getBody());
     }
 
     /**
@@ -82,7 +84,7 @@ public class HttpUser extends HttpUser_RestClient {
                         .body(reqBodyJson)
                         .retrieve()
                         .toEntity(String.class);
-        return new Response(entity.getStatusCode().value(), entity.getBody());
+        return new Response(entity.getStatusCode().value(), entity.getHeaders(), entity.getBody());
     }
 
     /**
@@ -106,7 +108,7 @@ public class HttpUser extends HttpUser_RestClient {
                         .body(reqBodyJson)
                         .retrieve()
                         .toEntity(String.class);
-        return new Response(entity.getStatusCode().value(), entity.getBody());
+        return new Response(entity.getStatusCode().value(), entity.getHeaders(), entity.getBody());
     }
 
     /**
@@ -130,7 +132,7 @@ public class HttpUser extends HttpUser_RestClient {
                         .body(reqBodyJson)
                         .retrieve()
                         .toEntity(String.class);
-        return new Response(entity.getStatusCode().value(), entity.getBody());
+        return new Response(entity.getStatusCode().value(), entity.getHeaders(), entity.getBody());
     }
 
     /**
@@ -150,7 +152,7 @@ public class HttpUser extends HttpUser_RestClient {
                         .header(http_header_key, http_header_val)
                         .retrieve()
                         .toEntity(String.class);
-        return new Response(entity.getStatusCode().value(), entity.getBody());
+        return new Response(entity.getStatusCode().value(), entity.getHeaders(), entity.getBody());
     }
 
     /**
@@ -174,7 +176,27 @@ public class HttpUser extends HttpUser_RestClient {
                         .body(reqBodyJson)
                         .retrieve()
                         .toEntity(String.class);
-        return new Response(entity.getStatusCode().value(), entity.getBody());
+        return new Response(entity.getStatusCode().value(), entity.getHeaders(), entity.getBody());
+    }
+
+    /**
+     * httpHead() method
+     *
+     * @param uri - uri to invoke
+     * @param uriVariables - sequence of variables to replace in uri
+     * @return boolean
+     * @throws RestClientException - Spring exception
+     */
+    @NotNull
+    public Response httpHead(String uri, Object... uriVariables) throws RestClientException {
+        ResponseEntity<String> entity =
+                restClient()
+                        .head()
+                        .uri(uri, uriVariables)
+                        .header(http_header_key, http_header_val)
+                        .retrieve()
+                        .toEntity(String.class);
+        return new Response(entity.getStatusCode().value(), entity.getHeaders(), entity.getBody());
     }
 
     /**
