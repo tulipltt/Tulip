@@ -181,8 +181,12 @@ table.striped thead {
     position: relative;
 }
 
+/* Explicitly disable any hover effect from framework defaults */
 .sortable th:hover {
-    background-color: var(--pico-table-stripe-background-color);
+    background-color: var(--pico-background-color) !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    transition: none !important;
 }
 
 .sortable th.sort-asc::after {

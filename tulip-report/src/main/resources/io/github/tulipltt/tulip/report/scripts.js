@@ -96,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
         headers.forEach((header, idx) => {
             if (!header.classList.contains('no-sort')) {
                 header.style.cursor = 'pointer';
-                header.setAttribute('role', 'button');
                 header.setAttribute('aria-label', `Sort by column ${idx + 1}`);
                 
                 header.addEventListener('click', () => {

@@ -32,10 +32,6 @@ object ReportStyles {
                 position: relative;
             }
             
-            .sortable th:hover {
-                background-color: var(--pico-table-stripe-background-color);
-            }
-            
             .sortable th.sort-asc::after {
                 content: ' ↑';
                 font-size: 0.8rem;
