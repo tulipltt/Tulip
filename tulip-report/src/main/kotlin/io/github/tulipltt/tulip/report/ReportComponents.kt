@@ -253,6 +253,20 @@ private fun FlowContent.renderMapTable(map: Map<out Any, Any>?) {
  */
 fun FlowContent.runtimeSection(reportData: ReportData) {
     statsCard(StatsCardConfig(titleText = "Tulip Runtime Information", classes = "full-width")) {
+        div(classes = "overflow-auto") {
+            table {
+                tbody {
+                    tr {
+                        td(classes = "numeric opacity-50 text-left") {
+                            +"Version"
+                        }
+                        td(classes = "text-left") {
+                            +reportData.version
+                        }
+                    }
+                }
+            }
+        }
         val java = reportData.java
 
         h5 { b { +"Java System Properties" } }

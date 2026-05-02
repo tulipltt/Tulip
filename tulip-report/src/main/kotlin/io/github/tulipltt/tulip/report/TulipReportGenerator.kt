@@ -48,7 +48,7 @@ object TulipReportGenerator {
                     reportData.results.groupBy {
                         it.bmName ?: "Unknown Benchmark"
                     } as Map<String, List<BenchmarkResult>>
-                renderSidebar(groupedResults.keys)
+                renderSidebar(reportData, groupedResults.keys)
                 main {
                     if (warnings.isNotEmpty()) {
                         article(classes = "warning-banner") {
@@ -72,12 +72,19 @@ object TulipReportGenerator {
         return out.toString()
     }
 
-    private fun FlowContent.renderSidebar(benchmarkNames: Set<String>) {
+    private fun FlowContent.renderSidebar(reportData: ReportData, benchmarkNames: Set<String>) {
         aside {
             id = "mySidebar"
             header {
                 unsafe { +ReportLogos.LARGE }
-                h5 { +"Tulip" }
+                a(href = "https://tulipltt.github.io/Tulip-docs", target = "_blank", classes = "header-link") {
+                    div(classes = "text-left") {
+                        h5 { +"Tulip" }
+                        small(classes = "opacity-50") {
+                            +"Version ${reportData.version}"
+                        }
+                    }
+                }
             }
             nav {
                 ul {
@@ -124,12 +131,10 @@ object TulipReportGenerator {
             div(classes = "container-fluid") {
                 div(classes = "align-center flex-gap-1rem") {
                     style = "display: flex;" // Temporary until I check if Pico handles display:flex on align-center
-                    unsafe { +ReportLogos.LARGE }
+                    //unsafe { +ReportLogos.LARGE }
                     div {
                         h2(classes = "m-0") { +"Performance Test Results" }
-                        small(classes = "opacity-50") {
-                            +"Tulip Performance Tool • Version ${reportData.version}"
-                        }
+                        h5(classes = "m-0") { +"${reportData.config.actions.description}" }
                     }
                 }
             }

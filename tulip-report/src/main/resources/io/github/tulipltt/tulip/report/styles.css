@@ -81,6 +81,10 @@ main {
     white-space: nowrap;
 }
 
+.text-left {
+    text-align: left !important;
+}
+
 table {
     font-size: 0.85rem;
 }
@@ -147,6 +151,19 @@ article.fullscreen .overflow-auto {
 
 .nav-link:hover {
     background-color: var(--pico-secondary-hover-background);
+    color: var(--pico-primary);
+}
+
+.header-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.header-link:hover {
+    text-decoration: none;
+}
+
+.header-link:hover h5 {
     color: var(--pico-primary);
 }
 
