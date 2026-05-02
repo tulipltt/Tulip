@@ -81,7 +81,7 @@ object TulipReportGenerator {
                     div(classes = "text-left") {
                         h5 { +"Tulip" }
                         small(classes = "opacity-50") {
-                            +"Version ${reportData.version}"
+                            +"${reportData.version}"
                         }
                     }
                 }
