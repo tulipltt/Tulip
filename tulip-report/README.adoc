@@ -1,0 +1,229 @@
+= Tulip Report Module
+:sectnums:
+
+The `tulip-report` module is a dedicated component of the Tulip performance tool, designed to generate high-quality, interactive, and insightful performance reports from benchmark results.
+
+== Overview
+
+Tulip reports provide a comprehensive view of performance metrics, including throughput (APS), latency percentiles, and resource utilization. Key features include:
+
+* **Interactive HTML**: A modern, responsive dashboard with interactive charts and a dark/light theme.
+* **Sortable Performance Tables**: All data tables now support interactive sorting for both numeric and text columns, allowing for easier analysis of iteration results.
+* **Smooth Loading Experience**: A dedicated loading overlay ensures a polished transition while high-resolution charts and datasets are initialized in the browser.
+* **AsciiDoc Export**: A structured document suitable for technical documentation and further conversion (e.g., PDF).
+
+== Architecture
+
+The module follows a "Data-to-Document" transformation architecture, converting raw JSON benchmark results into structured Kotlin models, which are then rendered into various document formats.
+
+=== Core Components
+
+1.  **`TulipReportGenerator`**: The main orchestrator and entry point for HTML report generation. It uses a DSL-based approach to build the report structure.
+2.  **`ReportAdoc`**: Responsible for generating AsciiDoc content and optionally converting it to HTML using AsciidoctorJ.
+3.  **`ReportModels.kt`**: Defines the `ReportData` container and sub-models (`BenchmarkResult`, `ActionStatResult`) that mirror the JSON output from `tulip-runtime`.
+4.  **`StatsCardConfig.kt` & `ChartConfig.kt`**: Type-safe configuration objects used to manage component parameters and reduce function signature complexity.
+5.  **`ReportTables.kt` & `ReportChartUtils.kt`**: Specialized logic for rendering performance data into tabular and graphical formats.
+6.  **`ReportData.kt`**: The top-level data container deserialized from the benchmark output JSON.
+
+=== Technology Stack
+
+* https://github.com/Kotlin/kotlinx.html[kotlinx-html]: Provides a type-safe DSL for generating HTML content programmatically in Kotlin.
+* https://picocss.com/[PicoCSS]: A lightweight, minimalist CSS framework used for styling the HTML reports, supporting automatic dark/light theme switching.
+* https://echarts.apache.org/[Apache ECharts]: A powerful, interactive charting and visualization library used for performance graphs.
+* https://asciidoctor.org/docs/asciidoctorj/[AsciidoctorJ]: The Java bridge for Asciidoctor, used to process and convert AsciiDoc reports.
+* http://hdrhistogram.org/[HdrHistogram]: Used for processing and decoding high-resolution latency histograms embedded in the benchmark results.
+
+== Design Patterns
+
+=== DSL (Domain-Specific Language)
+The module extensively uses the **DSL pattern** via `kotlinx-html`. This allows for a declarative and highly readable way to define complex HTML structures, ensuring type safety and reducing the boilerplate associated with string-based HTML generation.
+
+=== Singleton Orchestrator
+The `TulipReportGenerator` is implemented as a Kotlin `object` (Singleton), providing a centralized, thread-safe point for report creation across the application.
+
+=== Component-Based UI Rendering
+Instead of large, monolithic rendering functions, the UI logic is broken down into small, focused, and reusable **component functions** (e.g., `statsCard`, `metricCard`, `summaryTable`). 
+
+To maintain clean code and satisfy complexity constraints, these components utilize **Configuration Objects (Data Classes)**. Instead of passing many individual parameters (e.g., title, IDs, flags), related settings are grouped into structured objects like `StatsCardConfig` or `ChartConfig`. This mirrors modern frontend component architectures and makes the codebase easier to maintain and extend.
+
+== Usage
+
+=== CLI Usage
+The primary way to use the report generator is via the command-line interface. A convenience script `report.sh` (or `report.cmd` on Windows) is provided within the `tulip-report` directory.
+
+[source,bash]
+----
+cd tulip-report
+./report.sh <benchmark_output.json>
+----
+
+The tool will:
+
+1.  Read and deserialize the provided JSON file.
+2.  Generate a standalone HTML dashboard (e.g., `benchmark_report.html`).
+3.  Generate an AsciiDoc version of the report (e.g., `benchmark_report_c.adoc`).
+
+=== Library Usage
+You can also use the report generator directly in your Kotlin code:
+
+[source,kotlin]
+----
+import io.github.tulipltt.tulip.report.TulipReportGenerator
+
+// ... load your ReportData object ...
+val htmlReport = TulipReportGenerator.generateHtml(reportData)
+File("report.html").writeText(htmlReport)
+----
+
+== Building and Testing
+
+To build the module and run all tests, you can use the provided script within the `tulip-report` directory:
+
+[source,bash]
+----
+./build_and_test.sh
+----
+
+Alternatively, using Gradle from the project root:
+
+[source,bash]
+----
+./gradlew :tulip-report:build
+----
+
+== Reports
+
+After running tests or building the project, several reports are available to help you understand the quality and performance of the module.
+
+=== Test Results
+Standard unit test results are generated in HTML format:
+`tulip-report/build/reports/tests/test/index.html`
+
+=== Code Coverage (JaCoCo)
+Code coverage reports are generated using JaCoCo and can be accessed here:
+`tulip-report/build/reports/jacoco/test/html/index.html`
+
+These reports provide a detailed breakdown of line and branch coverage across the module's source code.
+
+== Extending the Tool
+
+=== Adding New Metrics
+1.  **Update Models**: Add the new metric to the relevant data class in `ReportModels.kt` (ensure it's `@Serializable`).
+2.  **Update Tables**: Add a new column or row to the relevant table function in `ReportTables.kt`.
+3.  **Update Charts**: If the metric should be visualized, update `ReportChartUtils.kt` to include it in a new or existing chart.
+
+=== Adding New Charts
+Tulip uses Apache ECharts for visualization. To add a new chart:
+
+1.  Define the data preparation logic in `ReportChartUtils.kt`.
+2.  Use the `ChartConfig` data class to package your chart settings (type, labels, data, etc.).
+3.  Call `renderChartScript(config)` to inject the chart initialization logic into the HTML report.
+4.  Ensure the chart has a corresponding container `div` with a unique ID, typically wrapped in a `statsCard(StatsCardConfig(...))`.
+
+=== Customizing Styles and Scripts
+* **Styles**: Global styles and theme customizations are located in `ReportStyles.kt`.
+* **Scripts**: Chart initialization logic and interactive UI features (like theme toggling) are in `ReportScripts.kt`.
+* **Icons**: SVG icons used in the sidebar and headers are defined in `ReportIcons.kt`.
+
+== Component & Flow Diagram
+
+The following diagram illustrates how the different classes within `tulip-report` interact to transform raw benchmark data into a formatted report.
+
+[plantuml,detailed_architecture,svg]
+....
+@startuml
+skinparam backgroundColor white
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Tulip Report Generation Flow
+
+package "Entry Point" {
+    class TulipReport << (C,#ADD1B2) >> {
+        + main(args)
+        + createHtmlReport(jsonPath)
+    }
+}
+
+package "Orchestration" {
+    object TulipReportGenerator {
+        + createReport(jsonPath, htmlPath)
+        + generateHtml(reportData)
+    }
+}
+
+package "Data Models" {
+    class ReportData << (D,#FF7700) >>
+    class BenchmarkResult << (D,#FF7700) >>
+    class ActionStatResult << (D,#FF7700) >>
+    class StatsCardConfig << (D,#FF7700) >>
+    class ChartConfig << (D,#FF7700) >>
+}
+
+package "Rendering Logic" {
+    package "HTML DSL" {
+        class ReportComponents << (F,#B19CD9) >> {
+            + statsCard(config)
+            + configSection()
+            + runtimeSection()
+        }
+        class ReportTables << (F,#B19CD9) >> {
+            + summaryTable()
+            + detailedBenchmarkTable()
+            + llqPercentileTable()
+            + hdrPercentileTable()
+        }
+        class ReportChartUtils << (F,#B19CD9) >> {
+            + renderCombinedCharts()
+            + renderBenchmarkCharts()
+        }
+    }
+    
+    package "AsciiDoc" {
+        object ReportAdoc {
+            + generateAsciiDoc(reportData)
+            + convertAdocToHtml(adocPath)
+        }
+    }
+}
+
+package "Utilities" {
+    class ReportStatsUtils << (F,#A1C181) >> {
+        + aggregateResults()
+        + aggregateActionResults()
+        + decodeHistogram()
+    }
+    class ReportConstants << (F,#A1C181) >>
+    class ReportIcons << (F,#A1C181) >>
+    class ReportStyles << (F,#A1C181) >>
+    class ReportScripts << (F,#A1C181) >>
+}
+
+' Flow
+TulipReport --> TulipReportGenerator : 1. Triggers
+TulipReportGenerator ..> ReportData : 2. Deserializes JSON to
+TulipReportGenerator --> ReportComponents : 3a. Renders Layout
+TulipReportGenerator --> ReportTables : 3b. Renders Data
+TulipReportGenerator --> ReportChartUtils : 3c. Renders Charts
+TulipReportGenerator --> ReportAdoc : 4. Triggers AsciiDoc
+
+ReportTables --> ReportStatsUtils : Uses for aggregation
+ReportChartUtils --> ReportStatsUtils : Uses for decoding HDR
+ReportChartUtils ..> ReportScripts : Injects JS helpers
+
+ReportComponents ..> ReportIcons : Uses SVGs
+ReportComponents ..> ReportStyles : Injects CSS
+
+ReportAdoc ..> "AsciidoctorJ" : External Library
+
+legend right
+  |= Color |= Type |
+  |<#ADD1B2>| Main Class |
+  |<#FF7700>| Data Model |
+  |<#B19CD9>| Rendering Function |
+  |<#A1C181>| Utility / Resource |
+endlegend
+
+@enduml
+....
