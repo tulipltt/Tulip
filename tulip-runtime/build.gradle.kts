@@ -3,9 +3,18 @@
  */
 import com.diffplug.spotless.kotlin.KtfmtStep
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import java.io.File
 
 group = "io.github.tulipltt.tulip"
-version = "2.3.1"
+
+// Extract VERSION from TulipApi.java
+val versionFile = file("src/main/java/io/github/tulipltt/tulip/api/TulipApi.java")
+val versionRegex = Regex("""public static final String VERSION = "([^"]+)";""")
+val versionMatch = versionRegex.find(versionFile.readText())
+val tulipVersion: String = versionMatch?.groupValues?.get(1) ?: "unknown"
+
+// Use the extracted VERSION for the project version
+version = tulipVersion
 
 plugins {
     // https://plugins.gradle.org/plugin/com.github.ben-manes.versions
