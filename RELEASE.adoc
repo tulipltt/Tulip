@@ -8,9 +8,6 @@ Update the Tulip version in the following files:
 . File tulip-runtime/src/main/java/.../api/TulipApi.java
 ** public static final String VERSION = "**2.0.0**";
 
-. File tulip-runtime/build.gradle.kts
-** version = "**2.0.0**"
-
 . File buildMavenArtifacts.cmd
 ** set version=**2.0.0**
 
