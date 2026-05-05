@@ -6,7 +6,9 @@ import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /** The HttpUser class. */
 public class HttpUser extends HttpUser_RestClient {
@@ -43,6 +45,10 @@ public class HttpUser extends HttpUser_RestClient {
         }
     }
 
+    private MultiValueMap<String, String> parseQueryParams(String queryString) {
+        return UriComponentsBuilder.fromUriString("?" + queryString).build().getQueryParams();
+    }
+
     /**
      * httpGet() method
      *
@@ -57,6 +63,27 @@ public class HttpUser extends HttpUser_RestClient {
                 restClient()
                         .get()
                         .uri(uri, uriVariables)
+                        .header(http_header_key, http_header_val)
+                        .retrieve()
+                        .toEntity(String.class);
+        return new Response(entity.getStatusCode().value(), entity.getHeaders(), entity.getBody());
+    }
+
+    /**
+     * httpGetWithQueryParams() method
+     *
+     * @param uri - uri to invoke
+     * @param query - query parameters
+     * @return boolean
+     * @throws RestClientException - Spring exception
+     */
+    @NotNull
+    public Response httpGetWithQueryParams(String uri, String query) throws RestClientException {
+        MultiValueMap<String, String> params = parseQueryParams(query);
+        ResponseEntity<String> entity =
+                restClient()
+                        .get()
+                        .uri(uriBuilder -> uriBuilder.path(uri).queryParams(params).build())
                         .header(http_header_key, http_header_val)
                         .retrieve()
                         .toEntity(String.class);
