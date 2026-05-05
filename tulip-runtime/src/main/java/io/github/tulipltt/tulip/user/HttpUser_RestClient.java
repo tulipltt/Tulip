@@ -16,6 +16,7 @@ class HttpRecord {
     public String urlHost = "";
     public int urlPort = -1;
     public String urlPath = "";
+    public String urlQuery = "";
 }
 
 /** The HttpUser class. */
@@ -192,6 +193,15 @@ public class HttpUser_RestClient extends TulipUser {
      */
     public String getUrlPath() {
         return https[getUserId() % https.length].urlPath;
+    }
+
+    /**
+     * getUrlQuery() method
+     *
+     * @return String
+     */
+    public String getUrlQuery() {
+        return https[getUserId() % https.length].urlQuery;
     }
 
     /** HTTP header key name */
