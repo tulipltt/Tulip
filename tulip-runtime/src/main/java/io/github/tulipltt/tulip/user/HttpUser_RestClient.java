@@ -93,6 +93,7 @@ public class HttpUser_RestClient extends TulipUser {
             https[idx].urlHost = url.getHost();
             https[idx].urlPort = url.getPort();
             https[idx].urlPath = url.getPath();
+            https[idx].urlQuery = url.getQuery();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
