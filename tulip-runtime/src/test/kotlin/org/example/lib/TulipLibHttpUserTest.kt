@@ -39,7 +39,7 @@ class TulipLibHttpUserTest {
                     Consumer { config: JavalinConfig? ->
                         config!!
                             .routes
-                            // action 1
+                            // action 1 & 8
                             .get(
                                 "/posts/{id}",
                                 Handler { ctx: Context? ->
@@ -209,6 +209,20 @@ class TulipLibHttpUserTest {
         logger().info("HEAD /postz response: {}", rsp)
         val contentLength = rsp.headers.contentLength
         assertEquals(contentLength, 1024)
+    }
+
+    // Action 8: GET /posts/{id}
+    @Test
+    fun action8() {
+        logger().info("action1: GET /posts/1?a=1&b=2")
+        val query = "a=1&b=2"
+        val rsp: HttpUser.Response = user.httpGetWithQueryParams("/posts/1", query)
+        if (!rsp.isSuccessful) {
+            logger().error("Failed to GET /posts/1?${query}")
+            assertEquals(0, 1)
+        }
+        logger().info("GET /posts/1?${query} response: {}", rsp)
+        assertEquals(0, 0)
     }
 
     fun logger(): Logger = logger
