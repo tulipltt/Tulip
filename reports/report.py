@@ -479,6 +479,15 @@ table, th, td {
 table.expanded .extra-col {
     display: table-cell;
 }
+
+/* Style the report to look the same as the navbar sidepanel */
+body {
+    background-color: #f8fafc;
+    color: #334155;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.2;
+    padding: 20px;
+}
 </style>
 
 <body>
