@@ -7,3 +7,16 @@ build/
 
 # Kotlin 2.0
 .kotlin/
+
+
+# Super Powers
+docs/superpowers
+
+# Worktrees
+.worktrees/
+worktrees/
+
+# Tools and Dependencies
+.opencode/
+node_modules/
+.vscode/
