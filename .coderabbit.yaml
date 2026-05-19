@@ -1,0 +1,5 @@
+# .coderabbit.yaml
+reviews:
+  auto_review:
+    enabled: true
+    auto_incremental_review: true # Reviews new pushes to existing PRs
