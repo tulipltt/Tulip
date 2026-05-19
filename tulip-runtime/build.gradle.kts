@@ -29,10 +29,10 @@ plugins {
     alias(libs.plugins.kotlin.serialization.plugin)
 
     // https://plugins.gradle.org/plugin/com.diffplug.spotless
-    id("com.diffplug.spotless") version "8.4.0"
+    id("com.diffplug.spotless") version "8.5.1"
 
     // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
-    id("org.owasp.dependencycheck") version "12.2.1"
+    id("org.owasp.dependencycheck") version "12.2.2"
 
     // https://plugins.gradle.org/plugin/com.gradleup.shadow
     id("com.gradleup.shadow") version "9.4.1"
@@ -47,12 +47,12 @@ java {
 }
 
 val gsonVersion = "2.14.0"
-val slf4jVersion = "2.0.17"
+val slf4jVersion = "2.0.18"
 val logbackVersion = "1.5.32"
 val springBootVersion = "3.5.14"
 val picocliVersion = "4.7.7"
 val kxsJsonVersion = "1.10.0"
-val javalinVersion = "7.2.0"
+val javalinVersion = "7.2.2"
 
 dependencies {
     // https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-jmx
