@@ -1,1 +1,0 @@
-jbang org.pkl-lang:pkl-cli-java:0.28.2 eval -f json tulip.pkl

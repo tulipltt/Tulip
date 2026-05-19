@@ -1,1 +1,0 @@
-jbang run spring_restclient.java
