@@ -39,6 +39,16 @@ plugins {
 
     // https://plugins.gradle.org/plugin/org.jetbrains.dokka
     id("org.jetbrains.dokka") version "2.2.0"
+    
+    jacoco
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }
 
 java {
