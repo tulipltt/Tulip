@@ -29,13 +29,13 @@ plugins {
     alias(libs.plugins.kotlin.serialization.plugin)
 
     // https://plugins.gradle.org/plugin/com.diffplug.spotless
-    id("com.diffplug.spotless") version "8.5.1"
+    id("com.diffplug.spotless") version "8.6.0"
 
     // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
     id("org.owasp.dependencycheck") version "12.2.2"
 
     // https://plugins.gradle.org/plugin/com.gradleup.shadow
-    id("com.gradleup.shadow") version "9.4.1"
+    id("com.gradleup.shadow") version "9.4.2"
 
     // https://plugins.gradle.org/plugin/org.jetbrains.dokka
     id("org.jetbrains.dokka") version "2.2.0"
@@ -48,7 +48,7 @@ java {
 
 val gsonVersion = "2.14.0"
 val slf4jVersion = "2.0.18"
-val logbackVersion = "1.5.32"
+val logbackVersion = "1.5.33"
 val springBootVersion = "3.5.14"
 val picocliVersion = "4.7.7"
 val kxsJsonVersion = "1.10.0"
@@ -101,7 +101,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.20.0")
 
     // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.3")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.4")
 
     // https://mvnrepository.com/artifact/info.picocli/picocli
     implementation("info.picocli:picocli:$picocliVersion")
