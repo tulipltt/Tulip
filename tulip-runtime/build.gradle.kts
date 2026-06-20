@@ -29,7 +29,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization.plugin)
 
     // https://plugins.gradle.org/plugin/com.diffplug.spotless
-    id("com.diffplug.spotless") version "8.6.0"
+    id("com.diffplug.spotless") version "8.7.0"
 
     // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
     id("org.owasp.dependencycheck") version "12.2.2"
@@ -49,15 +49,13 @@ java {
 val gsonVersion = "2.14.0"
 val slf4jVersion = "2.0.18"
 val logbackVersion = "1.5.34"
-val springBootVersion = "3.5.15"
+val springBootVersion = "4.1.0"
 val picocliVersion = "4.7.7"
-val kxsJsonVersion = "1.10.0"
 val javalinVersion = "7.2.2"
 
 dependencies {
     // https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-jmx
     // implementation("io.micrometer:micrometer-registry-jmx:1.14.3")
-
     // https://mvnrepository.com/artifact/org.hdrhistogram/HdrHistogram
     implementation("org.hdrhistogram:HdrHistogram:2.2.2")
 
