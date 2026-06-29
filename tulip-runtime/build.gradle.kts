@@ -35,7 +35,7 @@ plugins {
     id("org.owasp.dependencycheck") version "12.2.2"
 
     // https://plugins.gradle.org/plugin/com.gradleup.shadow
-    id("com.gradleup.shadow") version "9.4.2"
+    id("com.gradleup.shadow") version "9.4.3"
 
     // https://plugins.gradle.org/plugin/org.jetbrains.dokka
     id("org.jetbrains.dokka") version "2.2.0"
@@ -48,7 +48,7 @@ java {
 
 val gsonVersion = "2.14.0"
 val slf4jVersion = "2.0.18"
-val logbackVersion = "1.5.35"
+val logbackVersion = "1.5.37"
 val springBootVersion = "4.1.0"
 val picocliVersion = "4.7.7"
 val javalinVersion = "7.2.2"
