@@ -9,23 +9,15 @@ import java.time.Duration;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
-class HttpRecord {
-    public RestClient restClient = null;
-    public HttpClient httpClient = null;
-    public String url = "";
-    public String urlProtocol = "";
-    public String urlHost = "";
-    public int urlPort = -1;
-    public String urlPath = "";
-    public String urlQuery = "";
-}
-
-record RestClientRecord(RestClient restClient, HttpClient httpClient) {
-    public RestClientRecord() {
-        this(null, null);
-    }
-}
-;
+record HttpRecord(
+        RestClient restClient,
+        HttpClient httpClient,
+        String url,
+        String urlProtocol,
+        String urlHost,
+        int urlPort,
+        String urlPath,
+        String urlQuery) {}
 
 /** The HttpUser class. */
 public class HttpUser_RestClient extends TulipUser {
@@ -64,10 +56,10 @@ public class HttpUser_RestClient extends TulipUser {
         https = new HttpRecord[urls.length];
         int idx = 0;
         for (String url : urls) {
-            https[idx] = new HttpRecord();
-            var rh = createRestClient(idx, url.trim(), connectTimeout_, readTimeout_, httpVersion_);
-            https[idx].restClient = rh.restClient();
-            https[idx].httpClient = rh.httpClient();
+            https[idx] = createRestClient(idx, url.trim(), connectTimeout_, readTimeout_, httpVersion_);
+            if (https[idx] == null) {
+                return false;
+            }
             idx += 1;
         }
 
@@ -91,7 +83,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @param httpVersion_
      * @return
      */
-    RestClientRecord createRestClient(
+    HttpRecord createRestClient(
             int idx,
             String url_,
             String connectTimeout_,
@@ -100,22 +92,26 @@ public class HttpUser_RestClient extends TulipUser {
 
         RestClient restClient = null;
 
-        https[idx].url = url_;
+        String urlProtocol;
+        String urlHost;
+        int urlPort;
+        String urlPath;
+        String urlQuery;
         try {
             URL url = new URI(url_).toURL();
-            https[idx].urlProtocol = url.getProtocol();
-            https[idx].urlHost = url.getHost();
-            https[idx].urlPort = url.getPort();
-            https[idx].urlPath = url.getPath();
-            https[idx].urlQuery = url.getQuery();
+            urlProtocol = url.getProtocol();
+            urlHost = url.getHost();
+            urlPort = url.getPort();
+            urlPath = url.getPath();
+            urlQuery = url.getQuery();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
 
-        String baseUrl = https[idx].urlProtocol + "://" + https[idx].urlHost;
-        if (https[idx].urlPort != -1) {
-            baseUrl += ":" + https[idx].urlPort;
+        String baseUrl = urlProtocol + "://" + urlHost;
+        if (urlPort != -1) {
+            baseUrl += ":" + urlPort;
         }
         logger().info("[{}]baseUrl={}", idx, baseUrl);
 
@@ -150,7 +146,15 @@ public class HttpUser_RestClient extends TulipUser {
             logger().info("[{}]readTimeoutMillis={}", idx, readTimeout_);
         }
         restClient = RestClient.builder().requestFactory(factory).baseUrl(baseUrl).build();
-        return new RestClientRecord(restClient, httpClient);
+        return new HttpRecord(
+                restClient,
+                httpClient,
+                url_,
+                urlProtocol,
+                urlHost,
+                urlPort,
+                urlPath == null ? "" : urlPath,
+                urlQuery == null ? "" : urlQuery);
     }
 
     /**
@@ -161,8 +165,8 @@ public class HttpUser_RestClient extends TulipUser {
     public boolean onStop() {
         if (shareConnections) {
             for (HttpRecord hr : https) {
-                if (hr.httpClient != null) {
-                    hr.httpClient.close();
+                if (hr.httpClient() != null) {
+                    hr.httpClient().close();
                 }
             }
         }
@@ -176,7 +180,7 @@ public class HttpUser_RestClient extends TulipUser {
      */
     public RestClient restClient() {
         if (shareConnections) {
-            return https[getUserId() % https.length].restClient;
+            return https[getUserId() % https.length].restClient();
         } else {
             throw new RuntimeException(
                     "RestClient is not shared, please create a new RestClient for each request.");
@@ -192,7 +196,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @return String
      */
     public String getUrlProtocol() {
-        return https[getUserId() % https.length].urlProtocol;
+        return https[getUserId() % https.length].urlProtocol();
     }
 
     /**
@@ -201,7 +205,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @return String
      */
     public String getUrlHost() {
-        return https[getUserId() % https.length].urlHost;
+        return https[getUserId() % https.length].urlHost();
     }
 
     /**
@@ -210,7 +214,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @return int
      */
     public int getUrlPort() {
-        return https[getUserId() % https.length].urlPort;
+        return https[getUserId() % https.length].urlPort();
     }
 
     /**
@@ -219,7 +223,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @return String
      */
     public String getUrlPath() {
-        return https[getUserId() % https.length].urlPath;
+        return https[getUserId() % https.length].urlPath();
     }
 
     /**
@@ -228,7 +232,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @return String
      */
     public String getUrlQuery() {
-        return https[getUserId() % https.length].urlQuery;
+        return https[getUserId() % https.length].urlQuery();
     }
 
     /** HTTP header key name */
