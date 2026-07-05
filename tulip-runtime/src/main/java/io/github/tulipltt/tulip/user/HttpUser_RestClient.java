@@ -11,6 +11,7 @@ import org.springframework.web.client.RestClient;
 
 class HttpRecord {
     public RestClient restClient = null;
+    public HttpClient httpClient = null;
     public String url = "";
     public String urlProtocol = "";
     public String urlHost = "";
@@ -18,6 +19,13 @@ class HttpRecord {
     public String urlPath = "";
     public String urlQuery = "";
 }
+
+record RestClientRecord(RestClient restClient, HttpClient httpClient) {
+    public RestClientRecord() {
+        this(null, null);
+    }
+}
+;
 
 /** The HttpUser class. */
 public class HttpUser_RestClient extends TulipUser {
@@ -57,8 +65,9 @@ public class HttpUser_RestClient extends TulipUser {
         int idx = 0;
         for (String url : urls) {
             https[idx] = new HttpRecord();
-            https[idx].restClient =
-                    createRestClient(idx, url.trim(), connectTimeout_, readTimeout_, httpVersion_);
+            var rh = createRestClient(idx, url.trim(), connectTimeout_, readTimeout_, httpVersion_);
+            https[idx].restClient = rh.restClient();
+            https[idx].httpClient = rh.httpClient();
             idx += 1;
         }
 
@@ -82,7 +91,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @param httpVersion_
      * @return
      */
-    RestClient createRestClient(
+    RestClientRecord createRestClient(
             int idx,
             String url_,
             String connectTimeout_,
@@ -141,7 +150,7 @@ public class HttpUser_RestClient extends TulipUser {
             logger().info("[{}]readTimeoutMillis={}", idx, readTimeout_);
         }
         restClient = RestClient.builder().requestFactory(factory).baseUrl(baseUrl).build();
-        return restClient;
+        return new RestClientRecord(restClient, httpClient);
     }
 
     /**
@@ -150,6 +159,13 @@ public class HttpUser_RestClient extends TulipUser {
      * @return boolean
      */
     public boolean onStop() {
+        if (shareConnections) {
+            for (HttpRecord hr : https) {
+                if (hr.httpClient != null) {
+                    hr.httpClient.close();
+                }
+            }
+        }
         return true;
     }
 
@@ -221,10 +237,9 @@ public class HttpUser_RestClient extends TulipUser {
     /** HTTP header key value */
     public static String http_header_val = "";
 
-    /** Whether to share connections
-     * If false, then each user will be allocated its own
-     * restClient object. This is required when using
-     * httpOnly cookies to user JWTs that contain the userId.
+    /**
+     * Whether to share connections If false, then each user will be allocated its own restClient
+     * object. This is required when using httpOnly cookies to user JWTs that contain the userId.
      */
     public static boolean shareConnections = true;
 }
