@@ -4,6 +4,8 @@ import static io.github.tulipltt.tulip.core.TulipKt.gMaxNumUsers;
 
 import io.github.tulipltt.tulip.api.*;
 import io.github.tulipltt.tulip.api.TulipUser;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
@@ -16,6 +18,7 @@ import org.springframework.web.client.RestClient;
 record HttpRecord(
         RestClient restClient,
         HttpClient httpClient,
+        CookieManager cookieManager,
         String url,
         String urlProtocol,
         String urlHost,
@@ -159,15 +162,36 @@ public class HttpUser_RestClient extends TulipUser {
             logger().error("[{}]Falling back to HTTP 1.1", idx);
             httpVersion = HttpClient.Version.HTTP_1_1;
         }
+        CookieManager cookieManager =
+                (!shareConnections) ? new CookieManager(null, CookiePolicy.ACCEPT_ALL) : null;
         if (!connectTimeout_.isEmpty()) {
             logger().info("[{}]connectTimeoutMillis={}", idx, connectTimeout_);
-            httpClient =
-                    HttpClient.newBuilder()
-                            .version(httpVersion)
-                            .connectTimeout(Duration.ofMillis(Integer.parseInt(connectTimeout_)))
-                            .build();
+            if (cookieManager != null) {
+                httpClient =
+                        HttpClient.newBuilder()
+                                .version(httpVersion)
+                                .connectTimeout(
+                                        Duration.ofMillis(Integer.parseInt(connectTimeout_)))
+                                .cookieHandler(cookieManager)
+                                .build();
+            } else {
+                httpClient =
+                        HttpClient.newBuilder()
+                                .version(httpVersion)
+                                .connectTimeout(
+                                        Duration.ofMillis(Integer.parseInt(connectTimeout_)))
+                                .build();
+            }
         } else {
-            httpClient = HttpClient.newBuilder().version(httpVersion).build();
+            if (cookieManager != null) {
+                httpClient =
+                        HttpClient.newBuilder()
+                                .version(httpVersion)
+                                .cookieHandler(cookieManager)
+                                .build();
+            } else {
+                httpClient = HttpClient.newBuilder().version(httpVersion).build();
+            }
         }
         var factory = new JdkClientHttpRequestFactory(httpClient);
         if (!readTimeout_.isEmpty()) {
@@ -178,6 +202,7 @@ public class HttpUser_RestClient extends TulipUser {
         return new HttpRecord(
                 restClient,
                 httpClient,
+                cookieManager,
                 url_,
                 urlProtocol,
                 urlHost,
