@@ -1,11 +1,15 @@
 package io.github.tulipltt.tulip.user;
 
+import static io.github.tulipltt.tulip.core.TulipKt.gMaxNumUsers;
+
 import io.github.tulipltt.tulip.api.*;
 import io.github.tulipltt.tulip.api.TulipUser;
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
@@ -52,15 +56,34 @@ public class HttpUser_RestClient extends TulipUser {
             return false;
         }
 
+        int N;
         String[] urls = url_.split(",");
-        https = new HttpRecord[urls.length];
-        int idx = 0;
-        for (String url : urls) {
-            https[idx] = createRestClient(idx, url.trim(), connectTimeout_, readTimeout_, httpVersion_);
-            if (https[idx] == null) {
-                return false;
+        if (shareConnections) {
+            https = new ArrayList<>(urls.length);
+            N = 1;
+        } else {
+            https = new ArrayList<>(gMaxNumUsers);
+            N = gMaxNumUsers;
+            if (urls.length > 1) {
+                logger().warn(
+                                "Multiple URLs are specified, but shareConnections is false. Only the first URL will be used.");
+                urls = Arrays.copyOf(urls, 1);
             }
-            idx += 1;
+        }
+        int n = 0;
+        int idx = 0;
+        while (n < N) {
+            for (String url : urls) {
+                HttpRecord record =
+                        createRestClient(
+                                idx, url.trim(), connectTimeout_, readTimeout_, httpVersion_);
+                if (record == null) {
+                    return false;
+                }
+                https.add(record);
+                idx += 1;
+            }
+            n += 1;
         }
 
         var httpHeader_ = getUserParamValue("httpHeader");
@@ -163,13 +186,12 @@ public class HttpUser_RestClient extends TulipUser {
      * @return boolean
      */
     public boolean onStop() {
-        if (shareConnections) {
-            for (HttpRecord hr : https) {
-                if (hr.httpClient() != null) {
-                    hr.httpClient().close();
-                }
+        for (HttpRecord hr : https) {
+            if (hr.httpClient() != null) {
+                hr.httpClient().close();
             }
         }
+        https.clear();
         return true;
     }
 
@@ -180,7 +202,7 @@ public class HttpUser_RestClient extends TulipUser {
      */
     public RestClient restClient() {
         if (shareConnections) {
-            return https[getUserId() % https.length].restClient();
+            return https.get(getUserId() % https.size()).restClient();
         } else {
             throw new RuntimeException(
                     "RestClient is not shared, please create a new RestClient for each request.");
@@ -188,7 +210,7 @@ public class HttpUser_RestClient extends TulipUser {
     }
 
     // RestClient objects
-    private static HttpRecord[] https = null;
+    private static ArrayList<HttpRecord> https = null;
 
     /**
      * getUrlProtocol() method
@@ -196,7 +218,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @return String
      */
     public String getUrlProtocol() {
-        return https[getUserId() % https.length].urlProtocol();
+        return https.get(getUserId() % https.size()).urlProtocol();
     }
 
     /**
@@ -205,7 +227,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @return String
      */
     public String getUrlHost() {
-        return https[getUserId() % https.length].urlHost();
+        return https.get(getUserId() % https.size()).urlHost();
     }
 
     /**
@@ -214,7 +236,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @return int
      */
     public int getUrlPort() {
-        return https[getUserId() % https.length].urlPort();
+        return https.get(getUserId() % https.size()).urlPort();
     }
 
     /**
@@ -223,7 +245,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @return String
      */
     public String getUrlPath() {
-        return https[getUserId() % https.length].urlPath();
+        return https.get(getUserId() % https.size()).urlPath();
     }
 
     /**
@@ -232,7 +254,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @return String
      */
     public String getUrlQuery() {
-        return https[getUserId() % https.length].urlQuery();
+        return https.get(getUserId() % https.size()).urlQuery();
     }
 
     /** HTTP header key name */

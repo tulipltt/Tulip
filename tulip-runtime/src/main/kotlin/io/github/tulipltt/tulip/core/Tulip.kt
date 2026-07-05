@@ -95,7 +95,7 @@ val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm
 var gTulipContextName: String = ""
 var gTulipContextId: Int = 0
 
-var gMaxNumUsers = 0
+@JvmField var gMaxNumUsers = 0
 var gMaxNumTasks = 0
 var gMaxNumThreads = 0
 
