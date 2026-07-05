@@ -48,6 +48,9 @@ public class HttpUser_RestClient extends TulipUser {
 
         var shareConnections_ = getUserParamValue("shareConnections");
         if (!shareConnections_.isEmpty()) {
+            if (!shareConnections_.equalsIgnoreCase("true") && !shareConnections_.equalsIgnoreCase("false")) {
+                logger().warn("Unrecognized shareConnections value '{}', defaulting to false", shareConnections_);
+            }
             shareConnections = Boolean.parseBoolean(shareConnections_);
         }
 
