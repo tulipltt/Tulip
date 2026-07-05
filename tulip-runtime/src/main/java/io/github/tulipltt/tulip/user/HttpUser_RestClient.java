@@ -48,8 +48,11 @@ public class HttpUser_RestClient extends TulipUser {
 
         var shareConnections_ = getUserParamValue("shareConnections");
         if (!shareConnections_.isEmpty()) {
-            if (!shareConnections_.equalsIgnoreCase("true") && !shareConnections_.equalsIgnoreCase("false")) {
-                logger().warn("Unrecognized shareConnections value '{}', defaulting to false", shareConnections_);
+            if (!shareConnections_.equalsIgnoreCase("true")
+                    && !shareConnections_.equalsIgnoreCase("false")) {
+                logger().warn(
+                                "Unrecognized shareConnections value '{}', defaulting to false",
+                                shareConnections_);
             }
             shareConnections = Boolean.parseBoolean(shareConnections_);
         }
@@ -189,12 +192,16 @@ public class HttpUser_RestClient extends TulipUser {
      * @return boolean
      */
     public boolean onStop() {
+        if (getUserId() != 0) {
+            return true;
+        }
         for (HttpRecord hr : https) {
             if (hr.httpClient() != null) {
                 hr.httpClient().close();
             }
         }
         https.clear();
+        https = null;
         return true;
     }
 
