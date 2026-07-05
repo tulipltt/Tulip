@@ -42,6 +42,11 @@ public class HttpUser_RestClient extends TulipUser {
         var readTimeout_ = getUserParamValue("readTimeoutMillis");
         var httpVersion_ = getUserParamValue("httpVersion").toUpperCase();
 
+        var shareConnections_ = getUserParamValue("shareConnections");
+        if (!shareConnections_.isEmpty()) {
+            shareConnections = Boolean.parseBoolean(shareConnections_);
+        }
+
         if (url_.isEmpty()) {
             logger().error("\"url\" property is empty");
             return false;
@@ -154,7 +159,12 @@ public class HttpUser_RestClient extends TulipUser {
      * @return RestClient
      */
     public RestClient restClient() {
-        return https[getUserId() % https.length].restClient;
+        if (shareConnections) {
+            return https[getUserId() % https.length].restClient;
+        } else {
+            throw new RuntimeException(
+                    "RestClient is not shared, please create a new RestClient for each request.");
+        }
     }
 
     // RestClient objects
@@ -210,4 +220,11 @@ public class HttpUser_RestClient extends TulipUser {
 
     /** HTTP header key value */
     public static String http_header_val = "";
+
+    /** Whether to share connections
+     * If false, then each user will be allocated its own
+     * restClient object. This is required when using
+     * httpOnly cookies to user JWTs that contain the userId.
+     */
+    public static boolean shareConnections = true;
 }
