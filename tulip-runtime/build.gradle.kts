@@ -3,7 +3,6 @@
  */
 import com.diffplug.spotless.kotlin.KtfmtStep
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import java.io.File
 
 group = "io.github.tulipltt.tulip"
 
@@ -49,7 +48,7 @@ java {
 val gsonVersion = "2.14.0"
 val slf4jVersion = "2.0.18"
 val logbackVersion = "1.5.37"
-val springBootVersion = "4.1.0"
+val springBootVersion = "3.5.16"
 val picocliVersion = "4.7.7"
 val javalinVersion = "7.2.2"
 

@@ -2,7 +2,7 @@
 # Add key=value pairs of SDKs to use below
 
 # Java
-java=25.0.3-tem
+java=21.0.11-tem
 
 # Groovy
 groovy=5.0.7
@@ -11,10 +11,10 @@ groovy=5.0.7
 gradle=9.6.1
 
 # JBang
-jbang=0.139.3
+jbang=0.138.0
 
 # Kotlin
-kotlin=2.4.0
+kotlin=2.3.21
 
 # Scala
 scalacli=1.15.0
