@@ -211,12 +211,7 @@ public class HttpUser_RestClient extends TulipUser {
      * @return RestClient
      */
     public RestClient restClient() {
-        if (shareConnections) {
-            return https.get(getUserId() % https.size()).restClient();
-        } else {
-            throw new RuntimeException(
-                    "RestClient is not shared, please create a new RestClient for each request.");
-        }
+        return https.get(getUserId() % https.size()).restClient();
     }
 
     // RestClient objects
