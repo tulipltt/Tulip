@@ -3,7 +3,6 @@
  */
 import com.diffplug.spotless.kotlin.KtfmtStep
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import java.io.File
 
 group = "io.github.tulipltt.tulip"
 
@@ -35,7 +34,7 @@ plugins {
     id("org.owasp.dependencycheck") version "12.2.2"
 
     // https://plugins.gradle.org/plugin/com.gradleup.shadow
-    id("com.gradleup.shadow") version "9.4.3"
+    // id("com.gradleup.shadow") version "9.5.1"
 
     // https://plugins.gradle.org/plugin/org.jetbrains.dokka
     id("org.jetbrains.dokka") version "2.2.0"
@@ -100,7 +99,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.20.0")
 
     // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.1")
 
     // https://mvnrepository.com/artifact/info.picocli/picocli
     implementation("info.picocli:picocli:$picocliVersion")
