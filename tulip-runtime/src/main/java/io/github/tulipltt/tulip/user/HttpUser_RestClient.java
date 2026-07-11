@@ -184,6 +184,9 @@ public class HttpUser_RestClient extends TulipUser {
                 logger().info("[{}]readTimeoutMillis={}", idx, readTimeout_);
             }
         }
+        if (idx == 0) {
+            logger().info("[{}]shareConnections={}", idx, shareConnections);
+        }
         restClient = RestClient.builder().requestFactory(factory).baseUrl(baseUrl).build();
         return new HttpRecord(
                 restClient,
