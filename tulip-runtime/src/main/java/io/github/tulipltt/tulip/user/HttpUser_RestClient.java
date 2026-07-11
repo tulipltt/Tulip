@@ -142,12 +142,16 @@ public class HttpUser_RestClient extends TulipUser {
         if (urlPort != -1) {
             baseUrl += ":" + urlPort;
         }
-        logger().info("[{}]baseUrl={}", idx, baseUrl);
+        if (idx == 0) {
+            logger().info("[{}]baseUrl={}", idx, baseUrl);
+        }
 
         if (httpVersion_.isEmpty()) {
             httpVersion_ = "HTTP_1_1";
         }
-        logger().info("[{}]httpVersion={}", idx, httpVersion_);
+        if (idx == 0) {
+            logger().info("[{}]httpVersion={}", idx, httpVersion_);
+        }
 
         // HTTP 1.1 or HTTP/2 or HTTP/3
         HttpClient httpClient = null;
@@ -155,12 +159,16 @@ public class HttpUser_RestClient extends TulipUser {
         try {
             httpVersion = HttpClient.Version.valueOf(httpVersion_.toUpperCase());
         } catch (IllegalArgumentException e) {
-            logger().error("[{}]Unsupported HTTP version: {}", idx, httpVersion_);
-            logger().error("[{}]Falling back to HTTP 1.1", idx);
+            if (idx == 0) {
+                logger().error("[{}]Unsupported HTTP version: {}", idx, httpVersion_);
+                logger().error("[{}]Falling back to HTTP 1.1", idx);
+            }
             httpVersion = HttpClient.Version.HTTP_1_1;
         }
         if (!connectTimeout_.isEmpty()) {
-            logger().info("[{}]connectTimeoutMillis={}", idx, connectTimeout_);
+            if (idx == 0) {
+                logger().info("[{}]connectTimeoutMillis={}", idx, connectTimeout_);
+            }
             httpClient =
                     HttpClient.newBuilder()
                             .version(httpVersion)
@@ -172,7 +180,9 @@ public class HttpUser_RestClient extends TulipUser {
         var factory = new JdkClientHttpRequestFactory(httpClient);
         if (!readTimeout_.isEmpty()) {
             factory.setReadTimeout(Integer.parseInt(readTimeout_));
-            logger().info("[{}]readTimeoutMillis={}", idx, readTimeout_);
+            if (idx == 0) {
+                logger().info("[{}]readTimeoutMillis={}", idx, readTimeout_);
+            }
         }
         restClient = RestClient.builder().requestFactory(factory).baseUrl(baseUrl).build();
         return new HttpRecord(
