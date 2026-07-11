@@ -30,7 +30,7 @@ public class TulipApi implements Callable<Integer> {
     TulipApi() {}
 
     /** The version string of the Tulip API. */
-    public static final String VERSION = "2.3.4-SNAPSHOT";
+    public static final String VERSION = "2.3.4";
 
     /** The number of unique actions available in the benchmarking process. */
     public static final int NUM_ACTIONS = 101;
