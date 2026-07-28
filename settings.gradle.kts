@@ -8,6 +8,7 @@
 plugins {
     // Apply the foojay-resolver plugin to allow automatic download of JDKs
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+    id("io.github.ben-manes.versions.settings") version "0.56.0"
 }
 
 rootProject.name = "Tulip"

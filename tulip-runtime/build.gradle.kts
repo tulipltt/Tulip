@@ -17,7 +17,7 @@ version = tulipVersion
 
 plugins {
     // https://plugins.gradle.org/plugin/com.github.ben-manes.versions
-    id("com.github.ben-manes.versions") version "0.54.0"
+    // id("com.github.ben-manes.versions") version "0.56.0"
 
     // Gradle convention plugin for Kotlin libraries
     id("buildlogic.kotlin-library-conventions")
@@ -28,7 +28,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization.plugin)
 
     // https://plugins.gradle.org/plugin/com.diffplug.spotless
-    id("com.diffplug.spotless") version "8.8.0"
+    id("com.diffplug.spotless") version "8.9.0"
 
     // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
     id("org.owasp.dependencycheck") version "12.2.2"
