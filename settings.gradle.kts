@@ -4,11 +4,29 @@
  * The settings file is used to specify which projects to include in your build.
  * For more detailed information on multi-project builds, please refer to https://docs.gradle.org/8.10.1/userguide/multi_project_builds.html in the Gradle documentation.
  */
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     // Apply the foojay-resolver plugin to allow automatic download of JDKs
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
     id("io.github.ben-manes.versions.settings") version "0.56.0"
+}
+
+fun String.isNonStable(): Boolean {
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { uppercase().contains(it) }
+    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+    val isStable = stableKeyword || regex.matches(this)
+    return isStable.not()
+}
+
+gradle.rootProject {
+    tasks.withType(DependencyUpdatesTask::class.java).configureEach {
+        revision = "release"
+        outputFormatter = "json"
+        rejectVersionIf {
+            candidate.version.isNonStable() && !currentVersion.isNonStable()
+        }
+    }
 }
 
 rootProject.name = "Tulip"

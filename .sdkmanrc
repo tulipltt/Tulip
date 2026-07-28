@@ -2,7 +2,7 @@
 # Add key=value pairs of SDKs to use below
 
 # Java
-java=21.0.11-tem
+java=21.0.12-amzn
 
 # Groovy
 groovy=5.0.7
