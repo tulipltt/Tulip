@@ -30,7 +30,7 @@ plugins {
     id("com.diffplug.spotless") version "8.9.0"
 
     // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
-    id("org.owasp.dependencycheck") version "12.2.2"
+    id("org.owasp.dependencycheck") version "13.0.0"
 
     // https://plugins.gradle.org/plugin/com.gradleup.shadow
     // id("com.gradleup.shadow") version "9.5.1"
