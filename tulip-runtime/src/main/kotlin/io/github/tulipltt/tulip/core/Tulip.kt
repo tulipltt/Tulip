@@ -395,15 +395,26 @@ fun initConfig(text: String): String {
         val mc = MarkovChain(wn)
         for (an in gConfig.workflows[wn]!!.keys) {
             // Console.put("  aid = $an")
-            val anId = if (an == "-") 0 else an.toInt()
-            var list = mutableListOf<Edge>()
+            val anId =
+                if (an == "-") 0
+                else {
+                    if (an.contains(",")) -1 else an.toInt()
+                }
+            val list = mutableListOf<Edge>()
             for (da in gConfig.workflows[wn]!![an]!!.keys) {
                 val daId = if (da == "-") 0 else da.toInt()
                 val weight = (gConfig.workflows[wn]!![an]!![da]!! * 1000).toInt()
                 // Console.put("    did = $da, weight = $weight")
                 list.add(Edge(daId, weight))
             }
-            mc.add(anId, list)
+            if (anId == -1) {
+                an.split(",").forEach { aid ->
+                    val aId = if (aid == "-") 0 else aid.toInt()
+                    mc.add(aId, list)
+                }
+            } else {
+                mc.add(anId, list)
+            }
         }
         // register workflow
         workflows[wn] = mc

@@ -1714,6 +1714,12 @@ def createConfigReport(config_json, java_json, config_filename):
             printf('@startuml\n')
             #printf('title %s\n'%(wn))
             for sname in jb['workflows'][wn].keys():
+                if "," in sname:
+                    nodes = sname.split(",")
+                    for node in nodes:
+                        jb['workflows'][wn][node] = jb['workflows'][wn][sname]
+                    del jb['workflows'][wn][sname]
+            for sname in jb['workflows'][wn].keys():
                 if sname in ['-']:
                     printf('state "-" as A0\n')
                     continue
