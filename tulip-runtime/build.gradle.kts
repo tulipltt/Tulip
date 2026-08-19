@@ -27,7 +27,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization.plugin)
 
     // https://plugins.gradle.org/plugin/com.diffplug.spotless
-    id("com.diffplug.spotless") version "8.9.0"
+    id("com.diffplug.spotless") version "8.10.0"
 
     // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
     id("org.owasp.dependencycheck") version "13.0.0"
@@ -46,10 +46,10 @@ java {
 
 val gsonVersion = "2.14.0"
 val slf4jVersion = "2.0.18"
-val logbackVersion = "1.6.1"
+val logbackVersion = "1.6.3"
 val springBootVersion = "3.5.16"
 val picocliVersion = "4.7.7"
-val javalinVersion = "7.2.2"
+val javalinVersion = "7.2.3"
 
 dependencies {
     // https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-jmx
@@ -68,7 +68,7 @@ dependencies {
     implementation("com.google.code.gson:gson:$gsonVersion")
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
-    implementation("com.google.guava:guava:33.6.0-jre")
+    implementation("com.google.guava:guava:33.7.1-jre")
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     api("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
@@ -98,7 +98,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.20.0")
 
     // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.2")
 
     // https://mvnrepository.com/artifact/info.picocli/picocli
     implementation("info.picocli:picocli:$picocliVersion")
