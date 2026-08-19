@@ -849,11 +849,11 @@ class Summary:
 def createReport(filename):
 
     def formatTime(timeNanos):
-        if timeNanos < 1000.0:
+        if timeNanos < 1000.0 / 2:
             return "%.1f ns"%(timeNanos)
-        elif timeNanos < 1000000.0:
+        elif timeNanos < 1000000.0 / 2:
             return "%.1f us"%(timeNanos/1000.0)
-        elif timeNanos < 1000000000.0:
+        elif timeNanos < 1000000000.0 / 2:
             return "%.1f ms"%(timeNanos/1000000.0)
         else:
             return "%.1f s"%(timeNanos/1000000000.0)
