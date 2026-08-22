@@ -178,6 +178,7 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
   java {
     googleJavaFormat()
     toggleOffOn()
+    endWithNewline()
   }
   kotlin {
     // https://github.com/facebook/ktfmt
