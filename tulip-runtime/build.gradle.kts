@@ -15,47 +15,47 @@ val tulipVersion: String = versionMatch?.groupValues?.get(1) ?: "unknown"
 version = tulipVersion
 
 plugins {
-    // https://plugins.gradle.org/plugin/com.github.ben-manes.versions
-    // id("com.github.ben-manes.versions") version "0.56.0"
+  // https://plugins.gradle.org/plugin/com.github.ben-manes.versions
+  // id("com.github.ben-manes.versions") version "0.56.0"
 
-    // Gradle convention plugin for Kotlin libraries
-    id("buildlogic.kotlin-library-conventions")
+  // Gradle convention plugin for Kotlin libraries
+  id("buildlogic.kotlin-library-conventions")
 
-    `maven-publish`
+  `maven-publish`
 
-    // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.serialization
-    alias(libs.plugins.kotlin.serialization.plugin)
+  // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.serialization
+  alias(libs.plugins.kotlin.serialization.plugin)
 
-    // https://plugins.gradle.org/plugin/com.diffplug.spotless
-    id("com.diffplug.spotless") version "8.10.0"
+  // https://plugins.gradle.org/plugin/com.diffplug.spotless
+  id("com.diffplug.spotless") version "8.10.0"
 
-    // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
-    id("org.owasp.dependencycheck") version "13.0.0"
+  // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
+  id("org.owasp.dependencycheck") version "13.0.0"
 
-    // https://plugins.gradle.org/plugin/com.gradleup.shadow
-    // id("com.gradleup.shadow") version "9.5.1"
+  // https://plugins.gradle.org/plugin/com.gradleup.shadow
+  // id("com.gradleup.shadow") version "9.5.1"
 
-    // https://plugins.gradle.org/plugin/org.jetbrains.dokka
-    id("org.jetbrains.dokka") version "2.2.0"
+  // https://plugins.gradle.org/plugin/org.jetbrains.dokka
+  id("org.jetbrains.dokka") version "2.2.0"
 
-    jacoco
+  jacoco
 }
 
 jacoco {
-    toolVersion = "0.8.15"
+  toolVersion = "0.8.15"
 }
 
 tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-    }
+  dependsOn(tasks.test)
+  reports {
+    xml.required.set(true)
+    html.required.set(true)
+  }
 }
 
 java {
-    withJavadocJar()
-    withSourcesJar()
+  withJavadocJar()
+  withSourcesJar()
 }
 
 val gsonVersion = "2.14.0"
@@ -66,149 +66,147 @@ val picocliVersion = "4.7.7"
 val javalinVersion = "7.2.3"
 
 dependencies {
-    // https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-jmx
-    // implementation("io.micrometer:micrometer-registry-jmx:1.14.3")
+  // https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-jmx
+  // implementation("io.micrometer:micrometer-registry-jmx:1.14.3")
 
-    // https://mvnrepository.com/artifact/org.hdrhistogram/HdrHistogram
-    implementation("org.hdrhistogram:HdrHistogram:2.2.2")
+  // https://mvnrepository.com/artifact/org.hdrhistogram/HdrHistogram
+  implementation("org.hdrhistogram:HdrHistogram:2.2.2")
 
-    // https://mvnrepository.com/artifact/org.python/jython-standalone
-    implementation("org.python:jython-slim:2.7.4")
+  // https://mvnrepository.com/artifact/org.python/jython-standalone
+  implementation("org.python:jython-slim:2.7.4")
 
-    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json
-    implementation(libs.kotlin.serialization.json)
+  // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json
+  implementation(libs.kotlin.serialization.json)
 
-    // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    implementation("com.google.code.gson:gson:$gsonVersion")
+  // https://mvnrepository.com/artifact/com.google.code.gson/gson
+  implementation("com.google.code.gson:gson:$gsonVersion")
 
-    // https://mvnrepository.com/artifact/com.google.guava/guava
-    implementation("com.google.guava:guava:33.7.1-jre")
+  // https://mvnrepository.com/artifact/com.google.guava/guava
+  implementation("com.google.guava:guava:33.7.1-jre")
 
-    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
-    api("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
+  // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
+  api("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
 
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    api("org.slf4j:slf4j-api:$slf4jVersion")
+  // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+  api("org.slf4j:slf4j-api:$slf4jVersion")
 
-    // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
-    implementation("ch.qos.logback:logback-core:$logbackVersion")
+  // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
+  implementation("ch.qos.logback:logback-core:$logbackVersion")
 
-    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
-    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+  // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+  implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
-    // https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5
-    // implementation("org.apache.httpcomponents.client5:httpclient5:5.6")
+  // https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5
+  // implementation("org.apache.httpcomponents.client5:httpclient5:5.6")
 
-    // https://mvnrepository.com/artifact/org.asciidoctor/asciidoctorj
-    implementation("org.asciidoctor:asciidoctorj:3.0.1")
+  // https://mvnrepository.com/artifact/org.asciidoctor/asciidoctorj
+  implementation("org.asciidoctor:asciidoctorj:3.0.1")
 
-    // https://mvnrepository.com/artifact/org.asciidoctor/asciidoctorj-diagram
-    implementation("org.asciidoctor:asciidoctorj-diagram:3.2.1")
+  // https://mvnrepository.com/artifact/org.asciidoctor/asciidoctorj-diagram
+  implementation("org.asciidoctor:asciidoctorj-diagram:3.2.1")
 
-    // https://mvnrepository.com/artifact/org.asciidoctor/asciidoctorj-diagram-plantuml
-    implementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2026.2")
+  // https://mvnrepository.com/artifact/org.asciidoctor/asciidoctorj-diagram-plantuml
+  implementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2026.2")
 
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    implementation("org.apache.commons:commons-lang3:3.20.0")
+  // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+  implementation("org.apache.commons:commons-lang3:3.20.0")
 
-    // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.2")
+  // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.22.2")
 
-    // https://mvnrepository.com/artifact/info.picocli/picocli
-    implementation("info.picocli:picocli:$picocliVersion")
+  // https://mvnrepository.com/artifact/info.picocli/picocli
+  implementation("info.picocli:picocli:$picocliVersion")
 
-    // Source: https://mvnrepository.com/artifact/io.javalin/javalin
-    testImplementation("io.javalin:javalin:$javalinVersion")
+  // Source: https://mvnrepository.com/artifact/io.javalin/javalin
+  testImplementation("io.javalin:javalin:$javalinVersion")
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.isDeprecation = true
+  options.isDeprecation = true
 }
 
 tasks.jar {
-    manifest {
-        attributes["Main-Class"] = "io.github.tulipltt.tulip.api.TulipApi"
-        attributes["Enable-Native-Access"] = "ALL-UNNAMED"
-    }
+  manifest {
+    attributes["Main-Class"] = "io.github.tulipltt.tulip.api.TulipApi"
+    attributes["Enable-Native-Access"] = "ALL-UNNAMED"
+  }
 }
 
 publishing {
-    publications {
-        create<MavenPublication>("Tulip") {
-            from(components["java"])
-            groupId = "io.github.tulipltt"
-            artifactId = "tulip-runtime"
-            description = "Tulip Runtime"
-        }
-        withType<MavenPublication> {
-            pom {
-                packaging = "jar"
-                name.set("tulip-runtime")
-                description.set("Tulip Runtime")
-                url.set("https://github.com/tulipltt/Tulip")
-                inceptionYear.set("2020")
-                licenses {
-                    license {
-                        name.set("Apache License, Version 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("wfouche")
-                        name.set("Werner Fouché")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:git@github.com:tulipltt/Tulip.git")
-                    developerConnection.set("scm:git:ssh:git@github.com:tulipltt/Tulip.git")
-                    url.set("https://github.com/tulipltt/Tulip")
-                }
-            }
-        }
+  publications {
+    create<MavenPublication>("Tulip") {
+      from(components["java"])
+      groupId = "io.github.tulipltt"
+      artifactId = "tulip-runtime"
+      description = "Tulip Runtime"
     }
-    repositories {
-        maven {
-            url = uri(layout.buildDirectory.dir("staging-deploy"))
+    withType<MavenPublication> {
+      pom {
+        packaging = "jar"
+        name.set("tulip-runtime")
+        description.set("Tulip Runtime")
+        url.set("https://github.com/tulipltt/Tulip")
+        inceptionYear.set("2020")
+        licenses {
+          license {
+            name.set("Apache License, Version 2.0")
+            url.set("https://www.apache.org/licenses/LICENSE-2.0")
+          }
         }
+        developers {
+          developer {
+            id.set("wfouche")
+            name.set("Werner Fouché")
+          }
+        }
+        scm {
+          connection.set("scm:git:git@github.com:tulipltt/Tulip.git")
+          developerConnection.set("scm:git:ssh:git@github.com:tulipltt/Tulip.git")
+          url.set("https://github.com/tulipltt/Tulip")
+        }
+      }
     }
+  }
+  repositories {
+    maven {
+      url = uri(layout.buildDirectory.dir("staging-deploy"))
+    }
+  }
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
-    java {
-        googleJavaFormat().aosp()
-        toggleOffOn()
+  java {
+    googleJavaFormat()
+    toggleOffOn()
+  }
+  kotlin {
+    // https://github.com/facebook/ktfmt
+    ktfmt().googleStyle().configure {
+      it.setMaxWidth(100)
+      // it.setBlockIndent(4)
+      // it.setContinuationIndent(4)
+      it.setRemoveUnusedImports(true)
+      it.setTrailingCommaManagementStrategy(KtfmtStep.TrailingCommaManagementStrategy.COMPLETE)
     }
-    kotlin {
-        // https://github.com/facebook/ktfmt
-        ktfmt().googleStyle().configure {
-            it.setMaxWidth(100)
-            it.setBlockIndent(4)
-            it.setContinuationIndent(4)
-            it.setRemoveUnusedImports(true)
-            it.setTrailingCommaManagementStrategy(
-                KtfmtStep.TrailingCommaManagementStrategy.COMPLETE,
-            )
-        }
-        // ktlint()
-        trimTrailingWhitespace()
-        endWithNewline()
-        suppressLintsFor {
-            step = "ktlint"
-            shortCode = "standard:no-wildcard-imports"
-        }
+    // ktlint()
+    trimTrailingWhitespace()
+    endWithNewline()
+    suppressLintsFor {
+      step = "ktlint"
+      shortCode = "standard:no-wildcard-imports"
     }
-    kotlinGradle {
-        target("**/*.gradle.kts")
-        ktlint()
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
+  }
+  kotlinGradle {
+    target("**/*.gradle.kts")
+    ktfmt()
+    trimTrailingWhitespace()
+    endWithNewline()
+  }
 }
 
 dependencyCheck {
-    nvd {
-        apiKey = "ef1927c1-51b6-4b5c-a1b9-fb10b5e43725"
-        delay = 16000
-    }
+  nvd {
+    apiKey = "ef1927c1-51b6-4b5c-a1b9-fb10b5e43725"
+    delay = 16000
+  }
 }

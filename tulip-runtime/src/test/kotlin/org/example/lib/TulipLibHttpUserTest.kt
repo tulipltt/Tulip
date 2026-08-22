@@ -15,220 +15,220 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class TulipLibHttpUserTest {
-    val config = HashMap<String, String>()
-    val user: HttpUser
-    var app: Javalin? = null
+  val config = HashMap<String, String>()
+  val user: HttpUser
+  var app: Javalin? = null
 
-    init {
-        // config["url"] = "http://jsonplaceholder.typicode.com"
-        config["url"] = "http://localhost:7777"
-        config["httpVersion"] = "HTTP_1_1"
-        config["connectTimeoutMillis"] = "10000"
-        config["readTimeoutMillis"] = "10000"
-        user = HttpUser()
-        user.initRuntime(0, 0)
-        user.initConfig(config)
-        user.onStart()
+  init {
+    // config["url"] = "http://jsonplaceholder.typicode.com"
+    config["url"] = "http://localhost:7777"
+    config["httpVersion"] = "HTTP_1_1"
+    config["connectTimeoutMillis"] = "10000"
+    config["readTimeoutMillis"] = "10000"
+    user = HttpUser()
+    user.initRuntime(0, 0)
+    user.initConfig(config)
+    user.onStart()
+  }
+
+  @BeforeEach
+  fun setup() {
+    logger().info("Setup before each test")
+    app =
+      Javalin.create(
+          Consumer { config: JavalinConfig? ->
+            config!!
+              .routes
+              // action 1 & 8
+              .get(
+                "/posts/{id}",
+                Handler { ctx: Context? ->
+                  ctx!!.status(200)
+                  ctx.result("{\"code\": \"OK\"}").contentType("application/json")
+                },
+              )
+              // action 2
+              .post(
+                "/posts",
+                Handler { ctx: Context? ->
+                  ctx!!.status(201)
+                  ctx.result("{\"code\": \"OK\"}").contentType("application/json")
+                },
+              )
+              // action 3
+              .put(
+                "/posts/{id}",
+                Handler { ctx: Context? ->
+                  ctx!!.status(200)
+                  ctx.result("{\"code\": \"OK\"}").contentType("application/json")
+                },
+              )
+              // action 4
+              .patch(
+                "/posts/{id}",
+                Handler { ctx: Context? ->
+                  ctx!!.status(200)
+                  ctx.result("{\"code\": \"OK\"}").contentType("application/json")
+                },
+              )
+              // action 5
+              .delete(
+                "/posts/{id}",
+                Handler { ctx: Context? ->
+                  ctx!!.status(200)
+                  ctx.result("{\"code\": \"OK\"}").contentType("application/json")
+                },
+              )
+              // action 6
+              .query(
+                "/posts",
+                Handler { ctx: Context? ->
+                  ctx!!.status(200)
+                  ctx.result("{\"code\": \"OK\"}").contentType("application/json")
+                },
+              )
+              // action 7
+              .head(
+                "/postz",
+                Handler { ctx: Context? ->
+                  ctx!!.status(200)
+                  ctx.header("Content-Length", "1024")
+                },
+              )
+          }
+        )
+        .start(7777)
+  }
+
+  @AfterEach
+  fun teardown() {
+    logger().info("Teardown after each test")
+    app?.stop()
+    app = null
+  }
+
+  // Action 1: GET /posts/{id}
+  @Test
+  fun action1() {
+    logger().info("action1: GET /posts/{id}")
+    val id = ThreadLocalRandom.current().nextInt(100) + 1
+    val rsp: HttpUser.Response = user.httpGet("/posts/{id}", id)
+    if (!rsp.isSuccessful) {
+      logger().error("Failed to GET /posts/{}", id)
+      assertEquals(0, 1)
     }
+    logger().info("GET /posts/{} response: {}", id, rsp)
+    assertEquals(0, 0)
+  }
 
-    @BeforeEach
-    fun setup() {
-        logger().info("Setup before each test")
-        app =
-            Javalin.create(
-                    Consumer { config: JavalinConfig? ->
-                        config!!
-                            .routes
-                            // action 1 & 8
-                            .get(
-                                "/posts/{id}",
-                                Handler { ctx: Context? ->
-                                    ctx!!.status(200)
-                                    ctx.result("{\"code\": \"OK\"}").contentType("application/json")
-                                },
-                            )
-                            // action 2
-                            .post(
-                                "/posts",
-                                Handler { ctx: Context? ->
-                                    ctx!!.status(201)
-                                    ctx.result("{\"code\": \"OK\"}").contentType("application/json")
-                                },
-                            )
-                            // action 3
-                            .put(
-                                "/posts/{id}",
-                                Handler { ctx: Context? ->
-                                    ctx!!.status(200)
-                                    ctx.result("{\"code\": \"OK\"}").contentType("application/json")
-                                },
-                            )
-                            // action 4
-                            .patch(
-                                "/posts/{id}",
-                                Handler { ctx: Context? ->
-                                    ctx!!.status(200)
-                                    ctx.result("{\"code\": \"OK\"}").contentType("application/json")
-                                },
-                            )
-                            // action 5
-                            .delete(
-                                "/posts/{id}",
-                                Handler { ctx: Context? ->
-                                    ctx!!.status(200)
-                                    ctx.result("{\"code\": \"OK\"}").contentType("application/json")
-                                },
-                            )
-                            // action 6
-                            .query(
-                                "/posts",
-                                Handler { ctx: Context? ->
-                                    ctx!!.status(200)
-                                    ctx.result("{\"code\": \"OK\"}").contentType("application/json")
-                                },
-                            )
-                            // action 7
-                            .head(
-                                "/postz",
-                                Handler { ctx: Context? ->
-                                    ctx!!.status(200)
-                                    ctx.header("Content-Length", "1024")
-                                },
-                            )
-                    }
-                )
-                .start(7777)
+  // Action 2: POST /posts
+  @Test
+  fun action2() {
+    logger().info("action2: POST /posts")
+    val body = "{\"title\": \"foo\", \"body\": \"bar\", \"userId\": 1}"
+    val rsp: HttpUser.Response = user.httpPost(body, "/posts")
+    if (!rsp.isSuccessful) {
+      logger().error("Failed to POST /posts")
+      assertEquals(0, 1)
     }
+    logger().info("POST /posts response: {}", rsp)
+    assertEquals(0, 0)
+  }
 
-    @AfterEach
-    fun teardown() {
-        logger().info("Teardown after each test")
-        app?.stop()
-        app = null
+  // Action 3: PUT /posts/{id}
+  @Test
+  fun action3() {
+    logger().info("action3: PUT /posts/{id}")
+    val id = ThreadLocalRandom.current().nextInt(100) + 1
+    val body =
+      "{\"id\": " +
+        id +
+        ", \"title\": \"updated title\"" +
+        ", \"body\": \"updated body\", \"userId\": 1}"
+    val rsp: HttpUser.Response = user.httpPut(body, "/posts/{id}", id)
+    if (!rsp.isSuccessful) {
+      logger().error("Failed to PUT /posts/{}", id)
+      assertEquals(0, 1)
     }
+    logger().info("PUT /posts/{} response: {}", id, rsp)
+    assertEquals(0, 0)
+  }
 
-    // Action 1: GET /posts/{id}
-    @Test
-    fun action1() {
-        logger().info("action1: GET /posts/{id}")
-        val id = ThreadLocalRandom.current().nextInt(100) + 1
-        val rsp: HttpUser.Response = user.httpGet("/posts/{id}", id)
-        if (!rsp.isSuccessful) {
-            logger().error("Failed to GET /posts/{}", id)
-            assertEquals(0, 1)
-        }
-        logger().info("GET /posts/{} response: {}", id, rsp)
-        assertEquals(0, 0)
+  // Action 4: PATCH /posts/{id}
+  @Test
+  fun action4() {
+    logger().info("action4: PATCH /posts/{id}")
+    val id = ThreadLocalRandom.current().nextInt(100) + 1
+    val body = "{\"title\": \"patched title\"}"
+    val rsp: HttpUser.Response = user.httpPatch(body, "/posts/{id}", id)
+    if (!rsp.isSuccessful) {
+      logger().error("Failed to PATCH /posts/{}", id)
+      assertEquals(0, 1)
     }
+    logger().info("PATCH /posts/{} response: {}", id, rsp)
+    assertEquals(0, 0)
+  }
 
-    // Action 2: POST /posts
-    @Test
-    fun action2() {
-        logger().info("action2: POST /posts")
-        val body = "{\"title\": \"foo\", \"body\": \"bar\", \"userId\": 1}"
-        val rsp: HttpUser.Response = user.httpPost(body, "/posts")
-        if (!rsp.isSuccessful) {
-            logger().error("Failed to POST /posts")
-            assertEquals(0, 1)
-        }
-        logger().info("POST /posts response: {}", rsp)
-        assertEquals(0, 0)
+  // Action 5: DELETE /posts/{id}
+  @Test
+  fun action5() {
+    logger().info("action5: DELETE /posts/{id}")
+    val id = ThreadLocalRandom.current().nextInt(100) + 1
+    val rsp: HttpUser.Response = user.httpDelete("/posts/{id}", id)
+    if (!rsp.isSuccessful) {
+      logger().error("Failed to DELETE /posts/{}", id)
+      assertEquals(0, 1)
     }
+    logger().info("DELETE /posts/{} response: {}", id, rsp)
+    assertEquals(0, 0)
+  }
 
-    // Action 3: PUT /posts/{id}
-    @Test
-    fun action3() {
-        logger().info("action3: PUT /posts/{id}")
-        val id = ThreadLocalRandom.current().nextInt(100) + 1
-        val body =
-            "{\"id\": " +
-                id +
-                ", \"title\": \"updated title\"" +
-                ", \"body\": \"updated body\", \"userId\": 1}"
-        val rsp: HttpUser.Response = user.httpPut(body, "/posts/{id}", id)
-        if (!rsp.isSuccessful) {
-            logger().error("Failed to PUT /posts/{}", id)
-            assertEquals(0, 1)
-        }
-        logger().info("PUT /posts/{} response: {}", id, rsp)
-        assertEquals(0, 0)
+  // Action 6: QUERY /posts?userId={userId}
+  @Test
+  fun action6() {
+    logger().info("action6: QUERY /posts")
+    val body = "{\"title\": \"foo\", \"body\": \"bar\", \"userId\": 1}"
+    val rsp: HttpUser.Response = user.httpQuery(body, "/posts")
+    if (!rsp.isSuccessful) {
+      logger().error("Failed to QUERY /posts")
+      assertEquals(0, 1)
     }
+    logger().info("QUERY /posts response: {}", rsp)
+    assertEquals(0, 0)
+  }
 
-    // Action 4: PATCH /posts/{id}
-    @Test
-    fun action4() {
-        logger().info("action4: PATCH /posts/{id}")
-        val id = ThreadLocalRandom.current().nextInt(100) + 1
-        val body = "{\"title\": \"patched title\"}"
-        val rsp: HttpUser.Response = user.httpPatch(body, "/posts/{id}", id)
-        if (!rsp.isSuccessful) {
-            logger().error("Failed to PATCH /posts/{}", id)
-            assertEquals(0, 1)
-        }
-        logger().info("PATCH /posts/{} response: {}", id, rsp)
-        assertEquals(0, 0)
+  // Action 7
+  @Test
+  fun action7() {
+    logger().info("action7: HEAD /postz")
+    val rsp: HttpUser.Response = user.httpHead("/postz")
+    if (!rsp.isSuccessful) {
+      logger().error("Failed to GET /postz")
+      assertEquals(0, 1)
     }
+    logger().info("HEAD /postz response: {}", rsp)
+    val contentLength = rsp.headers.contentLength
+    assertEquals(contentLength, 1024)
+  }
 
-    // Action 5: DELETE /posts/{id}
-    @Test
-    fun action5() {
-        logger().info("action5: DELETE /posts/{id}")
-        val id = ThreadLocalRandom.current().nextInt(100) + 1
-        val rsp: HttpUser.Response = user.httpDelete("/posts/{id}", id)
-        if (!rsp.isSuccessful) {
-            logger().error("Failed to DELETE /posts/{}", id)
-            assertEquals(0, 1)
-        }
-        logger().info("DELETE /posts/{} response: {}", id, rsp)
-        assertEquals(0, 0)
+  // Action 8: GET /posts/{id}
+  @Test
+  fun action8() {
+    logger().info("action1: GET /posts/1?a=1&b=2")
+    val query = "a=1&b=2"
+    val rsp: HttpUser.Response = user.httpGetWithQueryParams("/posts/1", query)
+    if (!rsp.isSuccessful) {
+      logger().error("Failed to GET /posts/1?${query}")
+      assertEquals(0, 1)
     }
+    logger().info("GET /posts/1?${query} response: {}", rsp)
+    assertEquals(0, 0)
+  }
 
-    // Action 6: QUERY /posts?userId={userId}
-    @Test
-    fun action6() {
-        logger().info("action6: QUERY /posts")
-        val body = "{\"title\": \"foo\", \"body\": \"bar\", \"userId\": 1}"
-        val rsp: HttpUser.Response = user.httpQuery(body, "/posts")
-        if (!rsp.isSuccessful) {
-            logger().error("Failed to QUERY /posts")
-            assertEquals(0, 1)
-        }
-        logger().info("QUERY /posts response: {}", rsp)
-        assertEquals(0, 0)
-    }
+  fun logger(): Logger = logger
 
-    // Action 7
-    @Test
-    fun action7() {
-        logger().info("action7: HEAD /postz")
-        val rsp: HttpUser.Response = user.httpHead("/postz")
-        if (!rsp.isSuccessful) {
-            logger().error("Failed to GET /postz")
-            assertEquals(0, 1)
-        }
-        logger().info("HEAD /postz response: {}", rsp)
-        val contentLength = rsp.headers.contentLength
-        assertEquals(contentLength, 1024)
-    }
-
-    // Action 8: GET /posts/{id}
-    @Test
-    fun action8() {
-        logger().info("action1: GET /posts/1?a=1&b=2")
-        val query = "a=1&b=2"
-        val rsp: HttpUser.Response = user.httpGetWithQueryParams("/posts/1", query)
-        if (!rsp.isSuccessful) {
-            logger().error("Failed to GET /posts/1?${query}")
-            assertEquals(0, 1)
-        }
-        logger().info("GET /posts/1?${query} response: {}", rsp)
-        assertEquals(0, 0)
-    }
-
-    fun logger(): Logger = logger
-
-    // RestClient object
-    companion object {
-        private val logger = LoggerFactory.getLogger(TulipLibHttpUserTest::class.java)
-    }
+  // RestClient object
+  companion object {
+    private val logger = LoggerFactory.getLogger(TulipLibHttpUserTest::class.java)
+  }
 }

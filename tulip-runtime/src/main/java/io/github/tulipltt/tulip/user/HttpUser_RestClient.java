@@ -14,276 +14,272 @@ import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
 record HttpRecord(
-        RestClient restClient,
-        HttpClient httpClient,
-        String url,
-        String urlProtocol,
-        String urlHost,
-        int urlPort,
-        String urlPath,
-        String urlQuery) {}
+    RestClient restClient,
+    HttpClient httpClient,
+    String url,
+    String urlProtocol,
+    String urlHost,
+    int urlPort,
+    String urlPath,
+    String urlQuery) {}
 
 /** The HttpUser class. */
 public class HttpUser_RestClient extends TulipUser {
 
-    /** Default constructor for HttpUser_RestClient */
-    public HttpUser_RestClient() {}
+  /** Default constructor for HttpUser_RestClient */
+  public HttpUser_RestClient() {}
 
-    /**
-     * onStart() method
-     *
-     * @return boolean
-     */
-    public boolean onStart() {
-        // Initialize the shared RestClient object only once
-        if (getUserId() != 0) {
-            return true;
-        }
-
-        var url_ = getUserParamValue("url");
-
-        var connectTimeout_ = getUserParamValue("connectTimeoutMillis");
-        var readTimeout_ = getUserParamValue("readTimeoutMillis");
-        var httpVersion_ = getUserParamValue("httpVersion").toUpperCase();
-
-        var shareConnections_ = getUserParamValue("shareConnections");
-        if (!shareConnections_.isEmpty()) {
-            if (!shareConnections_.equalsIgnoreCase("true")
-                    && !shareConnections_.equalsIgnoreCase("false")) {
-                logger().warn(
-                                "Unrecognized shareConnections value '{}', defaulting to false",
-                                shareConnections_);
-            }
-            shareConnections = Boolean.parseBoolean(shareConnections_);
-        }
-
-        if (url_.isEmpty()) {
-            logger().error("\"url\" property is empty");
-            return false;
-        }
-
-        int N;
-        String[] urls = url_.split(",");
-        if (shareConnections) {
-            https = new ArrayList<>(urls.length);
-            N = 1;
-        } else {
-            https = new ArrayList<>(gMaxNumUsers);
-            N = gMaxNumUsers;
-            if (urls.length > 1) {
-                logger().warn(
-                                "Multiple URLs are specified, but shareConnections is false. Only the first URL will be used.");
-                urls = Arrays.copyOf(urls, 1);
-            }
-        }
-        int n = 0;
-        int idx = 0;
-        while (n < N) {
-            for (String url : urls) {
-                HttpRecord record =
-                        createRestClient(
-                                idx, url.trim(), connectTimeout_, readTimeout_, httpVersion_);
-                if (record == null) {
-                    return false;
-                }
-                https.add(record);
-                idx += 1;
-            }
-            n += 1;
-        }
-
-        var httpHeader_ = getUserParamValue("httpHeader");
-        if (httpHeader_.isEmpty()) {
-            httpHeader_ = "User-Agent: Tulip";
-        }
-        if (httpHeader_.contains(":")) {
-            var L = httpHeader_.split(":");
-            http_header_key = L[0].trim();
-            http_header_val = L[1].trim();
-        }
-
-        return true;
+  /**
+   * onStart() method
+   *
+   * @return boolean
+   */
+  public boolean onStart() {
+    // Initialize the shared RestClient object only once
+    if (getUserId() != 0) {
+      return true;
     }
 
-    /**
-     * @param url_
-     * @param connectTimeout_
-     * @param readTimeout_
-     * @param httpVersion_
-     * @return
-     */
-    HttpRecord createRestClient(
-            int idx,
-            String url_,
-            String connectTimeout_,
-            String readTimeout_,
-            String httpVersion_) {
+    var url_ = getUserParamValue("url");
 
-        RestClient restClient = null;
+    var connectTimeout_ = getUserParamValue("connectTimeoutMillis");
+    var readTimeout_ = getUserParamValue("readTimeoutMillis");
+    var httpVersion_ = getUserParamValue("httpVersion").toUpperCase();
 
-        String urlProtocol;
-        String urlHost;
-        int urlPort;
-        String urlPath;
-        String urlQuery;
-        try {
-            URL url = new URI(url_).toURL();
-            urlProtocol = url.getProtocol();
-            urlHost = url.getHost();
-            urlPort = url.getPort();
-            urlPath = url.getPath();
-            urlQuery = url.getQuery();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        String baseUrl = urlProtocol + "://" + urlHost;
-        if (urlPort != -1) {
-            baseUrl += ":" + urlPort;
-        }
-        if (idx == 0) {
-            logger().info("[{}]baseUrl={}", idx, baseUrl);
-        }
-
-        if (httpVersion_.isEmpty()) {
-            httpVersion_ = "HTTP_1_1";
-        }
-        if (idx == 0) {
-            logger().info("[{}]httpVersion={}", idx, httpVersion_);
-        }
-
-        // HTTP 1.1 or HTTP/2 or HTTP/3
-        HttpClient httpClient = null;
-        HttpClient.Version httpVersion;
-        try {
-            httpVersion = HttpClient.Version.valueOf(httpVersion_.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            if (idx == 0) {
-                logger().error("[{}]Unsupported HTTP version: {}", idx, httpVersion_);
-                logger().error("[{}]Falling back to HTTP 1.1", idx);
-            }
-            httpVersion = HttpClient.Version.HTTP_1_1;
-        }
-        if (!connectTimeout_.isEmpty()) {
-            if (idx == 0) {
-                logger().info("[{}]connectTimeoutMillis={}", idx, connectTimeout_);
-            }
-            httpClient =
-                    HttpClient.newBuilder()
-                            .version(httpVersion)
-                            .connectTimeout(Duration.ofMillis(Integer.parseInt(connectTimeout_)))
-                            .build();
-        } else {
-            httpClient = HttpClient.newBuilder().version(httpVersion).build();
-        }
-        var factory = new JdkClientHttpRequestFactory(httpClient);
-        if (!readTimeout_.isEmpty()) {
-            factory.setReadTimeout(Integer.parseInt(readTimeout_));
-            if (idx == 0) {
-                logger().info("[{}]readTimeoutMillis={}", idx, readTimeout_);
-            }
-        }
-        if (idx == 0) {
-            logger().info("[{}]shareConnections={}", idx, shareConnections);
-        }
-        restClient = RestClient.builder().requestFactory(factory).baseUrl(baseUrl).build();
-        return new HttpRecord(
-                restClient,
-                httpClient,
-                url_,
-                urlProtocol,
-                urlHost,
-                urlPort,
-                urlPath == null ? "" : urlPath,
-                urlQuery == null ? "" : urlQuery);
+    var shareConnections_ = getUserParamValue("shareConnections");
+    if (!shareConnections_.isEmpty()) {
+      if (!shareConnections_.equalsIgnoreCase("true")
+          && !shareConnections_.equalsIgnoreCase("false")) {
+        logger()
+            .warn(
+                "Unrecognized shareConnections value '{}', defaulting to false", shareConnections_);
+      }
+      shareConnections = Boolean.parseBoolean(shareConnections_);
     }
 
-    /**
-     * onStop() method
-     *
-     * @return boolean
-     */
-    public boolean onStop() {
-        if (getUserId() != 0) {
-            return true;
+    if (url_.isEmpty()) {
+      logger().error("\"url\" property is empty");
+      return false;
+    }
+
+    int N;
+    String[] urls = url_.split(",");
+    if (shareConnections) {
+      https = new ArrayList<>(urls.length);
+      N = 1;
+    } else {
+      https = new ArrayList<>(gMaxNumUsers);
+      N = gMaxNumUsers;
+      if (urls.length > 1) {
+        logger()
+            .warn(
+                "Multiple URLs are specified, but shareConnections is false. Only the first URL will be used.");
+        urls = Arrays.copyOf(urls, 1);
+      }
+    }
+    int n = 0;
+    int idx = 0;
+    while (n < N) {
+      for (String url : urls) {
+        HttpRecord record =
+            createRestClient(idx, url.trim(), connectTimeout_, readTimeout_, httpVersion_);
+        if (record == null) {
+          return false;
         }
-        for (HttpRecord hr : https) {
-            if (hr.httpClient() != null) {
-                hr.httpClient().close();
-            }
-        }
-        https.clear();
-        https = null;
-        return true;
+        https.add(record);
+        idx += 1;
+      }
+      n += 1;
     }
 
-    /**
-     * restClient() method
-     *
-     * @return RestClient
-     */
-    public RestClient restClient() {
-        return https.get(getUserId() % https.size()).restClient();
+    var httpHeader_ = getUserParamValue("httpHeader");
+    if (httpHeader_.isEmpty()) {
+      httpHeader_ = "User-Agent: Tulip";
+    }
+    if (httpHeader_.contains(":")) {
+      var L = httpHeader_.split(":");
+      http_header_key = L[0].trim();
+      http_header_val = L[1].trim();
     }
 
-    // RestClient objects
-    private static ArrayList<HttpRecord> https = null;
+    return true;
+  }
 
-    /**
-     * getUrlProtocol() method
-     *
-     * @return String
-     */
-    public String getUrlProtocol() {
-        return https.get(getUserId() % https.size()).urlProtocol();
+  /**
+   * @param url_
+   * @param connectTimeout_
+   * @param readTimeout_
+   * @param httpVersion_
+   * @return
+   */
+  HttpRecord createRestClient(
+      int idx, String url_, String connectTimeout_, String readTimeout_, String httpVersion_) {
+
+    RestClient restClient = null;
+
+    String urlProtocol;
+    String urlHost;
+    int urlPort;
+    String urlPath;
+    String urlQuery;
+    try {
+      URL url = new URI(url_).toURL();
+      urlProtocol = url.getProtocol();
+      urlHost = url.getHost();
+      urlPort = url.getPort();
+      urlPath = url.getPath();
+      urlQuery = url.getQuery();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
     }
 
-    /**
-     * getUrlHost() method
-     *
-     * @return String
-     */
-    public String getUrlHost() {
-        return https.get(getUserId() % https.size()).urlHost();
+    String baseUrl = urlProtocol + "://" + urlHost;
+    if (urlPort != -1) {
+      baseUrl += ":" + urlPort;
+    }
+    if (idx == 0) {
+      logger().info("[{}]baseUrl={}", idx, baseUrl);
     }
 
-    /**
-     * getUrlPort() method
-     *
-     * @return int
-     */
-    public int getUrlPort() {
-        return https.get(getUserId() % https.size()).urlPort();
+    if (httpVersion_.isEmpty()) {
+      httpVersion_ = "HTTP_1_1";
+    }
+    if (idx == 0) {
+      logger().info("[{}]httpVersion={}", idx, httpVersion_);
     }
 
-    /**
-     * getUrlPath() method
-     *
-     * @return String
-     */
-    public String getUrlPath() {
-        return https.get(getUserId() % https.size()).urlPath();
+    // HTTP 1.1 or HTTP/2 or HTTP/3
+    HttpClient httpClient = null;
+    HttpClient.Version httpVersion;
+    try {
+      httpVersion = HttpClient.Version.valueOf(httpVersion_.toUpperCase());
+    } catch (IllegalArgumentException e) {
+      if (idx == 0) {
+        logger().error("[{}]Unsupported HTTP version: {}", idx, httpVersion_);
+        logger().error("[{}]Falling back to HTTP 1.1", idx);
+      }
+      httpVersion = HttpClient.Version.HTTP_1_1;
     }
-
-    /**
-     * getUrlQuery() method
-     *
-     * @return String
-     */
-    public String getUrlQuery() {
-        return https.get(getUserId() % https.size()).urlQuery();
+    if (!connectTimeout_.isEmpty()) {
+      if (idx == 0) {
+        logger().info("[{}]connectTimeoutMillis={}", idx, connectTimeout_);
+      }
+      httpClient =
+          HttpClient.newBuilder()
+              .version(httpVersion)
+              .connectTimeout(Duration.ofMillis(Integer.parseInt(connectTimeout_)))
+              .build();
+    } else {
+      httpClient = HttpClient.newBuilder().version(httpVersion).build();
     }
+    var factory = new JdkClientHttpRequestFactory(httpClient);
+    if (!readTimeout_.isEmpty()) {
+      factory.setReadTimeout(Integer.parseInt(readTimeout_));
+      if (idx == 0) {
+        logger().info("[{}]readTimeoutMillis={}", idx, readTimeout_);
+      }
+    }
+    if (idx == 0) {
+      logger().info("[{}]shareConnections={}", idx, shareConnections);
+    }
+    restClient = RestClient.builder().requestFactory(factory).baseUrl(baseUrl).build();
+    return new HttpRecord(
+        restClient,
+        httpClient,
+        url_,
+        urlProtocol,
+        urlHost,
+        urlPort,
+        urlPath == null ? "" : urlPath,
+        urlQuery == null ? "" : urlQuery);
+  }
 
-    /** HTTP header key name */
-    public static String http_header_key = "";
+  /**
+   * onStop() method
+   *
+   * @return boolean
+   */
+  public boolean onStop() {
+    if (getUserId() != 0) {
+      return true;
+    }
+    for (HttpRecord hr : https) {
+      if (hr.httpClient() != null) {
+        hr.httpClient().close();
+      }
+    }
+    https.clear();
+    https = null;
+    return true;
+  }
 
-    /** HTTP header key value */
-    public static String http_header_val = "";
+  /**
+   * restClient() method
+   *
+   * @return RestClient
+   */
+  public RestClient restClient() {
+    return https.get(getUserId() % https.size()).restClient();
+  }
 
-    /**
-     * Whether to share connections If false, then each user will be allocated its own restClient
-     * object. This is required when using httpOnly cookies to user JWTs that contain the userId.
-     */
-    public static boolean shareConnections = true;
+  // RestClient objects
+  private static ArrayList<HttpRecord> https = null;
+
+  /**
+   * getUrlProtocol() method
+   *
+   * @return String
+   */
+  public String getUrlProtocol() {
+    return https.get(getUserId() % https.size()).urlProtocol();
+  }
+
+  /**
+   * getUrlHost() method
+   *
+   * @return String
+   */
+  public String getUrlHost() {
+    return https.get(getUserId() % https.size()).urlHost();
+  }
+
+  /**
+   * getUrlPort() method
+   *
+   * @return int
+   */
+  public int getUrlPort() {
+    return https.get(getUserId() % https.size()).urlPort();
+  }
+
+  /**
+   * getUrlPath() method
+   *
+   * @return String
+   */
+  public String getUrlPath() {
+    return https.get(getUserId() % https.size()).urlPath();
+  }
+
+  /**
+   * getUrlQuery() method
+   *
+   * @return String
+   */
+  public String getUrlQuery() {
+    return https.get(getUserId() % https.size()).urlQuery();
+  }
+
+  /** HTTP header key name */
+  public static String http_header_key = "";
+
+  /** HTTP header key value */
+  public static String http_header_val = "";
+
+  /**
+   * Whether to share connections If false, then each user will be allocated its own restClient
+   * object. This is required when using httpOnly cookies to user JWTs that contain the userId.
+   */
+  public static boolean shareConnections = true;
 }
