@@ -7,7 +7,7 @@ plugins {
     // id("com.github.ben-manes.versions") version "0.53.0"
     alias(libs.plugins.kotlin.serialization.plugin)
     // id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
-    id("io.gitlab.arturbosch.detekt") version "1.23.8"
+    id("dev.detekt") version "2.0.0-alpha.6"
     jacoco
 }
 
