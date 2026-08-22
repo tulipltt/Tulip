@@ -5,20 +5,24 @@
 plugins {
     id("buildlogic.kotlin-application-conventions")
     // id("com.github.ben-manes.versions") version "0.53.0"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
+    alias(libs.plugins.kotlin.serialization.plugin)
     // id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
-    id("io.gitlab.arturbosch.detekt") version "1.23.6"
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
     jacoco
+}
+
+jacoco {
+    toolVersion = "0.8.15"
 }
 
 dependencies {
     implementation(project(":tulip-runtime"))
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
     implementation("org.hdrhistogram:HdrHistogram:2.2.2")
     implementation("org.asciidoctor:asciidoctorj:3.0.1")
-    implementation("org.asciidoctor:asciidoctorj-diagram:3.2.0")
-    implementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2025.3")
+    implementation("org.asciidoctor:asciidoctorj-diagram:3.2.1")
+    implementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2026.2")
 }
 
 tasks.jacocoTestReport {

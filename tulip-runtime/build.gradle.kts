@@ -37,8 +37,12 @@ plugins {
 
     // https://plugins.gradle.org/plugin/org.jetbrains.dokka
     id("org.jetbrains.dokka") version "2.2.0"
-    
+
     jacoco
+}
+
+jacoco {
+    toolVersion = "0.8.15"
 }
 
 tasks.jacocoTestReport {
