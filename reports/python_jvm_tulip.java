@@ -2,7 +2,7 @@
 
 //DEPS dev.jbang:jash:0.0.3
 //DEPS org.tomlj:tomlj:1.1.1
-//DEPS org.python:jython-slim:2.7.4
+//DEPS org.python:jython-slim:2.7.5b1
 //DEPS org.graalvm.python:jbang:24.2.2
 //NOINTEGRATIONS
 
