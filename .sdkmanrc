@@ -5,10 +5,10 @@
 java=21.0.12-amzn
 
 # Groovy
-groovy=5.0.7
+groovy=5.1.1
 
 # Gradle
-gradle=9.6.1
+gradle=9.7.1
 
 # JBang
 jbang=0.141.0
@@ -17,10 +17,10 @@ jbang=0.141.0
 kotlin=2.3.21
 
 # Scala
-scalacli=1.15.0
+scalacli=1.16.0
 
 # MCS
-mcs=0.10.1
+mcs=0.11.0
 
 # Maven
 maven=3.9.16
