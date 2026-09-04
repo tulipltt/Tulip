@@ -27,7 +27,7 @@ plugins {
   alias(libs.plugins.kotlin.serialization.plugin)
 
   // https://plugins.gradle.org/plugin/com.diffplug.spotless
-  id("com.diffplug.spotless") version "8.10.0"
+  id("com.diffplug.spotless") version "8.10.1"
 
   // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
   id("org.owasp.dependencycheck") version "13.0.0"
