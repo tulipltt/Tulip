@@ -27,6 +27,7 @@ class TulipReportGeneratorTest {
         assertTrue(html.contains("Performance Test Results"))
         assertTrue(html.contains("All Benchmarks Summary"))
         assertTrue(html.contains("echarts.init"))
+        assertTrue(ReportScripts.echartsJs.contains("version:\"6.1.0\""))
         assertFalse(html.contains("https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"))
 
         val adocFile = File("build/tmp/test_report_c.adoc")
