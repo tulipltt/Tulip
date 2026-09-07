@@ -691,7 +691,7 @@ trailer = '''
 charts_html = '''
 <h2>Actions per Second</h2>
   <div id="main" style="width: 100%;height:400px;"></div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.0.0/echarts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"></script>
   <script src="__JS_T_CHART__"></script>
 <h2>Response Times (ns)</h2>
   <div id="main_p" style="width: 100%;height:400px;"></div>
