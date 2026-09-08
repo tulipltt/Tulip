@@ -56,7 +56,7 @@ data class BenchmarkResult(
     @SerialName("process_cpu_utilization") val processCpuUtilization: Double? = null,
     @SerialName("process_cpu_cores") val processCpuCores: Double? = null,
     @SerialName("process_cpu_time_ns") val processCpuTimeNs: Long? = null,
-    @SerialName("process_cgc_time_ns") val memoryCpuTimeNs: Long? = null,
+    @SerialName("process_gc_time_ns") val memoryCpuTimeNs: Long? = null,
     @SerialName("avg_wthread_qsize") val avgWthreadQsize: Double? = null,
     @SerialName("max_wthread_qsize") val maxWthreadQsize: Long? = null,
     @SerialName("avg_wt") val avgWt: Double? = null,
