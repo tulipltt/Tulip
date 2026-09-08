@@ -519,7 +519,7 @@ body {
     <th class="extra-col">MWT</th>
     <th class="extra-col">CPU_T</th>
     <th class="extra-col">CPU</th>
-    <th class="extra-col">CGC_T</th>
+    <th class="extra-col">GC_T</th>
     <th class="extra-col">MEM</th>
   </tr>
 '''
@@ -547,7 +547,7 @@ benchmark_columns = '''
     <th class="extra-col">MWT</th>
     <th class="extra-col">CPU_T</th>
     <th class="extra-col">CPU</th>
-    <th class="extra-col">CGC_T</th>
+    <th class="extra-col">GC_T</th>
     <th class="extra-col">MEM</th>
   </tr>
 '''
@@ -1103,7 +1103,7 @@ def createReport(filename):
             rd["MWT"] = sm.max_wt
             rd["CPU_T"] = cpu_t
             rd["CPU"] = sm.cpu
-            rd["CGC_T"] = cgc_t
+            rd["GC_T"] = cgc_t
             rd["MEM"] = sm.mem
 
             report_json_fh.write('        ,"summary": %s\n'%(json.dumps(rd)))
@@ -1446,7 +1446,7 @@ def createReport(filename):
             rd["MWT"] = e["max_wt"]
             rd["CPU_T"] = cpu_t
             rd["CPU"] = p_cpu
-            rd["CGC_T"] = cgc_t
+            rd["GC_T"] = cgc_t
             rd["MEM"] = p_mem
             if e["row_id"]+1 == 1:
                 report_json_fh.write('         "%d": %s\n'%(e["row_id"]+1,json.dumps(rd)))
