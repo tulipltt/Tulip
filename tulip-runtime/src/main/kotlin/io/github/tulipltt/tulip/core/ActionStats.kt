@@ -186,8 +186,8 @@ class ActionStats {
       val cpu_time_secs: Double = r.processCpuTime / 1000000000.0
       val gc_time_secs: Double = r.memoryCpuTime / 1000000000.0
       output.add("  cpu time (process)   = ${"%.3f".format(Locale.US, cpu_time_secs)} seconds")
-      if (java.lang.Runtime.version().feature() > 25) {
-        output.add("  gc time (process)   = ${"%.3f".format(Locale.US, gc_time_secs)} seconds")
+      if (Runtime.version().feature() > 25) {
+        output.add("  gc  time (process)   = ${"%.3f".format(Locale.US, gc_time_secs)} seconds")
       }
       r.processCpuCores = cpu_time_secs / r.durationSeconds
       output.add("  num cores used       = ${"%.3f".format(Locale.US, r.processCpuCores)} cores")
