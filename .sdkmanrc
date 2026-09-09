@@ -5,7 +5,7 @@
 java=21.0.12-amzn
 
 # Groovy
-groovy=5.1.1
+groovy=5.1.2
 
 # Gradle
 gradle=9.7.1
@@ -14,10 +14,10 @@ gradle=9.7.1
 jbang=0.141.0
 
 # Kotlin
-kotlin=2.3.21
+kotlin=2.4.20
 
 # Scala
-scalacli=1.16.0
+scalacli=1.17.0
 
 # MCS
 mcs=0.11.0
