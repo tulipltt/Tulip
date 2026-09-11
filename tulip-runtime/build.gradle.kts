@@ -27,7 +27,7 @@ plugins {
   alias(libs.plugins.kotlin.serialization.plugin)
 
   // https://plugins.gradle.org/plugin/com.diffplug.spotless
-  id("com.diffplug.spotless") version "8.10.1"
+  id("com.diffplug.spotless") version "8.10.2"
 
   // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
   id("org.owasp.dependencycheck") version "13.0.0"
@@ -59,7 +59,7 @@ java {
 }
 
 val gsonVersion = "2.14.0"
-val slf4jVersion = "2.0.18"
+val slf4jVersion = "2.0.19"
 val logbackVersion = "1.6.3"
 val springBootVersion = "3.5.16"
 val picocliVersion = "4.7.7"
