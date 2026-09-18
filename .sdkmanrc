@@ -17,10 +17,10 @@ jbang=0.141.0
 kotlin=2.4.20
 
 # Scala
-scalacli=1.17.0
+scalacli=1.17.1
 
 # MCS
-mcs=0.11.0
+mcs=0.11.1
 
 # Maven
 maven=3.9.16
