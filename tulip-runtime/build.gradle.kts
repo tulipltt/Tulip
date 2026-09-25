@@ -59,8 +59,8 @@ java {
 }
 
 val gsonVersion = "2.14.0"
-val slf4jVersion = "2.0.19"
-val logbackVersion = "1.6.3"
+val slf4jVersion = "2.0.20"
+val logbackVersion = "1.6.4"
 val springBootVersion = "4.1.1"
 val picocliVersion = "4.7.7"
 val javalinVersion = "7.2.3"
@@ -112,7 +112,7 @@ dependencies {
   implementation("org.apache.commons:commons-lang3:3.20.0")
 
   // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.22.2")
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.22.3")
 
   // https://mvnrepository.com/artifact/info.picocli/picocli
   implementation("info.picocli:picocli:$picocliVersion")
