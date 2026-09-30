@@ -82,7 +82,7 @@ dependencies {
   implementation("com.google.code.gson:gson:$gsonVersion")
 
   // https://mvnrepository.com/artifact/com.google.guava/guava
-  implementation("com.google.guava:guava:33.7.1-jre")
+  implementation("com.google.guava:guava:33.7.2-jre")
 
   // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
   api("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
@@ -109,7 +109,7 @@ dependencies {
   implementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2026.2")
 
   // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-  implementation("org.apache.commons:commons-lang3:3.20.0")
+  implementation("org.apache.commons:commons-lang3:3.21.0")
 
   // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
   implementation("com.fasterxml.jackson.core:jackson-databind:2.22.3")
