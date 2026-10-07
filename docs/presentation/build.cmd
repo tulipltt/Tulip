@@ -3,4 +3,4 @@ call jbang run asciidoctorj@asciidoctor ^
     -r asciidoctor-diagram ^
     presentation.adoc ^
     -b revealjs ^
-    -a revealjsdir=https://cdn.jsdelivr.net/npm/reveal.js@6.0.1
+    -a revealjsdir=https://cdn.jsdelivr.net/npm/reveal.js@6.0.2
