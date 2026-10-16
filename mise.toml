@@ -1,0 +1,8 @@
+[tools]
+java = "corretto-21"
+gradle = "latest"
+maven = "latest"
+scala-cli = "latest"
+groovy = "latest"
+kotlin = "latest"
+jbang = "latest"
