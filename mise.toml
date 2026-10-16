@@ -6,3 +6,18 @@ scala-cli = "latest"
 groovy = "latest"
 kotlin = "latest"
 jbang = "latest"
+
+[tasks.run-bench]
+description = ""
+run = "./gradlew -q :tulip-main:run --args=\"--config benchmark_config.jsonc\""
+run_windows = "gradlew.bat -q :tulip-main:run --args=\"--config benchmark_config.jsonc\""
+
+[tasks.run-bench-hist]
+description = ""
+run = "./gradlew -q :tulip-main:run --args=\"--config benchmark_config_hist.jsonc\""
+run_windows = "gradlew.bat -q :tulip-main:run --args=\"--config benchmark_config_hist.jsonc\""
+
+[tasks.run-bench-test]
+description = ""
+run = "./gradlew -q :tulip-main:run --args=\"--config benchmark_config_test.jsonc\""
+run_windows = "gradlew.bat -q :tulip-main:run --args=\"--config benchmark_config_test.jsonc\""
