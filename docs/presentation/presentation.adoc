@@ -1,6 +1,6 @@
 = Tulip: Load Testing Toolkit
 Werner Fouché,  <werner.fouche@gmail.com>
-:revealjs_theme: beige
+:revealjs_theme: sky
 :revealjs_width: 1408
 :revealjs_height: 992
 :source-highlighter: highlightjs
