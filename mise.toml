@@ -44,8 +44,13 @@ run_windows = "gradlew.bat :tulip-runtime:publishToMavenLocal"
 run = "find ~/.m2 -name 'tulip-runtime*.jar' -print | sort"
 run_windows = "cmd /c dir /s /b \"%USERPROFILE%\\.m2\\tulip-runtime*.jar\""
 
+[tasks.delete-jars-m2local]
+run = "rm -f -r ~/.m2/repository/io/github"
+run_windows = "if exist \"%USERPROFILE%\\.m2\\repository\\io\\github\" rmdir /q /s \"%USERPROFILE%\\.m2\\repository\\io\\github\""
+
 [tasks.publish-to-m2local]
 run = [
+    {task = "delete-jars-m2local"},
     {task = "update-runtime"},
     {task = "spotlessApply"},
     {task = "build-runtime"},
