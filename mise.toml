@@ -7,6 +7,41 @@ groovy = "latest"
 kotlin = "latest"
 jbang = "latest"
 
+[settings]
+experimental = true
+
+[tasks.update-runtime]
+dir = "reports"
+run = [
+    "jbang run python_jvm_tulip.java --keep-java report.py",
+    "jbang run FileModifier.java report_py.java ../tulip-runtime/src/main/java/io/github/tulipltt/tulip/report/report_py.java"
+]
+
+[tasks.spotlessApply]
+run = "./gradlew spotlessApply"
+run_windows = "gradlew spotlessApply"
+
+[tasks.build-runtime]
+run = "./gradlew :tulip-runtime:build"
+run_windows = "gradlew :tulip-runtime:build"
+
+[tasks.publish-runtime]
+run = "./gradlew :tulip-runtime:publishToMavenLocal"
+run_windows = "gradlew :tulip-runtime:publishToMavenLocal"
+
+[tasks.list-jars-m2local]
+run = "find ~/.m2 -name 'tulip-runtime*.jar' -print | sort"
+run_windows = "cmd /c dir /s /b \"%USERPROFILE%\\.m2\\tulip-runtime*.jar\""
+
+[tasks.publish-to-m2local]
+run = [
+    {task = "update-runtime"},
+    {task = "spotlessApply"},
+    {task = "build-runtime"},
+    {task = "publish-runtime"},
+    {task = "list-jars-m2local"}
+]
+
 [tasks.run-bench]
 description = ""
 run = "./gradlew -q :tulip-main:run --args=\"--config benchmark_config.jsonc\""

@@ -95,7 +95,7 @@ class TulipLibHttpUserTest {
                   ctx.header("Content-Length", "1024")
                 },
               )
-          }
+          },
         )
         .start(7777)
   }

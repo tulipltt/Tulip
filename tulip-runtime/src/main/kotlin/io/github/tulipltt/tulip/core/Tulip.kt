@@ -649,10 +649,10 @@ private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, q
     tsBegin = LocalDateTime.now().format(formatter)
     val tsEndPredicted = LocalDateTime.now().plusSeconds(durationMillis / 1000).format(formatter)
     Console.put(
-      "\n$testPhase (${testCase.name}), run ${runId + 1} of ${runIdMax + 1}: begin ($tsBegin)"
+      "\n$testPhase (${testCase.name}), run ${runId + 1} of ${runIdMax + 1}: begin ($tsBegin)",
     )
     Console.put(
-      "$testPhase (${testCase.name}), run ${runId + 1} of ${runIdMax + 1}:       ($tsEndPredicted)"
+      "$testPhase (${testCase.name}), run ${runId + 1} of ${runIdMax + 1}:       ($tsEndPredicted)",
     )
 
     timeMillisStart = timeMillisEnd
@@ -720,7 +720,7 @@ private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, q
     val tsEnd = LocalDateTime.now().format(formatter)
 
     Console.put(
-      "$testPhase (${testCase.name}), run ${runId + 1} of ${runIdMax + 1}: end   ($tsEnd)"
+      "$testPhase (${testCase.name}), run ${runId + 1} of ${runIdMax + 1}: end   ($tsEnd)",
     )
 
     DataCollector.createSummary(
@@ -771,9 +771,9 @@ private fun initTulip() {
   val tulip = if (TulipApi.isUtf8Terminal()) " " + String(Character.toChars(0x0001F337)) else ""
   Console.put(
     "Tulip $VERSION (Java: ${System.getProperty(
-            "java.vendor"
+            "java.vendor",
         )} ${System.getProperty("java.runtime.version")}, Kotlin: ${KotlinVersion.CURRENT})" +
-      tulip
+      tulip,
   )
 
   Console.put("")

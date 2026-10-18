@@ -18,17 +18,20 @@ public class FileModifier {
 
     public static void main(String[] args) {
         // 1. Check for command-line argument
-        if (args.length != 1) {
-            System.err.println("Usage: java FileModifier <path/to/your/file.txt>");
+        if (args.length != 2) {
+            System.err.println("Usage: java FileModifier <path/to/your/file.txt> <path/to/your/file.txt>");
             System.exit(1);
         }
 
-        final String filePath = args[0];
-        final Path path = Path.of(filePath);
+        final String filePath0 = args[0];
+        final Path path0 = Path.of(filePath0);
+
+        final String filePath1 = args[1];
+        final Path path1 = Path.of(filePath1);
 
         try {
             // 2. Read all existing lines from the file
-            List<String> lines = Files.readAllLines(path);
+            List<String> lines = Files.readAllLines(path0);
 
             if (lines.isEmpty()) {
                 System.out.println("File is empty. No modification performed.");
@@ -48,17 +51,20 @@ public class FileModifier {
             lines.add(0, NEW_LINE_CONTENT);
 
             // 4. Write the modified list of lines back to the same file (overwriting it)
-            Files.write(path, lines);
+            Files.write(path0, lines);
+            Files.write(path1, lines);
 
-            System.out.println("Successfully modified file: " + filePath);
+            System.out.println("Successfully modified file: " + filePath0);
             System.out.println("Add line '" + NEW_LINE_CONTENT + "' as the first line.");
 
+            Files.deleteIfExists(path0);
+
         } catch (IOException e) {
-            System.err.println("An error occurred while accessing the file: " + filePath);
+            System.err.println("An error occurred while accessing the file: " + filePath0);
             System.err.println("Error details: " + e.getMessage());
             e.printStackTrace();
         } catch (SecurityException e) {
-             System.err.println("Permission denied: Cannot read or write to file: " + filePath);
+             System.err.println("Permission denied: Cannot read or write to file: " + filePath0);
              e.printStackTrace();
         }
     }

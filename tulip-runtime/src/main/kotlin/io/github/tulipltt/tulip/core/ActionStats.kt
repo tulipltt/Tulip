@@ -158,7 +158,7 @@ class ActionStats {
     output.add(
       "  max_rt  = ${
                 formatTime(r.maxRt)
-            } at $histogramMaxRtTs"
+            } at $histogramMaxRtTs",
     )
 
     if (actionId == NUM_ACTIONS) {
