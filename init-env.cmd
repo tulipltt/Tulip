@@ -1,1 +1,0 @@
-bash -c "source ~/.sdkman/bin/sdkman-init.sh && sdk env install"
