@@ -10,6 +10,17 @@ jbang = "latest"
 [settings]
 experimental = true
 
+[tasks.dependency-updates]
+description = "Dump runtime dependencies and check for updates"
+run = [
+    "./gradlew :tulip-runtime:dependencies > deps.txt",
+    "./gradlew dependencyUpdates --no-configuration-cache -Drevision=release --no-parallel",
+]
+run_windows = [
+    "gradlew.bat :tulip-runtime:dependencies > deps.txt",
+    "gradlew.bat dependencyUpdates --no-configuration-cache -Drevision=release --no-parallel",
+]
+
 [tasks.update-runtime]
 dir = "reports"
 run = [
@@ -19,15 +30,15 @@ run = [
 
 [tasks.spotlessApply]
 run = "./gradlew spotlessApply"
-run_windows = "gradlew spotlessApply"
+run_windows = "gradlew.bat spotlessApply"
 
 [tasks.build-runtime]
 run = "./gradlew :tulip-runtime:build"
-run_windows = "gradlew :tulip-runtime:build"
+run_windows = "gradlew.bat :tulip-runtime:build"
 
 [tasks.publish-runtime]
 run = "./gradlew :tulip-runtime:publishToMavenLocal"
-run_windows = "gradlew :tulip-runtime:publishToMavenLocal"
+run_windows = "gradlew.bat :tulip-runtime:publishToMavenLocal"
 
 [tasks.list-jars-m2local]
 run = "find ~/.m2 -name 'tulip-runtime*.jar' -print | sort"
