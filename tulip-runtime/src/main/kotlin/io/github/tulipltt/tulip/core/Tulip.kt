@@ -686,14 +686,13 @@ private fun runTest(testCase: TestProfile, contextId: Int, indexTestCase: Int, q
 
     val durationNanos: Double = durationMillis * 1000000.0
     val startTimeNanos = timeMillisStart * 1000000L
-    val endTimeNanos: Double = startTimeNanos + durationNanos
     var rTime: Double = startTimeNanos.toDouble()
     var vTime: Double = rTime
     // New rate control logic - end
 
     cpuTime = getProcessCpuTime()
     memTime = getTotalGcCpuTime()
-    while (rTime < endTimeNanos) {
+    while (rTime - startTimeNanos.toDouble() < durationNanos) {
       // Pick a random user object to assign a task to.
       val uid = userList.random()
 
