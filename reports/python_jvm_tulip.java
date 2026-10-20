@@ -234,7 +234,7 @@ public class python_jvm_tulip {
 
     public static void main(String[] args) throws IOException {
         List<String> deps = new ArrayList<>();
-        String jythonVersion = "2.7.4";
+        String jythonVersion = "2.7.5b1";
         String graalpyVersion = "";
         String graalpyAllowAllAccess = "true";
         String graalpyEmulateJython = "false";
