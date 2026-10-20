@@ -72,3 +72,9 @@ run_windows = "gradlew.bat -q :tulip-main:run --args=\"--config benchmark_config
 description = ""
 run = "./gradlew -q :tulip-main:run --args=\"--config benchmark_config_test.jsonc\""
 run_windows = "gradlew.bat -q :tulip-main:run --args=\"--config benchmark_config_test.jsonc\""
+
+[tasks.upgrade-gradle]
+# If you run: mise run upgrade-gradle 9.8.1
+# It executes: ./gradlew wrapper --gradle-version 9.8.1
+run = "./gradlew wrapper --gradle-version"
+
