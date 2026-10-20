@@ -13,19 +13,19 @@ experimental = true
 [tasks.dependency-updates]
 description = "Dump runtime dependencies and check for updates"
 run = [
-    "./gradlew :tulip-runtime:dependencies > deps.txt",
-    "./gradlew dependencyUpdates --no-configuration-cache -Drevision=release --no-parallel",
+  "./gradlew :tulip-runtime:dependencies > deps.txt",
+  "./gradlew dependencyUpdates --no-configuration-cache -Drevision=release --no-parallel",
 ]
 run_windows = [
-    "gradlew.bat :tulip-runtime:dependencies > deps.txt",
-    "gradlew.bat dependencyUpdates --no-configuration-cache -Drevision=release --no-parallel",
+  "gradlew.bat :tulip-runtime:dependencies > deps.txt",
+  "gradlew.bat dependencyUpdates --no-configuration-cache -Drevision=release --no-parallel",
 ]
 
 [tasks.update-runtime]
 dir = "reports"
 run = [
-    "jbang run python_jvm_tulip.java --keep-java report.py",
-    "jbang run FileModifier.java report_py.java ../tulip-runtime/src/main/java/io/github/tulipltt/tulip/report/report_py.java"
+  "jbang run python_jvm_tulip.java --keep-java report.py",
+  "jbang run FileModifier.java report_py.java ../tulip-runtime/src/main/java/io/github/tulipltt/tulip/report/report_py.java",
 ]
 
 [tasks.spotlessApply]
@@ -50,12 +50,12 @@ run_windows = "if exist \"%USERPROFILE%\\.m2\\repository\\io\\github\" rmdir /q 
 
 [tasks.publish-to-m2local]
 run = [
-    {task = "delete-jars-m2local"},
-    {task = "update-runtime"},
-    {task = "spotlessApply"},
-    {task = "build-runtime"},
-    {task = "publish-runtime"},
-    {task = "list-jars-m2local"}
+  { task = "delete-jars-m2local" },
+  { task = "update-runtime" },
+  { task = "spotlessApply" },
+  { task = "build-runtime" },
+  { task = "publish-runtime" },
+  { task = "list-jars-m2local" },
 ]
 
 [tasks.run-bench]
