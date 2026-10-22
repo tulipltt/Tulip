@@ -3,7 +3,7 @@
 
 [versions]
 kotlin-version = "2.4.21"
-kotlin-json = "1.11.0"
+kotlin-json = "1.12.0"
 
 [libraries]
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin-version" }

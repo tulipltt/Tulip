@@ -18,7 +18,7 @@ jacoco {
 dependencies {
     implementation(project(":tulip-runtime"))
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
     implementation("org.hdrhistogram:HdrHistogram:2.2.2")
     implementation("org.asciidoctor:asciidoctorj:3.0.1")
     implementation("org.asciidoctor:asciidoctorj-diagram:3.2.1")
