@@ -1,5 +1,5 @@
 [tools]
-java = "corretto-21"
+java = "temurin-21"
 gradle = "latest"
 maven = "latest"
 scala-cli = "latest"
