@@ -27,7 +27,7 @@ plugins {
   alias(libs.plugins.kotlin.serialization.plugin)
 
   // https://plugins.gradle.org/plugin/com.diffplug.spotless
-  id("com.diffplug.spotless") version "8.10.4"
+  id("com.diffplug.spotless") version "8.11.0"
 
   // https://plugins.gradle.org/plugin/org.owasp.dependencycheck
   id("org.owasp.dependencycheck") version "13.0.0"
@@ -36,7 +36,7 @@ plugins {
   // id("com.gradleup.shadow") version "9.5.1"
 
   // https://plugins.gradle.org/plugin/org.jetbrains.dokka
-  id("org.jetbrains.dokka") version "2.2.0"
+  id("org.jetbrains.dokka") version "2.3.0"
 
   jacoco
 }
@@ -73,7 +73,7 @@ dependencies {
   implementation("org.hdrhistogram:HdrHistogram:2.2.2")
 
   // https://mvnrepository.com/artifact/org.python/jython-standalone
-  implementation("org.python:jython-slim:2.7.5b1")
+  implementation("org.python:jython-slim:2.7.5rc1")
 
   // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json
   implementation(libs.kotlin.serialization.json)
@@ -82,7 +82,7 @@ dependencies {
   implementation("com.google.code.gson:gson:$gsonVersion")
 
   // https://mvnrepository.com/artifact/com.google.guava/guava
-  implementation("com.google.guava:guava:33.7.2-jre")
+  implementation("com.google.guava:guava:33.8.0-jre")
 
   // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
   api("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
@@ -109,10 +109,10 @@ dependencies {
   implementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2026.2")
 
   // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-  implementation("org.apache.commons:commons-lang3:3.21.0")
+  implementation("org.apache.commons:commons-lang3:3.22.0")
 
   // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.22.4")
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.23.0")
 
   // https://mvnrepository.com/artifact/info.picocli/picocli
   implementation("info.picocli:picocli:$picocliVersion")
