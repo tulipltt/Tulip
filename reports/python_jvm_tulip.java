@@ -2,7 +2,7 @@
 
 //DEPS dev.jbang:jash:0.0.3
 //DEPS org.tomlj:tomlj:1.1.1
-//DEPS org.python:jython-slim:2.7.5b1
+//DEPS org.python:jython-slim:2.7.5rc1
 // - DEPS org.graalvm.python:jbang:24.2.2
 //NOINTEGRATIONS
 
@@ -234,7 +234,7 @@ public class python_jvm_tulip {
 
     public static void main(String[] args) throws IOException {
         List<String> deps = new ArrayList<>();
-        String jythonVersion = "2.7.5b1";
+        String jythonVersion = "2.7.5rc1";
         String graalpyVersion = "";
         String graalpyAllowAllAccess = "true";
         String graalpyEmulateJython = "false";

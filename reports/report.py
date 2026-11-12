@@ -21,7 +21,7 @@ import org.asciidoctor.Options as Options
 import org.asciidoctor.SafeMode as SafeMode
 import java.io.File as File
 # /// jbang
-# requires-jython = "2.7.5b1"
+# requires-jython = "2.7.5rc1"
 # requires-java = "21"
 # runtime-options = [
 #   "-XX:+IgnoreUnrecognizedVMOptions",
