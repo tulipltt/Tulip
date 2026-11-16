@@ -60,7 +60,7 @@ java {
 
 val gsonVersion = "2.15.0"
 val slf4jVersion = "2.0.20"
-val logbackVersion = "1.6.6"
+val logbackVersion = "1.6.7"
 val springBootVersion = "4.1.2"
 val picocliVersion = "4.7.7"
 val javalinVersion = "7.2.4"
