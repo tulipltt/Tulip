@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.github.ajalt.clikt:clikt-jvm:5.1.0")
+    implementation("com.github.ajalt.clikt:clikt-jvm:5.2.1")
     implementation(project(":tulip-runtime"))
     implementation("org.hdrhistogram:HdrHistogram:2.2.2")
 }
