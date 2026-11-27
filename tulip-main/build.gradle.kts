@@ -13,11 +13,18 @@ dependencies {
     implementation("org.hdrhistogram:HdrHistogram:2.2.2")
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+        vendor.set(JvmVendorSpec.ADOPTIUM)
+    }
+}
+
 application {
     // Define the main class for the application.
     mainClass = "org.example.app.AppKt"
 
-    // Java 21 - https://docs.oracle.com/en/java/javase/21/gctuning/z-garbage-collector.html
+    // Java 25 - https://docs.oracle.com/en/java/javase/25/gctuning/z-garbage-collector.html
     applicationDefaultJvmArgs = listOf(
 
         // -server or -client
@@ -40,7 +47,7 @@ application {
         // "-XX:+UseParallelGC",
 
         // Java 17
-        "-XX:+UseG1GC", "-XX:+UseDynamicNumberOfGCThreads",
+        // "-XX:+UseG1GC", "-XX:+UseDynamicNumberOfGCThreads",
 
         // Java 21
         // "-XX:+UseZGC", "-XX:+ZGenerational",
